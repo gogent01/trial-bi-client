@@ -37,8 +37,8 @@
             <tr v-for="(row, rowIdx) in table" :key="rowIdx" class="hover:bg-slate-50">
               <td
                 :class="[rowIdx < nrow - 1 ? 'border-b border-gray-200' : '', 'px-3 py-1 text-sm text-gray-500 whitespace-nowrap border-r border-gray-200']"
-                style="min-width: 2rem;">{{ rowIdx + 1 }}</td>
-              <td v-for="(cell, cellIdx) in Object.keys(row)" :key="cell" :class="[rowIdx < nrow - 1 ? 'border-b border-gray-200' : '', cellIdx < ncol - 1 ? 'border-r border-gray-200' : '', 'px-3 py-1 text-sm text-gray-500 whitespace-nowrap']" style="min-width: 2rem;">{{ row[cell] }}</td>
+                style="min-width: 2rem;">{{ (currentPage - 1) * limit + (rowIdx + 1) }}</td>
+              <td v-for="(cell, cellIdx) in Object.keys(row)" :key="cell" :class="[rowIdx < nrow - 1 ? 'border-b border-gray-200' : '', cellIdx < ncol - 1 ? 'border-r border-gray-200' : '', 'px-3 py-1 text-sm text-gray-500 whitespace-nowrap']" style="min-width: 2rem;">{{ row[cell] instanceof Date ? row[cell].toLocaleDateString('ru') : row[cell] }}</td>
             </tr>
             </tbody>
           </table>
@@ -46,7 +46,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
 import { FunnelIcon, ChartBarIcon, ChevronUpIcon, ChevronDownIcon } from '@heroicons/vue/24/outline';
 import { FunnelIcon as FunnelIconActive, ChartBarIcon as ChartBarIconActive } from '@heroicons/vue/24/solid';
 import { ReactiveSchema, FakeQueryTable } from '@/data/fake';
@@ -54,6 +53,8 @@ import { ReactiveSchema, FakeQueryTable } from '@/data/fake';
 interface Props {
   table: FakeQueryTable,
   reactiveSchema: ReactiveSchema,
+  currentPage: number,
+  limit: number,
 }
 
 const props = defineProps<Props>();

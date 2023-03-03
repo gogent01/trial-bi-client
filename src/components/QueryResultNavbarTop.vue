@@ -6,10 +6,10 @@
           <p class="text-slate-700">По запросу было найдено {{ nrow }} записей</p>
         </div>
         <div class="flex items-center gap-2 h-full">
-          <div class="flex-shrink-0 h-full">
+          <div v-if="isSortActive"
+               class="flex-shrink-0 h-full">
             <button type="button"
-                    :class="[isSortActive ? 'hover:bg-gray-50' : 'opacity-50']"
-                    class="relative inline-flex items-center h-full rounded-md bg-white px-4 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-inset ring-gray-300"
+                    class="relative inline-flex items-center h-full rounded-md bg-white px-4 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                     @click="isSortActive && emit('clearSort')">
               <x-mark-icon class="-ml-1 mr-1 h-5 w-5" aria-hidden="true" />
               <span>Сбросить сортировку</span>

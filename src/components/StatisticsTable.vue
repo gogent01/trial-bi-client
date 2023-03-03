@@ -9,7 +9,8 @@
       </thead>
       <tbody>
       <tr v-for="(dataRow, dataIdx) in data" :key="dataRow.param" class="hover:bg-slate-50">
-        <td v-for="(colname, colnameIdx) in Object.keys(colnames)" :key="colname" :class="[dataIdx < nrow - 1 ? 'border-b border-gray-300' : '', colnameIdx < ncol - 1 ? 'border-r border-gray-300' : '', 'px-3 py-1 text-sm text-gray-600 whitespace-nowrap']" style="min-width: 2rem;">{{ dataRow[colname] }}</td>
+        <td v-for="(colname, colnameIdx) in Object.keys(colnames)" :key="colname" :class="[dataIdx < nrow - 1 ? 'border-b border-gray-300' : '', colnameIdx < ncol - 1 ? 'border-r border-gray-300' : '', 'px-3 py-1 text-sm text-gray-600 whitespace-nowrap']" style="min-width: 2rem;">
+          {{ dataRow[colname] instanceof Date ? dataRow[colname].toLocaleDateString('ru') : dataRow[colname] }}</td>
       </tr>
       </tbody>
     </table>

@@ -69,12 +69,16 @@
             <div class="absolute min-w-max">
               <query-result-table :reactive-schema="reactiveSchema"
                                   :table="table"
+                                  :current-page="currentPage"
+                                  :limit="limit"
                                   @sort="toggleSort"
                                   @filter="toggleFilter"
                                   @stats="toggleStats" />
             </div>
           </div>
-          <query-result-navbar-bottom />
+          <query-result-navbar-bottom :current-page="currentPage"
+                                      :max-page="maxPage"
+                                      @update="setPage" />
         </div>
       </div>
 
@@ -129,7 +133,7 @@
     statisticsHidden.value = !statisticsHidden.value;
   }
 
-  const { schema, rows } = getData(50);
+  const { schema, rows } = getData(550);
   const reactiveSchema = ref<ReactiveSchema>(schema.map(column => ({
     ...column,
     hasFilter: false,
@@ -137,17 +141,28 @@
     hasStats: false,
   })));
 
+  const limit = 100;
+  const currentPage = ref(1);
+  const maxPage = ref(Math.ceil(rows.length / limit));
+  function setPage(page: number) {
+    if (page > 0 && page <= maxPage.value) {
+      currentPage.value = page;
+    }
+  }
+  const nrow = computed(() => rows.length);
+
   const table = computed<FakeQueryTable> (() => {
-    if (sortTasks.value.length === 0) return rows;
+    if (sortTasks.value.length === 0)
+      return rows.slice(limit * (currentPage.value - 1), limit * currentPage.value);
 
-    return sort(rows).by(sortTasks.value.map((st) => {
-      return st.direction === 'ASC'
-        ? ({ asc: row => row[st.key] })
-        : ({ desc: row => row[st.key] });
-    }));
+    return sort(rows)
+      .by(sortTasks.value.map((st) => {
+        return st.direction === 'ASC'
+          ? ({ asc: row => row[st.key] })
+          : ({ desc: row => row[st.key] });
+      }))
+      .slice(limit * (currentPage.value - 1), limit * currentPage.value);
   });
-
-  const nrow = computed(() => table.value.length);
 
   type SortTask = {
     key: string,
@@ -237,6 +252,13 @@
         param: level,
         value: columnValues.filter(value => value === level).length,
       })));
+    } else if (columnSchema.type === 'date') {
+      const columnValues = rows.map(row => row[columnKey]) as Date[];
+      data = [
+        { param: 'Число наблюдений', value: columnValues.length },
+        { param: 'Минимум', value: new Date(min(columnValues.map(d => d.getTime()))) },
+        { param: 'Максимум', value: new Date(max(columnValues.map(d => d.getTime()))) },
+      ];
     }
 
     return { variable, data };

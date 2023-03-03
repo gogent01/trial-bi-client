@@ -3,11 +3,11 @@ import { faker } from '@faker-js/faker';
 type FakeQueryColumn = {
   key: string;
   name: string;
-  type: 'number' | 'text' | 'factor';
+  type: 'number' | 'text' | 'factor' | 'date';
   levels?: string[];
 };
 
-type FakeQueryRow = { [key: string]: string | number };
+type FakeQueryRow = { [key: string]: string | number | Date };
 
 export type FakeQuerySchema = FakeQueryColumn[];
 export type FakeQueryTable = FakeQueryRow[];
@@ -27,7 +27,7 @@ function createRandomRow(id: number): FakeQueryRow {
     fullname: faker.name.fullName(),
     gender: faker.helpers.arrayElement(['Мужской', 'Женский']),
     history: faker.random.alphaNumeric(5, { casing: 'upper' }),
-    dateOfBirth: dateOfBirth.toLocaleDateString('ru'),
+    dateOfBirth: dateOfBirth,
     age: new Date().getFullYear() - new Date(dateOfBirth).getFullYear(),
     height,
     weight,
@@ -62,7 +62,7 @@ export function getData(length: number): { schema: FakeQuerySchema; rows: FakeQu
     {
       key: 'dateOfBirth',
       name: 'Дата рождения',
-      type: 'text',
+      type: 'date',
     },
     {
       key: 'age',
