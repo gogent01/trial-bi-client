@@ -14,6 +14,7 @@ export type FakeQueryTable = FakeQueryRow[];
 type ReactiveColumn = {
   hasFilter: boolean;
   hasSort: 'NONE' | 'ASC' | 'DESC';
+  sortPriority?: number;
   hasStats: boolean;
 };
 export type ReactiveSchema = (FakeQueryColumn & ReactiveColumn)[];

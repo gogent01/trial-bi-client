@@ -183,6 +183,8 @@
     if (sortTaskIndex === -1) {
       sortTasks.value.push({ key: columnKey, direction: 'ASC' });
       reactiveSchema.value[columnIdx].hasSort = 'ASC';
+
+      reactiveSchema.value[columnIdx].sortPriority = sortTasks.value.length;
     } else {
       const sortTask = sortTasks.value[sortTaskIndex];
       if (sortTask.direction === 'ASC') {
@@ -191,6 +193,14 @@
       } else {
         sortTasks.value.splice(sortTaskIndex, 1);
         reactiveSchema.value[columnIdx].hasSort = 'NONE';
+        reactiveSchema.value[columnIdx].sortPriority = undefined;
+
+        const sortTasksToUpdatePriority = sortTasks.value.slice(sortTaskIndex);
+        sortTasksToUpdatePriority.forEach((st, stIdx) => {
+          const columnIndex = reactiveSchema.value
+            .findIndex(column => column.key === st.key);
+          reactiveSchema.value[columnIndex].sortPriority = stIdx + 1;
+        });
       }
     }
   }
@@ -201,6 +211,7 @@
       const columnIndex = reactiveSchema.value
         .findIndex(column => column.key === sortTask.key);
       reactiveSchema.value[columnIndex].hasSort = 'NONE';
+      reactiveSchema.value[columnIndex].sortPriority = undefined;
     }
   }
 

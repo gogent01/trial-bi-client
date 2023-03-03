@@ -7,17 +7,19 @@
                 <p class="text-left text-sm font-semibold text-gray-900">#</p>
               </th>
               <th v-for="(column, columnIdx) in reactiveSchema" :key="column.key" scope="col"
-                  :class="[columnIdx < ncol - 1 ? 'border-r border-gray-200' : '', 'sticky top-0 border-b border-gray-200 bg-white bg-opacity-75 backdrop-blur backdrop-filter cursor-pointer']">
+                  :class="[columnIdx < ncol - 1 ? 'border-r border-gray-200' : '', 'sticky top-0 border-b border-gray-200 bg-white bg-opacity-75 backdrop-blur backdrop-filter cursor-pointer select-none']">
                 <div class="flex">
                   <p class="flex-1 pl-3 py-3 text-left text-sm font-semibold text-gray-900"
                      @click="emitSort(columnIdx)">
-                    <span v-if="column.hasSort === 'ASC'">
-                      <chevron-down-icon class="inline h-4 w-4"  />
+                    <span v-if="column.hasSort === 'ASC'" class="mr-1">
+                      <span class="text-xs text-gray-400">{{ column.sortPriority }}</span>
+                      <chevron-down-icon class="inline h-4 w-4" />
                     </span>
-                    <span v-if="column.hasSort === 'DESC'">
+                    <span v-if="column.hasSort === 'DESC'" class="mr-1">
+                      <span class="text-xs text-gray-400">{{ column.sortPriority }}</span>
                       <chevron-up-icon class="inline h-4 w-4" />
                     </span>
-                    <span class="inline ml-1">{{ column.name }}</span>
+                    <span class="inline">{{ column.name }}</span>
                   </p>
                   <div class="p-3 flex gap-1 items-center">
                     <span @click="emitFilter(columnIdx)">
