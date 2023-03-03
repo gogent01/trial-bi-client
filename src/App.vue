@@ -27,22 +27,44 @@
         <div class="pt-2 w-8 mx-auto bg-slate-400 flex flex-col gap-1 items-center text-slate-800 cursor-pointer hover:text-slate-700" @click="toggleQueryVisibility">
           <chevron-double-right-icon v-if="queryHidden" class="h-6 w-6 cursor-pointer"></chevron-double-right-icon>
           <chevron-double-left-icon v-else class="h-6 w-6 cursor-pointer"></chevron-double-left-icon>
-          <p class="font-semibold" style="writing-mode: vertical-rl;transform: scale(-1);">Запрос</p>
+          <p class="font-semibold" style="writing-mode: vertical-rl;transform: scale(-1);">Запрос и фильтры</p>
         </div>
 
         <div v-if="!queryHidden" class="p-4 basis-1/5 flex-shrink-0 flex flex-col">
-          <div class="flex ml-2 mb-2 items-center justify-between text-slate-700">
-            <p class="text-xl font-semibold">Запрос</p>
+          <div class="h-3/5 flex flex-col">
+            <div class="ml-2 mb-2 text-slate-700 text-xl font-semibold">
+              <p class="text-xl font-semibold">Запрос</p>
+            </div>
+            <div class="h-full rounded-xl bg-white overflow-hidden">
+              <query-navbar-top />
+              <div class="flex justify-center p-3 overflow-auto" style="height: calc(100% - 8rem);">
+                <div class="w-full">
+                  <p class="text-sm text-gray-600 text-center">Нет данных для отображения</p>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="h-full rounded-xl bg-white lg:h-full">
-            <!-- Left column area -->
+          <div class="h-2/5 mt-4 flex flex-col">
+            <div class="ml-2 mb-2 text-slate-700 text-xl font-semibold">
+              <p class="text-xl font-semibold">Фильтры</p>
+            </div>
+            <div class="h-full rounded-xl bg-white overflow-hidden">
+              <filter-navbar-top />
+              <div class="flex justify-center p-3 overflow-auto" style="height: calc(100% - 8rem);">
+                <div class="w-full">
+                  <p class="text-sm text-gray-600 text-center">Нет данных для отображения</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
       <div class="row-span-2 p-4 flex-1 flex flex-col">
         <p class="ml-2 mb-2 text-slate-700 text-xl font-semibold">Результат запроса</p>
         <div class="h-full rounded-xl bg-white overflow-hidden">
-          <query-result-navbar-top />
+          <query-result-navbar-top :nrow="nrow"
+                                   :is-sort-active="isSortActive"
+                                   @clearSort="clearSort" />
           <div class="relative w-full overflow-auto" style="height: calc(100% - 8rem);">
             <div class="absolute min-w-max">
               <query-result-table :reactive-schema="reactiveSchema"
@@ -89,6 +111,8 @@
   import { PlusIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/20/solid';
   import { getData, ReactiveSchema, FakeQueryTable } from '@/data/fake';
 
+  import QueryNavbarTop from '@/components/QuerySummaryNavbarTop.vue';
+  import FilterNavbarTop from '@/components/FilterNavbarTop.vue';
   import QueryResultNavbarTop from '@/components/QueryResultNavbarTop.vue';
   import QueryResultNavbarBottom from '@/components/QueryResultNavbarBottom.vue';
   import QueryResultTable from '@/components/QueryResultTable.vue';
@@ -123,12 +147,15 @@
     }));
   });
 
+  const nrow = computed(() => table.value.length);
+
   type SortTask = {
     key: string,
     direction: 'ASC' | 'DESC',
   };
 
   const sortTasks = ref<SortTask[]>([]);
+  const isSortActive = computed(() => sortTasks.value.length > 0);
 
   function toggleFilter(columnIdx: number) {
     reactiveSchema.value[columnIdx].hasFilter = !reactiveSchema.value[columnIdx].hasFilter;
@@ -153,7 +180,23 @@
     }
   }
 
-  const statsForColumnAtIndex = ref(5);
+  function clearSort() {
+    while (sortTasks.value.length > 0) {
+      const sortTask = sortTasks.value.pop() as SortTask;
+      const columnIndex = reactiveSchema.value
+        .findIndex(column => column.key === sortTask.key);
+      reactiveSchema.value[columnIndex].hasSort = 'NONE';
+    }
+  }
+
+  const statsForColumnAtIndex = ref(-1);
+
+  function pretty(n: number): string {
+    return n
+      .toFixed(3)
+      .replace(/0+$/, '')
+      .replace(/\.$/, '.0');
+  }
 
   const stats = computed(() => {
     if (statsForColumnAtIndex.value < 0) {
@@ -172,14 +215,14 @@
       const columnValues = rows.map(row => row[columnKey]) as number[];
       data = [
         { param: 'Число наблюдений', value: columnValues.length },
-        { param: 'Минимум', value: min(columnValues) },
-        { param: '1-ый квартиль', value: quantile(columnValues, 0.25) },
-        { param: 'Медиана', value: median(columnValues) },
-        { param: '3-ий квартиль', value: quantile(columnValues, 0.75) },
-        { param: 'Максимум', value: max(columnValues) },
-        { param: 'Межкварт. интервал', value: iqr(columnValues) },
-        { param: 'Среднее', value: mean(columnValues).toFixed(3) },
-        { param: 'Станд. отклонение', value: standardDeviation(columnValues).toFixed(3) },
+        { param: 'Минимум', value: pretty(min(columnValues)) },
+        { param: '1-ый квартиль', value: pretty(quantile(columnValues, 0.25)) },
+        { param: 'Медиана', value: pretty(median(columnValues)) },
+        { param: '3-ий квартиль', value: pretty(quantile(columnValues, 0.75)) },
+        { param: 'Максимум', value: pretty(max(columnValues)) },
+        { param: 'Межкварт. интервал', value: pretty(iqr(columnValues)) },
+        { param: 'Среднее', value: pretty(mean(columnValues)) },
+        { param: 'Станд. отклонение', value: pretty(standardDeviation(columnValues)) },
       ];
     } else if (columnSchema.type === 'text') {
       const columnValues = rows.map(row => row[columnKey]) as string[];
