@@ -10,7 +10,7 @@
           <!-- Logo section -->
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=white" alt="Your Company" />
+              <img class="h-8 w-auto text-white" :src="logo" alt="Your Company" />
             </div>
           </div>
           <div class=''>
@@ -114,6 +114,7 @@
   import { min, quantile, median, iqr, max, mean, standardDeviation } from 'simple-statistics';
   import { PlusIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/20/solid';
   import { getData, ReactiveSchema, FakeQueryTable } from '@/data/fake';
+  import logo from '@/assets/RWE-BI-logo.svg';
 
   import QueryNavbarTop from '@/components/QuerySummaryNavbarTop.vue';
   import FilterNavbarTop from '@/components/FilterNavbarTop.vue';
