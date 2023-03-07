@@ -323,9 +323,9 @@
         reactiveSchema.value[columnIdx].sortPriority = undefined;
 
         const sortTasksToUpdatePriority = sortTasks.value.slice(sortTaskIndex);
-        sortTasksToUpdatePriority.forEach((st, stIdx) => {
+        sortTasksToUpdatePriority.forEach((st) => {
           const columnIndex = reactiveSchema.value.findIndex((column) => column.key === st.key);
-          reactiveSchema.value[columnIndex].sortPriority = stIdx + 1 + 1;
+          reactiveSchema.value[columnIndex].sortPriority! -= 1;
         });
       }
     }
