@@ -52,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { nextTick } from 'vue';
   import { XMarkIcon } from '@heroicons/vue/20/solid';
 
   type ColumnType = 'text' | 'number' | 'date' | 'factor';
@@ -117,8 +117,7 @@
     const filterType = filterOptions[columnType].filter((option) => option.name === optionName)[0].value;
     emit('updateType', filterTaskIndex, filterType);
 
-    const siblingInput = target.nextElementSibling as HTMLInputElement;
-    siblingInput.focus();
+    nextTick(() => (target.nextElementSibling as HTMLInputElement).focus());
   }
 
   function updateFilterValue(event: Event, filterTaskIndex: number) {

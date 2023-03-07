@@ -149,7 +149,7 @@
     statisticsHidden.value = !statisticsHidden.value;
   }
 
-  const { schema, rows } = getData(150);
+  const { schema, rows } = getData(1500);
   const reactiveSchema = ref<ReactiveSchema>(
     schema.map((column) => ({
       ...column,
