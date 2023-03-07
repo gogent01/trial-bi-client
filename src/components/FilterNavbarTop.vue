@@ -2,14 +2,27 @@
   <nav class="bg-white border-b">
     <div class="mx-auto">
       <div class="flex justify-between h-16 p-3">
-        <div class="flex items-center gap-1 h-full text-slate-600"></div>
-        <div class="flex items-center gap-4 h-full">
-          <div class="flex-shrink-0 h-full">
-            <button type="button"
-                    :class="[false ? 'hover:bg-gray-50' : 'opacity-50']"
-                    class="relative inline-flex items-center h-full rounded-md bg-white px-4 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-inset ring-gray-300">
+        <div class="flex items-center gap-2 h-full">
+          <div v-if="isFilterActive" class="flex-shrink-0 h-full">
+            <button
+              type="button"
+              class="relative inline-flex items-center h-full rounded-md bg-white px-4 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+              @click="emit('clearFilters')"
+            >
               <trash-icon class="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
-              <span>Удалить все</span>
+              <span>Сбросить все</span>
+            </button>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 h-full">
+          <div class="flex-shrink-0 h-full">
+            <button
+              type="button"
+              :class="[true ? 'hover:bg-teal-700' : 'opacity-50']"
+              class="relative inline-flex items-center rounded-md border border-transparent bg-teal-600 h-full px-4 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+            >
+              <funnel-icon class="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+              <span>Применить</span>
             </button>
           </div>
         </div>
@@ -19,5 +32,13 @@
 </template>
 
 <script setup lang="ts">
-import { TrashIcon } from '@heroicons/vue/24/outline';
+  import { TrashIcon, FunnelIcon } from '@heroicons/vue/24/outline';
+
+  interface Props {
+    isFilterActive: boolean;
+  }
+
+  const props = defineProps<Props>();
+
+  const emit = defineEmits(['clearFilters']);
 </script>
