@@ -6,14 +6,14 @@
         <div class="flex items-center gap-4 h-full">
           <div class="flex items-center h-full text-slate-600">
             <button
-              :class="[currentPage > 1 ? 'hover:bg-gray-50' : 'opacity-50']"
+              :class="[currentPage > 1 ? 'hover:bg-gray-50' : 'opacity-50 cursor-default']"
               class="relative inline-flex items-center justify-center w-10 rounded-l-md border border-slate-300 bg-white h-full"
               @click="incrementPage(-1)"
             >
               <chevron-left-icon class="h-7 w-7" aria-hidden="true" />
             </button>
 
-            <div class="-mx-px px-2 h-full flex items-center gap-2 border border-slate-300 bg-white">
+            <div class="-mx-px px-2 h-full flex items-center gap-2 border border-slate-300 bg-white cursor-default">
               <p>Страница</p>
               <label for="page" class="sr-only">Страница</label>
               <input
@@ -29,7 +29,7 @@
             </div>
 
             <button
-              :class="[currentPage < maxPage ? 'hover:bg-gray-50' : 'opacity-50']"
+              :class="[currentPage < maxPage ? 'hover:bg-gray-50' : 'opacity-50 cursor-default']"
               class="relative inline-flex items-center justify-center w-10 rounded-r-md border border-slate-300 bg-white h-full"
               @click="incrementPage(1)"
             >

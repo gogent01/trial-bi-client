@@ -161,7 +161,7 @@
 
   const limit = 100;
   const currentPage = ref(1);
-  const maxPage = computed<number>(() => Math.ceil(filteredTable.value.length / limit));
+  const maxPage = computed<number>(() => Math.ceil(filteredTable.value.length / limit) || 1);
   const nrow = computed(() => filteredTable.value.length);
   function setPage(page: number) {
     if (page > 0 && page <= maxPage.value) {
@@ -273,11 +273,14 @@
   function updateFilterType(filterTaskIdx: number, filterType: FilterType) {
     const filterTask = filterTasks.value[filterTaskIdx];
     filterTask.updateType(filterType);
+    if (filterTask.value) currentPage.value = 1;
   }
 
   function updateValue(filterTaskIdx: number, value: string | number | Date) {
     const filterTask = filterTasks.value[filterTaskIdx];
     filterTask.updateValue(value);
+    console.log();
+    currentPage.value = 1;
   }
 
   function removeFilter(filterTaskIdx: number) {
@@ -285,6 +288,7 @@
     const columnIdx = reactiveSchema.value.findIndex((column) => column.key === filterTask.columnKey);
     filterTasks.value.splice(filterTaskIdx, 1);
     reactiveSchema.value[columnIdx].hasFilter = false;
+    currentPage.value = 1;
   }
 
   function clearFilters() {
@@ -293,6 +297,7 @@
       const columnIdx = reactiveSchema.value.findIndex((column) => column.key === filterTask!.columnKey);
       reactiveSchema.value[columnIdx].hasFilter = false;
     }
+    currentPage.value = 1;
   }
 
   type SortTask = {
@@ -355,7 +360,9 @@
     const variable = columnSchema.name;
     let data;
 
-    if (columnSchema.type === 'number') {
+    if (filteredTable.value.length === 0) {
+      data = [{ param: 'Число наблюдений', value: filteredTable.value.length }];
+    } else if (columnSchema.type === 'number') {
       const columnValues = filteredTable.value.map((row) => row[columnKey]) as number[];
       data = [
         { param: 'Число наблюдений', value: columnValues.length },

@@ -9,7 +9,7 @@
               class="relative inline-flex items-center h-full rounded-md bg-white px-4 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
               @click="emit('clearFilters')"
             >
-              <trash-icon class="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+              <x-mark-icon class="-ml-2 mr-1 h-5 w-5" aria-hidden="true" />
               <span>Сбросить все</span>
             </button>
           </div>
@@ -32,7 +32,8 @@
 </template>
 
 <script setup lang="ts">
-  import { TrashIcon, FunnelIcon } from '@heroicons/vue/24/outline';
+  import { FunnelIcon } from '@heroicons/vue/24/outline';
+  import { XMarkIcon } from '@heroicons/vue/20/solid';
 
   interface Props {
     isFilterActive: boolean;
