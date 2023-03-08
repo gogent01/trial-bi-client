@@ -21,7 +21,7 @@
                 name="page"
                 id="page"
                 type="number"
-                class="block p-2 w-7 h-7 rounded-md bg-slate-300 text-center focus:border-teal-500 focus:ring-teal-500"
+                class="block p-2 w-7 h-7 border border-transparent rounded-md bg-slate-300 text-center focus:border-teal-500 focus:ring-teal-500"
                 placeholder="1"
                 @keyup.enter="emitUpdate"
               />

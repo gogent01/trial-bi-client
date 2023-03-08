@@ -64,6 +64,7 @@
                 :tasks="filterTasks"
                 @updateType="updateFilterType"
                 @updateValue="updateValue"
+                @updateRangeValues="updateRangeValues"
                 @remove="removeFilter"
               />
               <div v-else class="w-full p-3">
@@ -198,11 +199,15 @@
     columnType: ColumnType;
     type?: FilterType;
     value?: T;
+    multipleValues: T[];
+    rangeValues: [T | undefined, T | undefined];
 
     constructor(columnKey: string, columnName: string, columnType: ColumnType) {
       this.columnKey = columnKey;
       this.columnName = columnName;
       this.columnType = columnType;
+      this.multipleValues = [];
+      this.rangeValues = [undefined, undefined];
     }
 
     updateType(filterType: FilterType) {
@@ -211,6 +216,10 @@
 
     updateValue(value?: T) {
       this.value = value;
+    }
+
+    updateRangeValues(rangeValues: [T | undefined, T | undefined]) {
+      this.rangeValues = rangeValues;
     }
 
     apply(row: TableRow): boolean {
@@ -229,13 +238,23 @@
         if (this.type === 'gte') return cellValue >= this.value;
         if (this.type === 'lt') return cellValue < this.value;
         if (this.type === 'lte') return cellValue <= this.value;
+        if (this.type === 'range')
+          return (
+            cellValue >= (this.rangeValues[0] || Number.NEGATIVE_INFINITY) &&
+            cellValue < (this.rangeValues[1] || Number.POSITIVE_INFINITY)
+          );
       } else if (this.columnType === 'date') {
         const cellValue = row[this.columnKey] as Date;
-        if (this.type === 'eq') return cellValue === this.value;
+        if (this.type === 'eq') return cellValue.toDateString() === (this.value as Date).toDateString();
         if (this.type === 'gt') return cellValue > this.value;
         if (this.type === 'gte') return cellValue >= this.value;
         if (this.type === 'lt') return cellValue < this.value;
         if (this.type === 'lte') return cellValue <= this.value;
+        if (this.type === 'range')
+          return (
+            cellValue >= (this.rangeValues[0] || Number.NEGATIVE_INFINITY) &&
+            cellValue < (this.rangeValues[1] || Number.POSITIVE_INFINITY)
+          );
       } else if (this.columnType === 'factor') {
         const cellValue = row[this.columnKey] as string;
         if (this.type === 'sw') return cellValue.startsWith(this.value as string);
@@ -279,7 +298,15 @@
   function updateValue(filterTaskIdx: number, value: string | number | Date) {
     const filterTask = filterTasks.value[filterTaskIdx];
     filterTask.updateValue(value);
-    console.log();
+    currentPage.value = 1;
+  }
+
+  function updateRangeValues(
+    filterTaskIdx: number,
+    rangeValues: [number | Date | undefined, number | Date | undefined]
+  ) {
+    const filterTask = filterTasks.value[filterTaskIdx];
+    filterTask.updateRangeValues(rangeValues);
     currentPage.value = 1;
   }
 
