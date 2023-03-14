@@ -5,8 +5,8 @@
         <div class="space-y-2 flex-1">
           <div class="flex justify-between align-start">
             <p class="text-sm font-medium text-gray-900">{{ task.columnName }}</p>
-            <p class="text-xs text-gray-400 cursor-pointer hover:text-gray-600">
-              <span><trash-icon class="inline mr-1 h-4 w-4" @click="remove(taskIdx)"></trash-icon>Удалить</span>
+            <p class="text-xs text-gray-400 cursor-pointer hover:text-gray-600" @click="remove(taskIdx)">
+              <span><trash-icon class="inline mr-1 h-4 w-4"></trash-icon>Удалить</span>
             </p>
           </div>
           <select
@@ -18,7 +18,11 @@
             <option v-for="option in filterOptions[task.columnType]" :key="option.name">{{ option.name }}</option>
           </select>
           <div v-if="task.type === 'any'">
-            <multiple-select :options="task.columnLevels" @change="updateFilterMultipleValues($event, taskIdx)" />
+            <multiple-select
+              :options="task.columnLevels"
+              :selected="task.multipleValues"
+              @change="updateFilterMultipleValues($event, taskIdx)"
+            />
           </div>
           <div v-else-if="task.type === 'range'">
             <div v-if="task.columnType === 'number'" class="flex items-center gap-2">
