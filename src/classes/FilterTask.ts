@@ -1,5 +1,5 @@
-type TableRow = { [key: string]: string | number | Date };
-type ColumnType = 'text' | 'number' | 'date' | 'factor';
+import type { ColumnType, TableRow } from '@/data/types';
+
 export type FilterType = 'eq' | 'gt' | 'gte' | 'lt' | 'lte' | 'sw' | 'has' | 'ew' | 'range' | 'any';
 
 export class FilterTask {

@@ -1,7 +1,4 @@
 <template>
-  <!-- Background color split screen for large screens -->
-  <!--  <div class="fixed top-0 left-0 h-full w-1/2 bg-violet-400" aria-hidden="true" />-->
-  <!--  <div class="fixed top-0 right-0 h-full w-1/2 bg-green-400" aria-hidden="true" />-->
   <div class="relative flex min-h-screen flex-col">
     <!-- Navbar -->
     <nav class="bg-teal-600">
@@ -128,10 +125,10 @@
 <script setup lang="ts">
   import { ref, computed } from 'vue';
   import { sort } from 'fast-sort';
-  import { min, quantile, median, iqr, max, mean, standardDeviation } from 'simple-statistics';
   import { PlusIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/20/solid';
   import logo from '@/assets/RWE-BI-logo.svg';
-  import { getData, ReactiveSchema, FakeQueryTable } from '@/data/fake';
+  import { ReactiveTableColumn, TableData } from '@/data/types';
+  import { Database } from '@/data/Database';
   import { FilterTask, FilterType } from '@/classes/FilterTask';
   import { SortTask } from '@/classes/SortTask';
   import { ColumnStats } from '@/classes/ColumnStats';
@@ -154,8 +151,9 @@
     statisticsHidden.value = !statisticsHidden.value;
   }
 
-  const { schema, rows } = getData(1538);
-  const reactiveSchema = ref<ReactiveSchema>(
+  const database = new Database(1538);
+  const { schema, data } = database.getPatients();
+  const reactiveSchema = ref<ReactiveTableColumn>(
     schema.map((column) => ({
       ...column,
       hasFilter: false,
@@ -174,13 +172,13 @@
     }
   }
 
-  const filteredTable = computed<FakeQueryTable>(() => {
-    return rows.filter((row) => {
+  const filteredTable = computed<TableData>(() => {
+    return data.filter((row) => {
       return filterTasks.value.every((task) => task.apply(row));
     });
   });
 
-  const filteredAndSortedTable = computed<FakeQueryTable>(() => {
+  const filteredAndSortedTable = computed<TableData>(() => {
     if (sortTasks.value.length === 0) return filteredTable.value;
 
     return sort(filteredTable.value).by(
@@ -190,7 +188,7 @@
     );
   });
 
-  const filteredSortedAndPaginatedTable = computed<FakeQueryTable>(() => {
+  const filteredSortedAndPaginatedTable = computed<TableData>(() => {
     return filteredAndSortedTable.value.slice(limit * (currentPage.value - 1), limit * currentPage.value);
   });
 

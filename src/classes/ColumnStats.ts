@@ -1,4 +1,4 @@
-import type { FakeQueryColumn } from '@/data/fake';
+import type { TableColumn } from '@/data/types';
 import { iqr, max, mean, median, min, quantile, standardDeviation } from 'simple-statistics';
 
 export type StatsRow = {
@@ -15,7 +15,7 @@ export class ColumnStats {
     this.data = [] as StatsRow[];
   }
 
-  calculate(columnMetadata: FakeQueryColumn, columnValues: unknown[]): this {
+  calculate(columnMetadata: TableColumn, columnValues: unknown[]): this {
     this.variable = columnMetadata.name;
 
     if (columnValues.length === 0) {

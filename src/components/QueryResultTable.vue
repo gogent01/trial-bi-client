@@ -82,11 +82,11 @@
 <script setup lang="ts">
   import { FunnelIcon, ChartBarIcon, ChevronUpIcon, ChevronDownIcon } from '@heroicons/vue/24/outline';
   import { FunnelIcon as FunnelIconActive, ChartBarIcon as ChartBarIconActive } from '@heroicons/vue/24/solid';
-  import { ReactiveSchema, FakeQueryTable } from '@/data/fake';
+  import { ReactiveTableColumn, TableData } from '@/data/types';
 
   interface Props {
-    table: FakeQueryTable;
-    reactiveSchema: ReactiveSchema;
+    table: TableData;
+    reactiveSchema: ReactiveTableColumn;
     currentPage: number;
     limit: number;
   }
