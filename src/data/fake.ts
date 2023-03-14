@@ -1,14 +1,14 @@
 import { faker } from '@faker-js/faker';
 faker.setLocale('ru');
 
-type FakeQueryColumn = {
+export type FakeQueryColumn = {
   key: string;
   name: string;
   type: 'number' | 'text' | 'factor' | 'date';
   levels?: string[];
 };
 
-type FakeQueryRow = { [key: string]: string | number | Date };
+export type FakeQueryRow = { [key: string]: string | number | Date };
 
 export type FakeQuerySchema = FakeQueryColumn[];
 export type FakeQueryTable = FakeQueryRow[];

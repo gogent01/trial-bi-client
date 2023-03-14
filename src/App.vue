@@ -130,8 +130,11 @@
   import { sort } from 'fast-sort';
   import { min, quantile, median, iqr, max, mean, standardDeviation } from 'simple-statistics';
   import { PlusIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/20/solid';
-  import { getData, ReactiveSchema, FakeQueryTable } from '@/data/fake';
   import logo from '@/assets/RWE-BI-logo.svg';
+  import { getData, ReactiveSchema, FakeQueryTable } from '@/data/fake';
+  import { FilterTask, FilterType } from '@/classes/FilterTask';
+  import { SortTask } from '@/classes/SortTask';
+  import { ColumnStats } from '@/classes/ColumnStats';
 
   import QueryNavbarTop from '@/components/QuerySummaryNavbarTop.vue';
   import FilterNavbarTop from '@/components/FilterNavbarTop.vue';
@@ -190,98 +193,6 @@
   const filteredSortedAndPaginatedTable = computed<FakeQueryTable>(() => {
     return filteredAndSortedTable.value.slice(limit * (currentPage.value - 1), limit * currentPage.value);
   });
-
-  type TableRow = { [key: string]: string | number | Date };
-  type ColumnType = 'text' | 'number' | 'date' | 'factor';
-  type FilterType = 'eq' | 'gt' | 'gte' | 'lt' | 'lte' | 'sw' | 'has' | 'ew' | 'range' | 'any';
-  class FilterTask {
-    columnKey: string;
-    columnName: string;
-    columnType: ColumnType;
-    columnLevels?: string[];
-    type?: FilterType;
-    value?: unknown;
-    multipleValues: string[];
-    rangeValues: [unknown | undefined, unknown | undefined];
-
-    constructor(columnKey: string, columnName: string, columnType: ColumnType, columnLevels?: string[]) {
-      this.columnKey = columnKey;
-      this.columnName = columnName;
-      this.columnType = columnType;
-      this.columnLevels = columnLevels;
-      this.multipleValues = [] as string[];
-      this.rangeValues = [undefined, undefined];
-    }
-
-    updateType(filterType: FilterType) {
-      this.type = filterType;
-    }
-
-    updateValue(value?: unknown) {
-      this.value = value;
-    }
-
-    updateRangeValues(rangeValues: [unknown | undefined, unknown | undefined]) {
-      this.rangeValues = rangeValues;
-    }
-
-    updateMultipleValues(values: string[]) {
-      this.multipleValues = values;
-    }
-
-    isEmpty(): Boolean {
-      if (this.type === 'range') {
-        return this.rangeValues[0] === undefined && this.rangeValues[1] === undefined;
-      } else if (this.type === 'any') {
-        return this.multipleValues.length === 0;
-      }
-      return this.value === undefined;
-    }
-
-    apply(row: TableRow): boolean {
-      if (this.isEmpty()) return true;
-
-      if (this.columnType === 'text') {
-        const cellValue = row[this.columnKey] as string;
-        if (this.type === 'eq') return cellValue === (this.value as string);
-        if (this.type === 'sw') return cellValue.startsWith(this.value as string);
-        if (this.type === 'ew') return cellValue.endsWith(this.value as string);
-        if (this.type === 'has') return cellValue.includes(this.value as string);
-      } else if (this.columnType === 'number') {
-        const cellValue = row[this.columnKey] as number;
-        if (this.type === 'eq') return cellValue === (this.value as number);
-        if (this.type === 'gt') return cellValue > (this.value as number);
-        if (this.type === 'gte') return cellValue >= (this.value as number);
-        if (this.type === 'lt') return cellValue < (this.value as number);
-        if (this.type === 'lte') return cellValue <= (this.value as number);
-        if (this.type === 'range')
-          return (
-            cellValue >= ((this.rangeValues[0] as number) || Number.NEGATIVE_INFINITY) &&
-            cellValue < ((this.rangeValues[1] as number) || Number.POSITIVE_INFINITY)
-          );
-      } else if (this.columnType === 'date') {
-        const cellValue = row[this.columnKey] as Date;
-        if (this.type === 'eq') return cellValue.toDateString() === (this.value as Date).toDateString();
-        if (this.type === 'gt') return cellValue > (this.value as Date);
-        if (this.type === 'gte') return cellValue >= (this.value as Date);
-        if (this.type === 'lt') return cellValue < (this.value as Date);
-        if (this.type === 'lte') return cellValue <= (this.value as Date);
-        if (this.type === 'range')
-          return (
-            cellValue >= ((this.rangeValues[0] as Date) || Number.NEGATIVE_INFINITY) &&
-            cellValue < ((this.rangeValues[1] as Date) || Number.POSITIVE_INFINITY)
-          );
-      } else if (this.columnType === 'factor') {
-        const cellValue = row[this.columnKey] as string;
-        if (this.type === 'sw') return cellValue.startsWith(this.value as string);
-        if (this.type === 'ew') return cellValue.endsWith(this.value as string);
-        if (this.type === 'has') return cellValue.includes(this.value as string);
-        if (this.type === 'any') return this.multipleValues.indexOf(cellValue) >= 0;
-      }
-
-      return false;
-    }
-  }
 
   const filterTasks = ref<FilterTask[]>([]);
   const isFilterActive = computed(() => filterTasks.value.length > 0);
@@ -347,11 +258,6 @@
     currentPage.value = 1;
   }
 
-  type SortTask = {
-    key: string;
-    direction: 'ASC' | 'DESC';
-  };
-
   const sortTasks = ref<SortTask[]>([]);
   const isSortActive = computed(() => sortTasks.value.length > 0);
 
@@ -360,14 +266,14 @@
     const sortTaskIndex = sortTasks.value.findIndex((task) => task.key === columnKey);
 
     if (sortTaskIndex === -1) {
-      sortTasks.value.push({ key: columnKey, direction: 'ASC' });
+      sortTasks.value.push(new SortTask(columnKey, 'ASC'));
       reactiveSchema.value[columnIdx].hasSort = 'ASC';
 
       reactiveSchema.value[columnIdx].sortPriority = sortTasks.value.length;
     } else {
       const sortTask = sortTasks.value[sortTaskIndex];
       if (sortTask.direction === 'ASC') {
-        sortTasks.value[sortTaskIndex].direction = 'DESC';
+        sortTasks.value[sortTaskIndex].setDirection('DESC');
         reactiveSchema.value[columnIdx].hasSort = 'DESC';
       } else {
         sortTasks.value.splice(sortTaskIndex, 1);
@@ -394,61 +300,18 @@
   }
 
   const statsForColumnAtIndex = ref(-1);
+  const columnStats = new ColumnStats();
 
   const stats = computed(() => {
     if (statsForColumnAtIndex.value < 0) {
-      return {
-        variable: '',
-        data: [] as { param: string; value: string | number }[],
-      };
+      return columnStats.empty();
     }
 
-    const columnSchema = schema[statsForColumnAtIndex.value];
-    const columnKey = columnSchema.key;
-    const variable = columnSchema.name;
-    let data;
+    const columnMetadata = schema[statsForColumnAtIndex.value];
+    const columnValues = filteredTable.value.map((row) => row[columnMetadata.key]);
 
-    if (filteredTable.value.length === 0) {
-      data = [{ param: 'Число наблюдений', value: filteredTable.value.length }];
-    } else if (columnSchema.type === 'number') {
-      const columnValues = filteredTable.value.map((row) => row[columnKey]) as number[];
-      data = [
-        { param: 'Число наблюдений', value: columnValues.length },
-        { param: 'Минимум', value: pretty(min(columnValues)) },
-        { param: '1-ый квартиль', value: pretty(quantile(columnValues, 0.25)) },
-        { param: 'Медиана', value: pretty(median(columnValues)) },
-        { param: '3-ий квартиль', value: pretty(quantile(columnValues, 0.75)) },
-        { param: 'Максимум', value: pretty(max(columnValues)) },
-        { param: 'Межкварт. интервал', value: pretty(iqr(columnValues)) },
-        { param: 'Среднее', value: pretty(mean(columnValues)) },
-        { param: 'Станд. отклонение', value: pretty(standardDeviation(columnValues)) },
-      ];
-    } else if (columnSchema.type === 'text') {
-      const columnValues = filteredTable.value.map((row) => row[columnKey]) as string[];
-      data = [{ param: 'Число наблюдений', value: columnValues.length }];
-    } else if (columnSchema.type === 'factor') {
-      const columnValues = filteredTable.value.map((row) => row[columnKey]) as string[];
-      data = [{ param: 'Число наблюдений', value: columnValues.length }].concat(
-        columnSchema.levels!.map((level) => ({
-          param: level,
-          value: columnValues.filter((value) => value === level).length,
-        }))
-      );
-    } else if (columnSchema.type === 'date') {
-      const columnValues = filteredTable.value.map((row) => row[columnKey]) as Date[];
-      data = [
-        { param: 'Число наблюдений', value: columnValues.length },
-        { param: 'Минимум', value: new Date(min(columnValues.map((d) => d.getTime()))) },
-        { param: 'Максимум', value: new Date(max(columnValues.map((d) => d.getTime()))) },
-      ];
-    }
-
-    return { variable, data };
+    return columnStats.calculate(columnMetadata, columnValues);
   });
-
-  function pretty(n: number): string {
-    return n.toFixed(3).replace(/0+$/, '').replace(/\.$/, '.0');
-  }
 
   function toggleStats(columnIdx: number) {
     if (statsForColumnAtIndex.value < 0) {
