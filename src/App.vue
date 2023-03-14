@@ -38,7 +38,7 @@
         <p class="font-semibold" style="writing-mode: vertical-rl; transform: scale(-1)">Запрос и фильтры</p>
       </div>
 
-      <div v-if="!queryHidden" class="p-4 basis-1/5 flex-shrink-0 flex flex-col">
+      <div v-if="!queryHidden" class="p-4 basis-1/5 flex-shrink-0 flex-grow-0 flex flex-col">
         <div class="h-3/5 flex flex-col">
           <div class="ml-2 mb-2 text-slate-700 text-xl font-semibold">
             <p class="text-xl font-semibold">Запрос</p>
@@ -65,6 +65,7 @@
                 @updateType="updateFilterType"
                 @updateValue="updateValue"
                 @updateRangeValues="updateRangeValues"
+                @updateMultipleValues="updateMultipleValues"
                 @remove="removeFilter"
               />
               <div v-else class="w-full p-3">
@@ -125,7 +126,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed } from 'vue';
+  import { ref, reactive, computed, Ref } from 'vue';
   import { sort } from 'fast-sort';
   import { min, quantile, median, iqr, max, mean, standardDeviation } from 'simple-statistics';
   import { PlusIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/20/solid';
@@ -150,7 +151,7 @@
     statisticsHidden.value = !statisticsHidden.value;
   }
 
-  const { schema, rows } = getData(1500);
+  const { schema, rows } = getData(1538);
   const reactiveSchema = ref<ReactiveSchema>(
     schema.map((column) => ({
       ...column,
@@ -193,20 +194,22 @@
   type TableRow = { [key: string]: string | number | Date };
   type ColumnType = 'text' | 'number' | 'date' | 'factor';
   type FilterType = 'eq' | 'gt' | 'gte' | 'lt' | 'lte' | 'sw' | 'has' | 'ew' | 'range' | 'any';
-  class FilterTask<T extends string | number | Date> {
+  class FilterTask {
     columnKey: string;
     columnName: string;
     columnType: ColumnType;
+    columnLevels?: string[];
     type?: FilterType;
-    value?: T;
-    multipleValues: T[];
-    rangeValues: [T | undefined, T | undefined];
+    value?: unknown;
+    multipleValues: string[];
+    rangeValues: [unknown | undefined, unknown | undefined];
 
-    constructor(columnKey: string, columnName: string, columnType: ColumnType) {
+    constructor(columnKey: string, columnName: string, columnType: ColumnType, columnLevels?: string[]) {
       this.columnKey = columnKey;
       this.columnName = columnName;
       this.columnType = columnType;
-      this.multipleValues = [];
+      this.columnLevels = columnLevels;
+      this.multipleValues = [] as string[];
       this.rangeValues = [undefined, undefined];
     }
 
@@ -214,75 +217,86 @@
       this.type = filterType;
     }
 
-    updateValue(value?: T) {
+    updateValue(value?: unknown) {
       this.value = value;
     }
 
-    updateRangeValues(rangeValues: [T | undefined, T | undefined]) {
+    updateRangeValues(rangeValues: [unknown | undefined, unknown | undefined]) {
       this.rangeValues = rangeValues;
     }
 
+    updateMultipleValues(values: string[]) {
+      this.multipleValues = values;
+    }
+
+    isEmpty(): Boolean {
+      if (this.type === 'range') {
+        return this.rangeValues[0] === undefined && this.rangeValues[1] === undefined;
+      } else if (this.type === 'any') {
+        return this.multipleValues.length === 0;
+      }
+      return this.value === undefined;
+    }
+
     apply(row: TableRow): boolean {
-      if (!this.value) return true;
+      if (this.isEmpty()) return true;
 
       if (this.columnType === 'text') {
         const cellValue = row[this.columnKey] as string;
-        if (this.type === 'eq') return cellValue === this.value;
+        if (this.type === 'eq') return cellValue === (this.value as string);
         if (this.type === 'sw') return cellValue.startsWith(this.value as string);
         if (this.type === 'ew') return cellValue.endsWith(this.value as string);
         if (this.type === 'has') return cellValue.includes(this.value as string);
       } else if (this.columnType === 'number') {
         const cellValue = row[this.columnKey] as number;
-        if (this.type === 'eq') return cellValue === this.value;
-        if (this.type === 'gt') return cellValue > this.value;
-        if (this.type === 'gte') return cellValue >= this.value;
-        if (this.type === 'lt') return cellValue < this.value;
-        if (this.type === 'lte') return cellValue <= this.value;
+        if (this.type === 'eq') return cellValue === (this.value as number);
+        if (this.type === 'gt') return cellValue > (this.value as number);
+        if (this.type === 'gte') return cellValue >= (this.value as number);
+        if (this.type === 'lt') return cellValue < (this.value as number);
+        if (this.type === 'lte') return cellValue <= (this.value as number);
         if (this.type === 'range')
           return (
-            cellValue >= (this.rangeValues[0] || Number.NEGATIVE_INFINITY) &&
-            cellValue < (this.rangeValues[1] || Number.POSITIVE_INFINITY)
+            cellValue >= ((this.rangeValues[0] as number) || Number.NEGATIVE_INFINITY) &&
+            cellValue < ((this.rangeValues[1] as number) || Number.POSITIVE_INFINITY)
           );
       } else if (this.columnType === 'date') {
         const cellValue = row[this.columnKey] as Date;
         if (this.type === 'eq') return cellValue.toDateString() === (this.value as Date).toDateString();
-        if (this.type === 'gt') return cellValue > this.value;
-        if (this.type === 'gte') return cellValue >= this.value;
-        if (this.type === 'lt') return cellValue < this.value;
-        if (this.type === 'lte') return cellValue <= this.value;
+        if (this.type === 'gt') return cellValue > (this.value as Date);
+        if (this.type === 'gte') return cellValue >= (this.value as Date);
+        if (this.type === 'lt') return cellValue < (this.value as Date);
+        if (this.type === 'lte') return cellValue <= (this.value as Date);
         if (this.type === 'range')
           return (
-            cellValue >= (this.rangeValues[0] || Number.NEGATIVE_INFINITY) &&
-            cellValue < (this.rangeValues[1] || Number.POSITIVE_INFINITY)
+            cellValue >= ((this.rangeValues[0] as Date) || Number.NEGATIVE_INFINITY) &&
+            cellValue < ((this.rangeValues[1] as Date) || Number.POSITIVE_INFINITY)
           );
       } else if (this.columnType === 'factor') {
         const cellValue = row[this.columnKey] as string;
         if (this.type === 'sw') return cellValue.startsWith(this.value as string);
         if (this.type === 'ew') return cellValue.endsWith(this.value as string);
         if (this.type === 'has') return cellValue.includes(this.value as string);
+        if (this.type === 'any') return this.multipleValues.indexOf(cellValue) >= 0;
       }
 
       return false;
     }
   }
 
-  const filterTasks = ref<FilterTask<string | number | Date>[]>([]);
+  const filterTasks = ref<FilterTask[]>([]);
   const isFilterActive = computed(() => filterTasks.value.length > 0);
 
   function toggleFilter(columnIdx: number) {
     const columnKey = reactiveSchema.value[columnIdx].key;
     const columnName = reactiveSchema.value[columnIdx].name;
     const columnType = reactiveSchema.value[columnIdx].type;
+    const columnLevels = reactiveSchema.value[columnIdx].levels;
     const filterTaskIdx = filterTasks.value.findIndex((task) => task.columnKey === columnKey);
 
     if (filterTaskIdx === -1) {
-      let filterTask;
-      if (columnType === 'number') filterTask = new FilterTask<number>(columnKey, columnName, columnType);
-      else if (columnType === 'date') filterTask = new FilterTask<Date>(columnKey, columnName, columnType);
-      else filterTask = new FilterTask<string>(columnKey, columnName, columnType);
-
-      filterTasks.value.push(filterTask);
       reactiveSchema.value[columnIdx].hasFilter = true;
+      const filterTask = new FilterTask(columnKey, columnName, columnType, columnLevels);
+      filterTasks.value.push(filterTask);
     } else {
       filterTasks.value.splice(filterTaskIdx, 1);
       reactiveSchema.value[columnIdx].hasFilter = false;
@@ -307,6 +321,12 @@
   ) {
     const filterTask = filterTasks.value[filterTaskIdx];
     filterTask.updateRangeValues(rangeValues);
+    currentPage.value = 1;
+  }
+
+  function updateMultipleValues(filterTaskIdx: number, values: string[]) {
+    const filterTask = filterTasks.value[filterTaskIdx];
+    filterTask.updateMultipleValues(values);
     currentPage.value = 1;
   }
 
@@ -370,6 +390,7 @@
       reactiveSchema.value[columnIndex].hasSort = 'NONE';
       reactiveSchema.value[columnIndex].sortPriority = undefined;
     }
+    currentPage.value = 1;
   }
 
   const statsForColumnAtIndex = ref(-1);

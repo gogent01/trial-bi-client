@@ -12,7 +12,10 @@
             <option selected disabled>- выберите фильтр -</option>
             <option v-for="option in filterOptions[task.columnType]" :key="option.name">{{ option.name }}</option>
           </select>
-          <div v-if="task.type === 'range'">
+          <div v-if="task.type === 'any'">
+            <multiple-select :options="task.columnLevels" @change="updateFilterMultipleValues($event, taskIdx)" />
+          </div>
+          <div v-else-if="task.type === 'range'">
             <div v-if="task.columnType === 'number'" class="flex items-center gap-2">
               <label for="from" class="text-sm text-gray-900">от</label>
               <input
@@ -21,7 +24,8 @@
                 name="from"
                 class="flex px-2 py-1 w-20 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 placeholder="от"
-                @keyup.enter="updateFilterRangeValues($event, taskIdx)"
+                @keyup.enter="$event.target.blur()"
+                @blur="updateFilterRangeValues($event, taskIdx)"
               />
               <label for="to" class="text-sm text-gray-900">до</label>
               <input
@@ -30,7 +34,8 @@
                 name="to"
                 class="flex px-2 py-1 w-20 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 placeholder="до"
-                @keyup.enter="updateFilterRangeValues($event, taskIdx)"
+                @keyup.enter="$event.target.blur()"
+                @blur="updateFilterRangeValues($event, taskIdx)"
               />
             </div>
             <div v-else-if="task.columnType === 'date'" class="flex items-center gap-2">
@@ -93,6 +98,7 @@
 <script setup lang="ts">
   import { nextTick } from 'vue';
   import { XMarkIcon } from '@heroicons/vue/20/solid';
+  import MultipleSelect from '@/components/MultipleSelect.vue';
 
   type ColumnType = 'text' | 'number' | 'date' | 'factor';
   type FilterType = 'eq' | 'gt' | 'gte' | 'lt' | 'lte' | 'sw' | 'has' | 'ew' | 'range' | 'any';
@@ -100,6 +106,7 @@
     columnKey: string;
     columnName: string;
     columnType: ColumnType;
+    columnLevels?: string[];
     type?: FilterType;
     value?: string | number | Date;
   };
@@ -109,7 +116,7 @@
   }
   const props = defineProps<Props>();
 
-  const emit = defineEmits(['updateType', 'updateValue', 'updateRangeValues', 'remove']);
+  const emit = defineEmits(['updateType', 'updateValue', 'updateRangeValues', 'updateMultipleValues', 'remove']);
 
   const filterOptions = {
     text: [
@@ -135,7 +142,7 @@
       { name: 'диапазон', value: 'range' },
     ],
     factor: [
-      { name: 'любое значение из списка', value: 'any' },
+      { name: 'значение из списка', value: 'any' },
       { name: 'начинается с', value: 'sw' },
       { name: 'содержит', value: 'has' },
       { name: 'заканчивается на', value: 'ew' },
@@ -194,6 +201,10 @@
     }
 
     emit('updateRangeValues', filterTaskIndex, [typedFromValue, typedToValue]);
+  }
+
+  function updateFilterMultipleValues(values: string[], filterTaskIndex: number) {
+    emit('updateMultipleValues', filterTaskIndex, values);
   }
 
   function remove(filterTaskIndex: number) {

@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { ref, watchEffect } from 'vue';
   import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid';
 
   interface Props {
@@ -55,6 +55,9 @@
   const emit = defineEmits(['update']);
 
   const displayedPage = ref(props.currentPage);
+  watchEffect(() => {
+    displayedPage.value = props.currentPage;
+  });
 
   function emitUpdate() {
     if (displayedPage.value === props.currentPage) return;
