@@ -3,10 +3,15 @@
     <li v-for="(task, taskIdx) in props.tasks" :key="task.columnKey" class="flex p-3">
       <div class="flex flex-1 gap-2 items-center justify-between">
         <div class="space-y-2 flex-1">
-          <p class="text-sm font-medium text-gray-900">{{ task.columnName }}</p>
+          <div class="flex justify-between align-start">
+            <p class="text-sm font-medium text-gray-900">{{ task.columnName }}</p>
+            <p class="text-xs text-gray-400 cursor-pointer hover:text-gray-600">
+              <span><trash-icon class="inline mr-1 h-4 w-4" @click="remove(taskIdx)"></trash-icon>Удалить</span>
+            </p>
+          </div>
           <select
             :value="getOption(task.columnType, task.type)"
-            class="block w-full rounded-md border-0 py-1 pl-3 pr-8 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 text-sm sm:leading-6"
+            class="block w-full rounded-md border-0 py-1 pl-3 pr-8 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-teal-600 text-sm sm:leading-6"
             @change="updateFilterType($event, taskIdx)"
           >
             <option selected disabled>- выберите фильтр -</option>
@@ -22,7 +27,7 @@
                 :type="task.columnType"
                 :value="task.rangeValues[0] || ''"
                 name="from"
-                class="flex px-2 py-1 w-20 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                class="flex px-2 py-1 w-20 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
                 placeholder="от"
                 @keyup.enter="$event.target.blur()"
                 @blur="updateFilterRangeValues($event, taskIdx)"
@@ -32,7 +37,7 @@
                 :type="task.columnType"
                 :value="task.rangeValues[1] || ''"
                 name="to"
-                class="flex px-2 py-1 w-20 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                class="flex px-2 py-1 w-20 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
                 placeholder="до"
                 @keyup.enter="$event.target.blur()"
                 @blur="updateFilterRangeValues($event, taskIdx)"
@@ -44,7 +49,7 @@
                 :value="task.rangeValues[0] ? task.rangeValues[0].toISOString().split('T')[0] : ''"
                 :class="[
                   task.rangeValues[0] ? 'text-gray-900' : 'placeholder:text-gray-400',
-                  'flex p-1 rounded-md border-0  shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6',
+                  'flex p-1 rounded-md border-0  shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6',
                 ]"
                 type="date"
                 @keyup.enter="$event.target.blur()"
@@ -55,7 +60,7 @@
                 :value="task.rangeValues[1] ? task.rangeValues[1].toISOString().split('T')[0] : ''"
                 :class="[
                   task.rangeValues[0] ? 'text-gray-900' : 'placeholder:text-gray-400',
-                  'flex p-1 rounded-md border-0  shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6',
+                  'flex p-1 rounded-md border-0  shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6',
                 ]"
                 type="date"
                 @keyup.enter="$event.target.blur()"
@@ -69,7 +74,7 @@
                 :value="task.value ? task.value.toISOString().split('T')[0] : ''"
                 :class="[
                   task.value ? 'text-gray-900' : 'placeholder:text-gray-400',
-                  'flex p-1 rounded-md border-0  shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6',
+                  'flex p-1 rounded-md border-0  shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6',
                 ]"
                 type="date"
                 @keyup.enter="updateFilterValue($event, taskIdx)"
@@ -79,17 +84,13 @@
               <input
                 :type="task.columnType === 'factor' ? 'text' : task.columnType"
                 :value="task.value"
-                class="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                class="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
                 placeholder="введите значение"
                 @keyup.enter="updateFilterValue($event, taskIdx)"
               />
             </template>
           </template>
         </div>
-        <x-mark-icon
-          class="-mr-1 h-5 w-5 text-gray-400 hover:text-gray-600 cursor-pointer"
-          @click="remove(taskIdx)"
-        ></x-mark-icon>
       </div>
     </li>
   </ul>
@@ -98,6 +99,7 @@
 <script setup lang="ts">
   import { nextTick } from 'vue';
   import { XMarkIcon } from '@heroicons/vue/20/solid';
+  import { TrashIcon } from '@heroicons/vue/24/outline';
   import MultipleSelect from '@/components/MultipleSelect.vue';
 
   type ColumnType = 'text' | 'number' | 'date' | 'factor';

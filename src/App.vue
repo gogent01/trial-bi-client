@@ -69,7 +69,7 @@
                 @remove="removeFilter"
               />
               <div v-else class="w-full p-3">
-                <p class="text-sm text-gray-600 text-center">Нет данных для отображения</p>
+                <p class="text-sm text-gray-600 text-center">Нет фильтров для отображения</p>
               </div>
             </div>
           </div>
@@ -126,7 +126,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive, computed, Ref } from 'vue';
+  import { ref, computed } from 'vue';
   import { sort } from 'fast-sort';
   import { min, quantile, median, iqr, max, mean, standardDeviation } from 'simple-statistics';
   import { PlusIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/20/solid';

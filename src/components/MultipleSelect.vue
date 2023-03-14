@@ -2,7 +2,7 @@
   <Listbox as="div" v-model="selected" multiple>
     <div class="relative mt-2">
       <ListboxButton
-        class="relative w-full cursor-default rounded-md bg-white py-1 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+        class="relative w-full cursor-default rounded-md bg-white py-1 pl-3 pr-10 text-left text-gray-900 ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-600 sm:text-sm sm:leading-6"
       >
         <span class="block whitespace-pre-wrap h-8" style="max-height: 1.5rem">{{ selected.join(', ') }}</span>
         <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
