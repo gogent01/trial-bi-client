@@ -2,9 +2,9 @@
   <nav class="bg-white border-b">
     <div class="mx-auto">
       <div class="flex justify-between h-16 p-3">
-        <div class="flex items-center gap-1 h-full text-slate-600">
-          <information-circle-icon v-if="variable" class="h-6 w-6" aria-hidden="true" />
-          <p v-if="variable">{{ variable }}</p>
+        <div class="relative flex items-center gap-1 h-full text-slate-600">
+          <!--          <information-circle-icon v-if="variable" class="h-6 w-6" aria-hidden="true" />-->
+          <!--          <p v-if="variable" class="truncate">{{ variable }}</p>-->
         </div>
         <div class="flex items-center gap-4 h-full">
           <div class="flex-shrink-0 h-full">

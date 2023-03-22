@@ -103,7 +103,11 @@
           <statistics-navbar-top :variable="stats.variable" :has-data="filteredTable.length > 0" />
           <div class="relative flex justify-center p-3 overflow-auto" style="height: calc(100% - 8rem)">
             <div class="w-full">
-              <statistics-table v-if="stats.variable && filteredTable.length > 0" :data="stats.data" />
+              <statistics-table
+                v-if="stats.variable && filteredTable.length > 0"
+                :variable="stats.variable"
+                :data="stats.data"
+              />
               <p v-else class="text-sm text-gray-600 text-center">Нет данных для отображения</p>
             </div>
           </div>
@@ -151,15 +155,17 @@
     statisticsHidden.value = !statisticsHidden.value;
   }
 
-  const database = new Database(1538);
-  const { schema, data } = database.getPatients();
+  const database = new Database(20);
+  const { schema, data } = database.getCancers();
   const reactiveSchema = ref<ReactiveTableColumn>(
-    schema.map((column) => ({
-      ...column,
-      hasFilter: false,
-      hasSort: 'NONE',
-      hasStats: false,
-    }))
+    schema
+      .filter((column) => !column.primaryKey && !column.belongsTo)
+      .map((column) => ({
+        ...column,
+        hasFilter: false,
+        hasSort: 'NONE',
+        hasStats: false,
+      }))
   );
 
   const limit = 100;
@@ -171,6 +177,20 @@
       currentPage.value = page;
     }
   }
+
+  // const visibleTable = computed<TableData>(() => {
+  //   const serviceKeys = schema.reduce((keys: string[], column: TableColumn) => {
+  //     if (column.primaryKey || column.belongsTo) {
+  //       keys.push(column.key);
+  //     }
+  //     return keys;
+  //   }, []);
+  //   return data.map((row) => {
+  //     const visibleRow = { ...row };
+  //     serviceKeys.forEach((key) => delete visibleRow[key]);
+  //     return visibleRow;
+  //   });
+  // });
 
   const filteredTable = computed<TableData>(() => {
     return data.filter((row) => {
@@ -305,7 +325,7 @@
       return columnStats.empty();
     }
 
-    const columnMetadata = schema[statsForColumnAtIndex.value];
+    const columnMetadata = reactiveSchema.value[statsForColumnAtIndex.value];
     const columnValues = filteredTable.value.map((row) => row[columnMetadata.key]);
 
     return columnStats.calculate(columnMetadata, columnValues);

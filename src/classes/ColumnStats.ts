@@ -38,12 +38,19 @@ export class ColumnStats {
       this.data = [{ param: 'Число наблюдений', value: values.length.toString() }];
     } else if (columnMetadata.type === 'factor') {
       const values = columnValues as string[];
-      this.data = [{ param: 'Число наблюдений', value: values.length.toString() }].concat(
-        columnMetadata.levels!.map((level) => ({
-          param: level,
-          value: values.filter((value) => value === level).length.toString(),
-        }))
-      );
+      this.data = [{ param: 'Число наблюдений', value: values.length.toString() }]
+        .concat(
+          columnMetadata.levels!.map((level) => ({
+            param: level,
+            value: values.filter((value) => value === level).length.toString(),
+          }))
+        )
+        .concat([
+          {
+            param: 'Нет данных',
+            value: values.filter((value) => value === undefined).length.toString(),
+          },
+        ]);
     } else if (columnMetadata.type === 'date') {
       const values = columnValues as Date[];
       this.data = [

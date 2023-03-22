@@ -1,20 +1,21 @@
 import { faker } from '@faker-js/faker';
-import type { TableRow, TableSchema, TableData } from '@/data/types';
+import { Model } from '@/data/Model';
+import type { TableRow, TableData } from '@/data/types';
 import { cancerSchema } from '@/data/cancers/schema';
 
-export function buildCancers(patients: TableData): { schema: TableSchema; data: TableData } {
+export function buildCancers(patients: TableData): Model {
   const schema = cancerSchema;
   const data = [] as TableData;
 
   for (let i = 0, id = 0; i < patients.length; i++) {
     data.push(createCancer(id, patients[i].id as number));
     id++;
-    while (Math.random() > 0.95) {
+    while (Math.random() > 0.7) {
       data.push(createCancer(id, patients[i].id as number));
       id++;
     }
   }
-  return { schema, data };
+  return new Model('cancers', schema, data);
 }
 
 function createCancer(id: number, patientId: number): TableRow {
@@ -31,7 +32,7 @@ function createCancer(id: number, patientId: number): TableRow {
       'Другое',
       undefined,
     ]),
-    detailed_localization: faker.lorem.sentences(2),
+    detailed_localization: Math.random() > 0.4 ? faker.lorem.sentences(2) : undefined,
     date_of_symptoms,
     date_of_diagnosis,
     stage_T: faker.helpers.arrayElement(['0', 'is(DCIS)', 'is(LCIS)', '1', '2', '3', '4a', '4b', '4c', '4d']),

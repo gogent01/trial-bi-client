@@ -3,9 +3,9 @@
     <li v-for="(task, taskIdx) in props.tasks" :key="task.columnKey" class="flex p-3">
       <div class="flex flex-1 gap-2 items-center justify-between">
         <div class="space-y-2 flex-1">
-          <div class="flex justify-between align-start">
+          <div class="flex justify-between items-center">
             <p class="text-sm font-medium text-gray-900">{{ task.columnName }}</p>
-            <p class="text-xs text-gray-400 cursor-pointer hover:text-gray-600" @click="remove(taskIdx)">
+            <p class="flex-shrink-0 text-xs text-gray-400 cursor-pointer hover:text-gray-600" @click="remove(taskIdx)">
               <span><trash-icon class="inline mr-1 h-4 w-4"></trash-icon>Удалить</span>
             </p>
           </div>

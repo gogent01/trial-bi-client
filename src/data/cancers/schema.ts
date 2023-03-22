@@ -4,18 +4,26 @@ export const cancerSchema: TableSchema = [
   {
     key: 'id',
     name: 'Код',
-    type: 'number',
+    type: 'id',
+    primaryKey: true,
   },
   {
-    key: 'patientId',
+    key: 'patient_id',
     name: 'Код пациента',
-    type: 'number',
+    type: 'id',
+    belongsTo: 'patients',
   },
   {
     key: 'histologic_subtype',
     name: 'Гистологический подтип',
     type: 'factor',
-    levels: [],
+    levels: [
+      'Неспецифический/неспецифицированный/протоковый',
+      'Дольковый',
+      'Метапластический',
+      'Апокринная дифференцировка',
+      'Другое',
+    ],
   },
   {
     key: 'detailed_localization',

@@ -1,19 +1,17 @@
-export type ColumnType = 'text' | 'number' | 'date' | 'factor';
+export type ColumnType = 'id' | 'text' | 'number' | 'date' | 'factor';
 
 export type TableColumn = {
   key: string;
   name: string;
   type: ColumnType;
   levels?: string[];
+  primaryKey?: boolean;
+  belongsTo?: string;
 };
 export type TableRow = { [key: string]: string | number | Date | undefined };
 
 export type TableSchema = TableColumn[];
 export type TableData = TableRow[];
-export type Model = {
-  schema: TableSchema;
-  data: TableData;
-};
 
 type ReactiveColumn = {
   hasFilter: boolean;

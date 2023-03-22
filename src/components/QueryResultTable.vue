@@ -11,11 +11,12 @@
           <th
             v-for="(column, columnIdx) in reactiveSchema"
             :key="column.key"
-            scope="col"
             :class="[
               columnIdx < ncol - 1 ? 'border-r border-gray-200' : '',
-              'sticky top-0 border-b border-gray-200 bg-white bg-opacity-75 backdrop-blur backdrop-filter cursor-pointer select-none',
+              'sticky top-0 whitespace-pre-wrap border-b border-gray-200 bg-white bg-opacity-75 backdrop-blur backdrop-filter cursor-pointer select-none',
             ]"
+            style="min-width: 2rem; max-width: 12rem"
+            scope="col"
           >
             <div class="flex">
               <p class="flex-1 pl-3 py-3 text-left text-sm font-semibold text-gray-900" @click="emitSort(columnIdx)">
@@ -27,7 +28,7 @@
                   <span class="text-xs text-gray-400">{{ column.sortPriority }}</span>
                   <chevron-up-icon class="inline h-4 w-4" />
                 </span>
-                <span class="inline">{{ column.name }}</span>
+                <span class="inline whitespace-pre-wrap">{{ column.name }}</span>
               </p>
               <div class="p-3 flex gap-1 items-center">
                 <span @click="emitFilter(columnIdx)">
@@ -48,23 +49,23 @@
           <td
             :class="[
               rowIdx < nrow - 1 ? 'border-b border-gray-200' : '',
-              'px-3 py-1 text-sm text-gray-500 whitespace-nowrap border-r border-gray-200',
+              'px-3 py-1 text-sm text-gray-500 whitespace-pre-wrap border-r border-gray-200',
             ]"
-            style="min-width: 2rem"
+            style="min-width: 2rem; max-width: 20rem"
           >
             {{ (currentPage - 1) * limit + (rowIdx + 1) }}
           </td>
           <td
-            v-for="(cell, cellIdx) in Object.keys(row)"
-            :key="cell"
+            v-for="(column, columnIdx) in reactiveSchema"
+            :key="column.key"
             :class="[
               rowIdx < nrow - 1 ? 'border-b border-gray-200' : '',
-              cellIdx < ncol - 1 ? 'border-r border-gray-200' : '',
-              'px-3 py-1 text-sm text-gray-500 whitespace-nowrap',
+              columnIdx < ncol - 1 ? 'border-r border-gray-200' : '',
+              'px-3 py-1 text-sm text-gray-500 whitespace-pre-wrap',
             ]"
-            style="min-width: 2rem"
+            style="min-width: 2rem; max-width: 12rem"
           >
-            {{ row[cell] instanceof Date ? row[cell].toLocaleDateString('ru') : row[cell] }}
+            {{ row[column.key] instanceof Date ? row[column.key].toLocaleDateString('ru') : row[column.key] }}
           </td>
         </tr>
       </tbody>
@@ -80,6 +81,7 @@
 </template>
 
 <script setup lang="ts">
+  import { ref } from 'vue';
   import { FunnelIcon, ChartBarIcon, ChevronUpIcon, ChevronDownIcon } from '@heroicons/vue/24/outline';
   import { FunnelIcon as FunnelIconActive, ChartBarIcon as ChartBarIconActive } from '@heroicons/vue/24/solid';
   import { ReactiveTableColumn, TableData } from '@/data/types';
@@ -94,8 +96,8 @@
   const props = defineProps<Props>();
   const emit = defineEmits(['sort', 'filter', 'stats']);
 
-  const ncol = Object.keys(props.table[0]).length;
-  const nrow = props.table.length;
+  const ncol = ref(Object.keys(props.table[0]).length);
+  const nrow = ref(props.table.length);
 
   function emitFilter(columnIdx: number) {
     emit('filter', columnIdx);

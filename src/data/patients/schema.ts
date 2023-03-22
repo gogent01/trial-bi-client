@@ -4,7 +4,8 @@ export const patientSchema: TableSchema = [
   {
     key: 'id',
     name: 'Код',
-    type: 'number',
+    type: 'id',
+    primaryKey: true,
   },
   {
     key: 'center',
