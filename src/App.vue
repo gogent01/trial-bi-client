@@ -77,7 +77,7 @@
         <p class="ml-2 mb-2 text-slate-700 text-xl font-semibold">Результат запроса</p>
         <div class="h-full rounded-xl bg-white overflow-hidden">
           <query-result-navbar-top :nrow="nrow" :is-sort-active="isSortActive" @clearSort="clearSort" />
-          <div class="relative w-full overflow-auto" style="height: calc(100% - 8rem)">
+          <div id="queryResultTable" class="relative w-full overflow-auto" style="height: calc(100% - 8rem)">
             <div class="absolute min-w-max">
               <query-result-table
                 :reactive-schema="reactiveSchema"
@@ -133,7 +133,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed } from 'vue';
+  import { ref, computed, watch, onMounted } from 'vue';
   import { sort } from 'fast-sort';
   import { PlusIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/20/solid';
   import logo from '@/assets/RWE-BI-logo.svg';
@@ -162,7 +162,7 @@
   }
 
   const database = new Database(200);
-  const { schema, data } = database.getCancers();
+  const { schema, data } = database.getAll();
   const reactiveSchema = ref<ReactiveTableColumn>(
     schema
       .filter((column) => !column.primaryKey && !column.belongsTo)
@@ -202,6 +202,13 @@
 
   const filteredSortedAndPaginatedTable = computed<TableData>(() => {
     return filteredAndSortedTable.value.slice(limit * (currentPage.value - 1), limit * currentPage.value);
+  });
+
+  onMounted(() => {
+    watch(filteredSortedAndPaginatedTable, () => {
+      const tableEl = document.getElementById('queryResultTable');
+      tableEl!.scrollTo(tableEl!.scrollLeft, 0);
+    });
   });
 
   const filterTasks = ref<FilterTask[]>([]);

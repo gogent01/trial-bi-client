@@ -37,8 +37,6 @@ export class Database {
     }
 
     const joinedSchema = [...safeLeftModel.schema, ...safeRightModel.schema];
-    // TODO: other logic after schema join: remove redundant key column
-    // joinedSchema.splice(left.schema.length + foreignKeyIdx, 1);
     const joinedData = [] as TableData;
     left.data.forEach((leftRow, idx) => {
       const primaryKey = left.schema[primaryKeyIdx].key;
@@ -47,15 +45,13 @@ export class Database {
         if (leftRow[primaryKey] === rightRow[foreignKey]) indexes.push(idx);
         return indexes;
       }, []);
-      console.log(indexesOfAllForeignRows);
+
       while (indexesOfAllForeignRows.length > 0) {
         const foreignIdx = indexesOfAllForeignRows.shift() as number;
         const rightRow = right.data[foreignIdx];
         joinedData.push({ ...leftRow, ...rightRow });
       }
     });
-
-    console.log(new Model('all', joinedSchema, joinedData));
 
     return new Model('all', joinedSchema, joinedData);
   }
