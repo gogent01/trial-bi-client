@@ -41,20 +41,26 @@
             <p class="text-xl font-semibold">Запрос</p>
           </div>
           <div class="h-full rounded-xl bg-white overflow-hidden">
-            <query-navbar-top />
-            <div class="flex justify-center overflow-auto" style="height: calc(100% - 8rem)">
-              <div class="w-full p-3">
+            <query-navbar-top :is-query-active="reactiveSchema.length > 0" />
+            <div class="flex justify-center overflow-auto" style="height: calc(100% - 5rem)">
+              <query-list
+                v-if="reactiveSchema.length > 0"
+                :schema="reactiveSchema"
+                @toggleColumnVisibility="toggleColumnVisibility"
+              />
+              <div v-else class="w-full p-3">
                 <p class="text-sm text-gray-600 text-center">Нет данных для отображения</p>
               </div>
             </div>
           </div>
         </div>
+
         <div class="h-2/5 mt-4 flex flex-col">
           <div class="ml-2 mb-2 text-slate-700 text-xl font-semibold">
             <p class="text-xl font-semibold">Фильтры</p>
           </div>
           <div class="h-full rounded-xl bg-white overflow-hidden">
-            <filter-navbar-top :is-filter-active="isFilterActive" @clearFilters="clearFilters" />
+            <filter-navbar-top :is-filter-active="filterTasks.length > 0" @clearFilters="clearFilters" />
             <div class="flex justify-center overflow-auto" style="height: calc(100% - 4rem)">
               <filter-list
                 v-if="filterTasks.length > 0"
@@ -137,13 +143,14 @@
   import { sort } from 'fast-sort';
   import { PlusIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/20/solid';
   import logo from '@/assets/RWE-BI-logo.svg';
-  import { ReactiveTableColumn, TableData } from '@/data/types';
+  import { ReactiveTableSchema, TableData } from '@/data/types';
   import { Database } from '@/data/Database';
   import { FilterTask, FilterType } from '@/classes/FilterTask';
   import { SortTask } from '@/classes/SortTask';
   import { ColumnStats } from '@/classes/ColumnStats';
 
   import QueryNavbarTop from '@/components/QuerySummaryNavbarTop.vue';
+  import QueryList from '@/components/QueryList.vue';
   import FilterNavbarTop from '@/components/FilterNavbarTop.vue';
   import FilterList from '@/components/FilterList.vue';
   import QueryResultNavbarTop from '@/components/QueryResultNavbarTop.vue';
@@ -163,7 +170,7 @@
 
   const database = new Database(200);
   const { schema, data } = database.getAll();
-  const reactiveSchema = ref<ReactiveTableColumn>(
+  const reactiveSchema = ref<ReactiveTableSchema>(
     schema
       .filter((column) => !column.primaryKey && !column.belongsTo)
       .map((column) => ({
@@ -171,8 +178,14 @@
         hasFilter: false,
         hasSort: 'NONE',
         hasStats: false,
+        invisible: false,
       }))
   );
+
+  function toggleColumnVisibility(columnKey: string) {
+    const columnIdx = reactiveSchema.value.findIndex((column) => column.key === columnKey);
+    reactiveSchema.value[columnIdx].invisible = !reactiveSchema.value[columnIdx].invisible;
+  }
 
   const limit = 100;
   const currentPage = ref(1);
@@ -212,10 +225,9 @@
   });
 
   const filterTasks = ref<FilterTask[]>([]);
-  const isFilterActive = computed(() => filterTasks.value.length > 0);
 
-  function toggleFilter(columnIdx: number) {
-    const columnKey = reactiveSchema.value[columnIdx].key;
+  function toggleFilter(columnKey: string) {
+    const columnIdx = reactiveSchema.value.findIndex((column) => column.key === columnKey);
     const columnName = reactiveSchema.value[columnIdx].name;
     const columnType = reactiveSchema.value[columnIdx].type;
     const columnLevels = reactiveSchema.value[columnIdx].levels;
@@ -278,8 +290,8 @@
   const sortTasks = ref<SortTask[]>([]);
   const isSortActive = computed(() => sortTasks.value.length > 0);
 
-  function toggleSort(columnIdx: number) {
-    const columnKey = reactiveSchema.value[columnIdx].key;
+  function toggleSort(columnKey: string) {
+    const columnIdx = reactiveSchema.value.findIndex((column) => column.key === columnKey);
     const sortTaskIndex = sortTasks.value.findIndex((task) => task.key === columnKey);
 
     if (sortTaskIndex === -1) {
@@ -330,7 +342,8 @@
     return columnStats.calculate(columnMetadata, columnValues);
   });
 
-  function toggleStats(columnIdx: number) {
+  function toggleStats(columnKey: string) {
+    const columnIdx = reactiveSchema.value.findIndex((column) => column.key === columnKey);
     if (statsForColumnAtIndex.value < 0) {
       statsForColumnAtIndex.value = columnIdx;
       reactiveSchema.value[statsForColumnAtIndex.value].hasStats = true;

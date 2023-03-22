@@ -18,5 +18,6 @@ type ReactiveColumn = {
   hasSort: 'NONE' | 'ASC' | 'DESC';
   sortPriority?: number;
   hasStats: boolean;
+  invisible?: boolean;
 };
-export type ReactiveTableColumn = (TableColumn & ReactiveColumn)[];
+export type ReactiveTableSchema = (TableColumn & ReactiveColumn)[];

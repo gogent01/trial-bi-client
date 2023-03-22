@@ -9,7 +9,7 @@
             <p class="text-left text-sm font-semibold text-gray-900">#</p>
           </th>
           <th
-            v-for="(column, columnIdx) in reactiveSchema"
+            v-for="(column, columnIdx) in visibleSchema"
             :key="column.key"
             :class="[
               columnIdx < ncol - 1 ? 'border-r border-gray-200' : '',
@@ -19,7 +19,7 @@
             scope="col"
           >
             <div class="flex">
-              <p class="flex-1 pl-3 py-3 text-left text-sm font-semibold text-gray-900" @click="emitSort(columnIdx)">
+              <p class="flex-1 pl-3 py-3 text-left text-sm font-semibold text-gray-900" @click="emitSort(column.key)">
                 <span v-if="column.hasSort === 'ASC'" class="mr-1">
                   <span class="text-xs text-gray-400">{{ column.sortPriority }}</span>
                   <chevron-down-icon class="inline h-4 w-4" />
@@ -31,11 +31,11 @@
                 <span class="inline whitespace-pre-wrap">{{ column.name }}</span>
               </p>
               <div class="p-3 flex gap-1 items-center">
-                <span @click="emitFilter(columnIdx)">
+                <span @click="emitFilter(column.key)">
                   <funnel-icon v-if="!column.hasFilter" class="h-4 w-4 text-gray-400 hover:text-gray-600" />
                   <funnel-icon-active v-else class="h-4 w-4 text-gray-600 hover:text-gray-800" />
                 </span>
-                <span @click="emitStats(columnIdx)">
+                <span @click="emitStats(column.key)">
                   <chart-bar-icon v-if="!column.hasStats" class="h-4 w-4 text-gray-400 hover:text-gray-600" />
                   <chart-bar-icon-active v-else class="h-4 w-4 text-gray-600 hover:text-gray-800" />
                 </span>
@@ -56,7 +56,7 @@
             {{ (currentPage - 1) * limit + (rowIdx + 1) }}
           </td>
           <td
-            v-for="(column, columnIdx) in reactiveSchema"
+            v-for="(column, columnIdx) in visibleSchema"
             :key="column.key"
             :class="[
               rowIdx < nrow - 1 ? 'border-b border-gray-200' : '',
@@ -71,7 +71,7 @@
       </tbody>
       <tbody v-else>
         <tr class="hover:bg-slate-50">
-          <td :colspan="reactiveSchema.length" class="px-3 py-1 text-sm text-gray-500 text-center whitespace-nowrap">
+          <td :colspan="visibleSchema.length" class="px-3 py-1 text-sm text-gray-500 text-center whitespace-nowrap">
             Нет данных для отображения
           </td>
         </tr>
@@ -81,14 +81,14 @@
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { ref, computed } from 'vue';
   import { FunnelIcon, ChartBarIcon, ChevronUpIcon, ChevronDownIcon } from '@heroicons/vue/24/outline';
   import { FunnelIcon as FunnelIconActive, ChartBarIcon as ChartBarIconActive } from '@heroicons/vue/24/solid';
-  import { ReactiveTableColumn, TableData } from '@/data/types';
+  import { ReactiveTableSchema, TableData } from '@/data/types';
 
   interface Props {
     table: TableData;
-    reactiveSchema: ReactiveTableColumn;
+    reactiveSchema: ReactiveTableSchema;
     currentPage: number;
     limit: number;
   }
@@ -99,15 +99,19 @@
   const ncol = ref(Object.keys(props.table[0]).length);
   const nrow = ref(props.table.length);
 
-  function emitFilter(columnIdx: number) {
-    emit('filter', columnIdx);
+  const visibleSchema = computed(() => {
+    return props.reactiveSchema.filter((column) => !column.invisible);
+  });
+
+  function emitFilter(columnKey: string) {
+    emit('filter', columnKey);
   }
 
-  function emitSort(columnIdx: number) {
-    emit('sort', columnIdx);
+  function emitSort(columnKey: string) {
+    emit('sort', columnKey);
   }
 
-  function emitStats(columnIdx: number) {
-    emit('stats', columnIdx);
+  function emitStats(columnKey: string) {
+    emit('stats', columnKey);
   }
 </script>
