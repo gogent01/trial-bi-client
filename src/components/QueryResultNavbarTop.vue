@@ -3,7 +3,7 @@
     <div class="mx-auto">
       <div class="flex justify-between h-16 py-3 px-4">
         <div class="flex items-center h-full">
-          <p class="text-slate-700">По запросу было найдено {{ nrow }} записей</p>
+          <p class="text-slate-700">По запросу было найдено {{ toLocaleRowCount(nrow) }}</p>
         </div>
         <div class="flex items-center gap-2 h-full">
           <div v-if="isSortActive" class="flex-shrink-0 h-full">
@@ -43,4 +43,15 @@
   const props = defineProps<Props>();
 
   const emit = defineEmits(['clearSort']);
+
+  function toLocaleRowCount(n: number) {
+    const cases = { sin: { nom: 'запись', gen: 'записи' }, plu: { nom: 'записи', gen: 'записей' } };
+    const correctCase =
+      n % 10 === 1 && n % 100 !== 11
+        ? cases.sin.nom
+        : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)
+        ? cases.sin.gen
+        : cases.plu.gen;
+    return `${n} ${correctCase}`;
+  }
 </script>

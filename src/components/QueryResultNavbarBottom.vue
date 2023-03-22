@@ -2,7 +2,9 @@
   <nav class="bg-white border-t">
     <div class="mx-auto">
       <div class="flex justify-between h-16 py-3 px-4">
-        <div class="flex items-center h-full"></div>
+        <div class="flex items-center h-full">
+          <p class="text-sm text-slate-700">Показаны записи {{ rowNumberStart }} – {{ rowNumberEnd }} из {{ nrow }}</p>
+        </div>
         <div class="flex items-center gap-4 h-full">
           <div class="flex items-center h-full text-slate-600">
             <button
@@ -43,16 +45,21 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, watchEffect } from 'vue';
+  import { ref, computed, watchEffect } from 'vue';
   import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid';
 
   interface Props {
+    nrow: number;
+    limit: number;
     currentPage: number;
     maxPage: number;
   }
 
   const props = defineProps<Props>();
   const emit = defineEmits(['update']);
+
+  const rowNumberStart = computed(() => (props.currentPage - 1) * props.limit + 1);
+  const rowNumberEnd = computed(() => Math.min(rowNumberStart.value + props.limit - 1, props.nrow));
 
   const displayedPage = ref(props.currentPage);
   watchEffect(() => {

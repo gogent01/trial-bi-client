@@ -90,7 +90,13 @@
               />
             </div>
           </div>
-          <query-result-navbar-bottom :current-page="currentPage" :max-page="maxPage" @update="setPage" />
+          <query-result-navbar-bottom
+            :nrow="nrow"
+            :limit="limit"
+            :current-page="currentPage"
+            :max-page="maxPage"
+            @update="setPage"
+          />
         </div>
       </div>
 
@@ -155,7 +161,7 @@
     statisticsHidden.value = !statisticsHidden.value;
   }
 
-  const database = new Database(20);
+  const database = new Database(200);
   const { schema, data } = database.getCancers();
   const reactiveSchema = ref<ReactiveTableColumn>(
     schema
@@ -177,20 +183,6 @@
       currentPage.value = page;
     }
   }
-
-  // const visibleTable = computed<TableData>(() => {
-  //   const serviceKeys = schema.reduce((keys: string[], column: TableColumn) => {
-  //     if (column.primaryKey || column.belongsTo) {
-  //       keys.push(column.key);
-  //     }
-  //     return keys;
-  //   }, []);
-  //   return data.map((row) => {
-  //     const visibleRow = { ...row };
-  //     serviceKeys.forEach((key) => delete visibleRow[key]);
-  //     return visibleRow;
-  //   });
-  // });
 
   const filteredTable = computed<TableData>(() => {
     return data.filter((row) => {
