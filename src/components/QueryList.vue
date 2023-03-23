@@ -10,18 +10,6 @@
         <div class="space-y-2 flex-1">
           <div :class="[column.invisible ? 'text-gray-400' : 'text-gray-900', 'flex gap-1 items-center']">
             <p class="flex-shrink-0 text-xs cursor-pointer text-gray-400">
-              <!--              <span v-if="column.hasSort === 'ASC'">-->
-              <!--                <chevron-down-icon class="inline mr-1 h-4 w-4"></chevron-down-icon>-->
-              <!--              </span>-->
-              <!--              <span v-if="column.hasSort === 'DESC'">-->
-              <!--                <chevron-up-icon class="inline mr-1 h-4 w-4"></chevron-up-icon>-->
-              <!--              </span>-->
-              <!--              <span v-if="column.hasFilter">-->
-              <!--                <funnel-icon class="inline mr-1 h-4 w-4"></funnel-icon>-->
-              <!--              </span>-->
-              <!--              <span v-if="column.hasStats">-->
-              <!--                <chart-bar-icon class="inline mr-1 h-4 w-4"></chart-bar-icon>-->
-              <!--              </span>-->
               <span v-if="column.invisible">
                 <eye-slash-icon class="inline mr-1 h-4 w-4"></eye-slash-icon>
               </span>

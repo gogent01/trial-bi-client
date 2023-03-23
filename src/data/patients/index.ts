@@ -7,7 +7,7 @@ import { patientSchema } from '@/data/patients/schema';
 export function buildPatients(length: number): Model {
   const schema = patientSchema;
   const data = Array.from({ length }).map((_, idx) => createPatient(idx));
-  return new Model('patients', schema, data);
+  return new Model('patients', 'Пациенты', schema, data);
 }
 
 function createPatient(id: number): TableRow {

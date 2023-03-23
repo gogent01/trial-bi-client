@@ -10,9 +10,10 @@
               <img class="h-8 w-auto text-white" :src="logo" alt="Your Company" />
             </div>
           </div>
-          <div class="">
+          <div>
             <button
               class="inline-flex items-center rounded-lg border border-transparent bg-teal-900 px-4 py-2 font-medium text-white shadow-sm hover:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+              @click="toggleQueryEditOverlayVisibility"
             >
               <plus-icon class="-ml-2 mr-1 h-6 w-6"></plus-icon> Новый запрос
             </button>
@@ -20,6 +21,13 @@
         </div>
       </div>
     </nav>
+
+    <query-edit-overlay
+      :is-visible="isQueryEditOverlayVisible"
+      :schema="reactiveCompleteSchema"
+      @change="toggleCompleteSchemaField"
+      @close="toggleQueryEditOverlayVisibility"
+    />
 
     <!-- 3 column wrapper -->
     <div
@@ -41,7 +49,10 @@
             <p class="text-xl font-semibold">Запрос</p>
           </div>
           <div class="h-full rounded-xl bg-white overflow-hidden">
-            <query-navbar-top :is-query-active="reactiveSchema.length > 0" />
+            <query-navbar-top
+              :is-query-active="reactiveSchema.length > 0"
+              @edit-query="toggleQueryEditOverlayVisibility"
+            />
             <div class="flex justify-center overflow-auto" style="height: calc(100% - 5rem)">
               <query-list
                 v-if="reactiveSchema.length > 0"
@@ -143,12 +154,13 @@
   import { sort } from 'fast-sort';
   import { PlusIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/20/solid';
   import logo from '@/assets/RWE-BI-logo.svg';
-  import { ReactiveTableSchema, TableData } from '@/data/types';
+  import type { ReactiveTableSchemaInfo, ReactiveTableSchema, TableData } from '@/data/types';
   import { Database } from '@/data/Database';
   import { FilterTask, FilterType } from '@/classes/FilterTask';
   import { SortTask } from '@/classes/SortTask';
   import { ColumnStats } from '@/classes/ColumnStats';
 
+  import QueryEditOverlay from '@/components/QueryEditOverlay.vue';
   import QueryNavbarTop from '@/components/QuerySummaryNavbarTop.vue';
   import QueryList from '@/components/QueryList.vue';
   import FilterNavbarTop from '@/components/FilterNavbarTop.vue';
@@ -168,7 +180,28 @@
     statisticsHidden.value = !statisticsHidden.value;
   }
 
-  const database = new Database(200);
+  const database = new Database(123);
+  const completeSchema = database.getCompleteSchema();
+  const reactiveCompleteSchema = ref<ReactiveTableSchemaInfo>(
+    completeSchema.map((columnInfo) => ({
+      ...columnInfo,
+      selected: false,
+    }))
+  );
+
+  const isQueryEditOverlayVisible = ref(false);
+  function toggleQueryEditOverlayVisibility() {
+    isQueryEditOverlayVisible.value = !isQueryEditOverlayVisible.value;
+  }
+
+  function toggleCompleteSchemaField(at: { originKey: string; columnKey: string }) {
+    const columnIdx = reactiveCompleteSchema.value.findIndex(
+      (column) => column.origin.key === at.originKey && column.key === at.columnKey
+    );
+    reactiveCompleteSchema.value[columnIdx].selected = !reactiveCompleteSchema.value[columnIdx].selected;
+    console.log(reactiveCompleteSchema.value[columnIdx]);
+  }
+
   const { schema, data } = database.getAll();
   const reactiveSchema = ref<ReactiveTableSchema>(
     schema

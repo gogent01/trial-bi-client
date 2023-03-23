@@ -1,18 +1,22 @@
 import type { TableData, TableSchema } from '@/data/types';
 
 export class Model {
+  key: string;
   name: string;
   schema: TableSchema;
   data: TableData;
 
-  constructor(name: string, schema: TableSchema, data: TableData) {
+  constructor(key: string, name: string, schema: TableSchema, data: TableData) {
+    this.key = key;
     this.name = name;
     this.schema = schema;
     this.data = data;
   }
 
   copy(): Model {
-    return new Model(this.name, this.schema, this.data);
+    const schema = this.schema.map((column) => ({ ...column }));
+    const data = this.data.map((row) => ({ ...row }));
+    return new Model(this.key, this.name, schema, data);
   }
 
   static getConflictingKeys(left: Model, right: Model): string[] {

@@ -1,32 +1,48 @@
 import { buildPatients } from '@/data/patients';
 import { buildCancers } from '@/data/cancers';
 import { Model } from '@/data/Model';
-import type { TableData } from '@/data/types';
+import type { TableColumn, TableData, TableSchemaInfo } from '@/data/types';
 
 export class Database {
-  patients: Model;
-  cancers: Model;
+  models: Model[];
 
   constructor(length: number) {
-    this.patients = buildPatients(length);
-    this.cancers = buildCancers(this.patients.data);
+    const patients = buildPatients(length);
+    const cancers = buildCancers(patients.data);
+    this.models = [patients, cancers];
+  }
+
+  getCompleteSchema(): TableSchemaInfo {
+    return this.models.reduce((columns: TableSchemaInfo, model: Model) => {
+      return columns.concat(
+        model.schema.map((column: TableColumn) => {
+          return { origin: { key: model.key, name: model.name }, key: column.key, name: column.name };
+        })
+      );
+    }, []);
+  }
+
+  getModelByName(name: string): Model {
+    return this.models.find((model) => model.key === name) as Model;
   }
 
   getPatients(): Model {
-    return this.patients;
+    return this.getModelByName('patients');
   }
 
   getCancers(): Model {
-    return this.cancers;
+    return this.getModelByName('cancers');
   }
 
   getAll(): Model {
-    return this.leftJoin(this.patients, this.cancers);
+    const patients = this.getModelByName('patients');
+    const cancers = this.getModelByName('cancers');
+    return this.leftJoin(patients, cancers);
   }
 
   leftJoin(left: Model, right: Model): Model {
     const primaryKeyIdx = left.schema.findIndex((column) => column.primaryKey);
-    const foreignKeyIdx = right.schema.findIndex((column) => (column.belongsTo || '') === left.name);
+    const foreignKeyIdx = right.schema.findIndex((column) => (column.belongsTo || '') === left.key);
     const namingConflictColumnKeys = Model.getConflictingKeys(left, right);
 
     const safeLeftModel = left.copy();
@@ -53,6 +69,6 @@ export class Database {
       }
     });
 
-    return new Model('all', joinedSchema, joinedData);
+    return new Model('all', 'Все', joinedSchema, joinedData);
   }
 }
