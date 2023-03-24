@@ -16,7 +16,12 @@ export class Database {
     return this.models.reduce((columns: TableSchemaInfo, model: Model) => {
       return columns.concat(
         model.schema.map((column: TableColumn) => {
-          return { origin: { key: model.key, name: model.name }, key: column.key, name: column.name };
+          return {
+            origin: { key: model.key, name: model.name },
+            key: column.key,
+            name: column.name,
+            isServiceColumn: column.primaryKey || column.belongsTo,
+          };
         })
       );
     }, []);

@@ -44,16 +44,16 @@
       </div>
 
       <div v-if="!queryHidden" class="p-4 basis-1/5 flex-shrink-0 flex-grow-0 flex flex-col">
-        <div class="h-3/5 flex flex-col">
+        <div class="h-3/5 flex flex-col overflow-hidden">
           <div class="ml-2 mb-2 text-slate-700 text-xl font-semibold">
             <p class="text-xl font-semibold">Запрос</p>
           </div>
-          <div class="h-full rounded-xl bg-white overflow-hidden">
+          <div class="h-full flex flex-col bg-white rounded-xl overflow-hidden">
             <query-navbar-top
               :is-query-active="reactiveSchema.length > 0"
               @edit-query="toggleQueryEditOverlayVisibility"
             />
-            <div class="flex justify-center overflow-auto" style="height: calc(100% - 5rem)">
+            <div class="flex-1 flex justify-center rounded-b-xl overflow-auto">
               <query-list
                 v-if="reactiveSchema.length > 0"
                 :schema="reactiveSchema"
@@ -183,10 +183,12 @@
   const database = new Database(123);
   const completeSchema = database.getCompleteSchema();
   const reactiveCompleteSchema = ref<ReactiveTableSchemaInfo>(
-    completeSchema.map((columnInfo) => ({
-      ...columnInfo,
-      selected: false,
-    }))
+    completeSchema
+      .filter((column) => !column.isServiceColumn)
+      .map((columnInfo) => ({
+        ...columnInfo,
+        selected: false,
+      }))
   );
 
   const isQueryEditOverlayVisible = ref(false);

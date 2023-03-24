@@ -7,6 +7,7 @@ export type TableColumnInfo = {
   };
   key: string;
   name: string;
+  isServiceColumn: boolean;
 };
 export type TableColumn = {
   key: string;

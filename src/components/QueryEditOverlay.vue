@@ -28,18 +28,15 @@
               class="relative flex flex-col p-6 transform overflow-hidden rounded-lg bg-slate-300 text-left shadow-xl transition-all w-2/3"
               style="height: 80vh"
             >
-              <div class="h-full flex gap-6">
+              <div class="flex-1 flex gap-6 overflow-hidden">
                 <div class="basis-1/4 flex-shrink-0 flex-grow-0 flex flex-col">
                   <div class="flex mb-2 ml-2 items-center justify-between text-slate-700">
                     <p class="text-xl font-semibold">Запрос</p>
                   </div>
 
-                  <div class="h-full rounded-xl bg-white overflow-hidden">
-                    <div class="relative flex justify-center p-3 overflow-auto">
-                      <div class="w-full">
-                        <p class="text-sm text-gray-600 text-center">Нет данных для отображения</p>
-                      </div>
-                    </div>
+                  <div class="h-full rounded-xl bg-white overflow-auto">
+                    <query-edit-column-list v-if="selectedSchema.length > 0" :schema="selectedSchema" />
+                    <p v-else class="p-4 text-sm text-gray-600 text-center">Нет данных для отображения</p>
                   </div>
                 </div>
 
@@ -49,16 +46,14 @@
                   </div>
 
                   <div class="h-full rounded-xl bg-white overflow-auto">
-                    <div class="relative flex justify-center p-4">
-                      <div class="w-full">
-                        <query-edit-column-select v-if="schema.length > 0" :schema="schema" @change="emitChange" />
-                        <p v-else class="text-sm text-gray-600 text-center">Нет данных для отображения</p>
-                      </div>
+                    <div class="w-full p-4 relative flex justify-center">
+                      <query-edit-column-select v-if="schema.length > 0" :schema="schema" @change="emitChange" />
+                      <p v-else class="text-sm text-gray-600 text-center">Нет данных для отображения</p>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="mt-4 h-10 flex gap-2 items-center justify-end">
+              <div class="mt-4 basis-10 flex gap-2 items-center justify-end">
                 <button
                   ref="buttonCancel"
                   class="relative px-4 inline-flex items-center h-full rounded-md border border-gray-400 bg-white text-sm font-medium text-slate-700 shadow-sm hover:bg-gray-100"
@@ -84,11 +79,12 @@
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { ref, computed } from 'vue';
   import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue';
   import { XMarkIcon, ChevronRightIcon } from '@heroicons/vue/24/outline';
   import type { ReactiveTableSchemaInfo } from '@/data/types';
 
+  import QueryEditColumnList from '@/components/QueryEditColumnList.vue';
   import QueryEditColumnSelect from '@/components/QueryEditColumnSelect.vue';
 
   const buttonCancel = ref(null);
@@ -99,6 +95,8 @@
   }
   const props = defineProps<Props>();
   const emit = defineEmits(['change', 'sendQuery', 'close']);
+
+  const selectedSchema = computed(() => props.schema.filter((column) => column.selected));
 
   function emitChange(at: { originKey: string; columnKey: string }) {
     emit('change', at);
