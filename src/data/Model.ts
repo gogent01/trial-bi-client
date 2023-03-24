@@ -1,4 +1,4 @@
-import type { TableData, TableSchema } from '@/data/types';
+import type { TableData, TableRow, TableSchema } from '@/data/types';
 
 export class Model {
   key: string;
@@ -13,9 +13,27 @@ export class Model {
     this.data = data;
   }
 
+  static empty(): Model {
+    return new Model('empty', 'None', [], []);
+  }
+
   copy(): Model {
     const schema = this.schema.map((column) => ({ ...column }));
     const data = this.data.map((row) => ({ ...row }));
+    return new Model(this.key, this.name, schema, data);
+  }
+
+  selectByColumnKeys(keys: string[]): Model {
+    const schema = this.schema.filter((column) => keys.includes(column.key) || column.type === 'id');
+    const allKeysToSelect = schema.map((column) => column.key);
+    const data = this.data.map((row) => {
+      const filteredRow: TableRow = {};
+      for (const key of allKeysToSelect) {
+        filteredRow[key] = row[key];
+      }
+      return filteredRow;
+    });
+
     return new Model(this.key, this.name, schema, data);
   }
 

@@ -65,6 +65,7 @@
                 <button
                   type="button"
                   class="relative px-4 inline-flex items-center h-full rounded-md border border-transparent bg-teal-600 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+                  @click="emit('sendQuery')"
                 >
                   <chevron-right-icon class="-ml-2 mr-1 h-5 w-5" aria-hidden="true" />
                   Отправить запрос

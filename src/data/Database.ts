@@ -1,7 +1,7 @@
 import { buildPatients } from '@/data/patients';
 import { buildCancers } from '@/data/cancers';
 import { Model } from '@/data/Model';
-import type { TableColumn, TableData, TableSchemaInfo } from '@/data/types';
+import type { TableColumn, TableData, TableSchemaInfo, DataQuery } from '@/data/types';
 
 export class Database {
   models: Model[];
@@ -20,28 +20,52 @@ export class Database {
             origin: { key: model.key, name: model.name },
             key: column.key,
             name: column.name,
-            isServiceColumn: column.primaryKey || column.belongsTo,
+            isServiceColumn: !!column.primaryKey || !!column.belongsTo,
           };
         })
       );
     }, []);
   }
 
-  getModelByName(name: string): Model {
-    return this.models.find((model) => model.key === name) as Model;
+  getDataFromQuery(query: DataQuery): Model {
+    const queryMap = new Map<string, string[]>();
+    query.forEach((column) => {
+      const modelColumns = queryMap.get(column.modelKey) || [];
+      modelColumns.push(column.columnKey);
+      queryMap.set(column.modelKey, modelColumns);
+    });
+
+    const models: Model[] = [];
+    queryMap.forEach((columnKeys, modelKey) => {
+      const selectedModel = this.getModelByKey(modelKey).selectByColumnKeys(columnKeys);
+      models.push(selectedModel);
+    });
+
+    const sortedModels = models.sort((modelA: Model, modelB: Model) => modelA.key.localeCompare(modelB.key));
+    let result: Model = sortedModels.pop() || Model.empty();
+
+    while (sortedModels.length > 0) {
+      result = this.leftJoin(result, sortedModels.pop()!);
+    }
+
+    return result;
+  }
+
+  getModelByKey(key: string): Model {
+    return this.models.find((model) => model.key === key) as Model;
   }
 
   getPatients(): Model {
-    return this.getModelByName('patients');
+    return this.getModelByKey('patients');
   }
 
   getCancers(): Model {
-    return this.getModelByName('cancers');
+    return this.getModelByKey('cancers');
   }
 
   getAll(): Model {
-    const patients = this.getModelByName('patients');
-    const cancers = this.getModelByName('cancers');
+    const patients = this.getModelByKey('patients');
+    const cancers = this.getModelByKey('cancers');
     return this.leftJoin(patients, cancers);
   }
 

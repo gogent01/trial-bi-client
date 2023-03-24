@@ -37,3 +37,8 @@ export type ReactiveTableSchema = ReactiveTableColumn[];
 
 export type TableRow = { [key: string]: string | number | Date | undefined };
 export type TableData = TableRow[];
+
+export type DataQuery = {
+  modelKey: string;
+  columnKey: string;
+}[];

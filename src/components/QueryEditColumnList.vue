@@ -1,7 +1,7 @@
 <template>
   <ul role="list" class="w-full divide-y divide-gray-200">
     <li
-      v-for="column in props.schema"
+      v-for="column in props.schema.sort((a, b) => a.name.localeCompare(b.name))"
       :key="column.key"
       class="flex px-3 py-2 bg-white hover:bg-gray-50 cursor-pointer"
     >

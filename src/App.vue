@@ -26,6 +26,7 @@
       :is-visible="isQueryEditOverlayVisible"
       :schema="reactiveCompleteSchema"
       @change="toggleCompleteSchemaField"
+      @sendQuery="getDataFromQuery"
       @close="toggleQueryEditOverlayVisibility"
     />
 
@@ -154,7 +155,7 @@
   import { sort } from 'fast-sort';
   import { PlusIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/20/solid';
   import logo from '@/assets/RWE-BI-logo.svg';
-  import type { ReactiveTableSchemaInfo, ReactiveTableSchema, TableData } from '@/data/types';
+  import type { ReactiveTableSchemaInfo, ReactiveTableSchema, TableData, DataQuery } from '@/data/types';
   import { Database } from '@/data/Database';
   import { FilterTask, FilterType } from '@/classes/FilterTask';
   import { SortTask } from '@/classes/SortTask';
@@ -201,12 +202,35 @@
       (column) => column.origin.key === at.originKey && column.key === at.columnKey
     );
     reactiveCompleteSchema.value[columnIdx].selected = !reactiveCompleteSchema.value[columnIdx].selected;
-    console.log(reactiveCompleteSchema.value[columnIdx]);
   }
 
-  const { schema, data } = database.getAll();
+  function getDataFromQuery() {
+    const query: DataQuery = reactiveCompleteSchema.value
+      .filter((column) => column.selected)
+      .map((column) => ({
+        modelKey: column.origin.key,
+        columnKey: column.key,
+      }));
+    const dbData = database.getDataFromQuery(query);
+    schema.value = dbData.schema;
+    data.value = dbData.data;
+    reactiveSchema.value = schema.value
+      .filter((column) => !column.primaryKey && !column.belongsTo)
+      .map((column) => ({
+        ...column,
+        hasFilter: false,
+        hasSort: 'NONE',
+        hasStats: false,
+        invisible: false,
+      }));
+    isQueryEditOverlayVisible.value = false;
+  }
+
+  const dbData = database.getAll();
+  const schema = ref(dbData.schema);
+  const data = ref(dbData.data);
   const reactiveSchema = ref<ReactiveTableSchema>(
-    schema
+    schema.value
       .filter((column) => !column.primaryKey && !column.belongsTo)
       .map((column) => ({
         ...column,
@@ -233,7 +257,7 @@
   }
 
   const filteredTable = computed<TableData>(() => {
-    return data.filter((row) => {
+    return data.value.filter((row) => {
       return filterTasks.value.every((task) => task.apply(row));
     });
   });
