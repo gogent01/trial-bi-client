@@ -3,6 +3,9 @@ import { buildCancers } from '@/data/cancers';
 import { Model } from '@/data/Model';
 import type { TableColumn, TableData, TableSchemaInfo, DataQuery } from '@/data/types';
 
+//TODO: some object to depict hierarchy: which table should join which
+//TODO: some mechanism to decide in which order to join tables + deciding to join over parent table when only sibling tables are requested
+
 export class Database {
   models: Model[];
 

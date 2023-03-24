@@ -151,6 +151,9 @@
 </template>
 
 <script setup lang="ts">
+  //TODO: clearing of all sorts/filters/stats when querying for new data and keeping sorts/filters/stats of remaining columns when editing query
+  //TODO: make querySummary editButton to edit current query (as it is now), but newQuery button in navbarTop to create a query from scratch
+  //TODO: feedback button and initial alert about fake data / evaluation purposes
   import { ref, computed, watch, onMounted } from 'vue';
   import { sort } from 'fast-sort';
   import { PlusIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/20/solid';

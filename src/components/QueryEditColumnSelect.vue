@@ -36,6 +36,7 @@
 </template>
 
 <script setup lang="ts">
+  //TODO: 'select all' and 'deselect all' buttons for each section
   import { computed } from 'vue';
   import type { ReactiveTableColumnInfo, ReactiveTableSchemaInfo } from '@/data/types';
 
