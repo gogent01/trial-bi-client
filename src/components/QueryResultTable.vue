@@ -73,7 +73,7 @@
       <tbody v-else>
         <tr class="hover:bg-slate-50">
           <td
-            :colspan="visibleSchema.length"
+            :colspan="visibleSchema.length + 1"
             :class="[ncol > 0 ? 'border-r border-gray-200' : '']"
             class="px-3 py-1 text-sm text-gray-500 text-center whitespace-nowrap"
           >
