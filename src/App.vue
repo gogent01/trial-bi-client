@@ -13,7 +13,7 @@
           <div>
             <button
               class="inline-flex items-center rounded-lg border border-transparent bg-teal-900 px-4 py-2 font-medium text-white shadow-sm hover:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-              @click="toggleQueryEditOverlayVisibility"
+              @click="createQuery"
             >
               <plus-icon class="-ml-2 mr-1 h-6 w-6"></plus-icon> Новый запрос
             </button>
@@ -27,7 +27,7 @@
       :schema="reactiveCompleteSchema"
       @change="toggleCompleteSchemaField"
       @sendQuery="getDataFromQuery"
-      @close="toggleQueryEditOverlayVisibility"
+      @cancel="cancelQueryEdit"
     />
 
     <!-- 3 column wrapper -->
@@ -50,10 +50,7 @@
             <p class="text-xl font-semibold">Запрос</p>
           </div>
           <div class="h-full flex flex-col bg-white rounded-xl overflow-hidden">
-            <query-navbar-top
-              :is-query-active="reactiveSchema.length > 0"
-              @edit-query="toggleQueryEditOverlayVisibility"
-            />
+            <query-navbar-top :is-query-active="ncol > 0" @edit-query="editQuery" />
             <div class="flex-1 flex justify-center rounded-b-xl overflow-auto">
               <query-list
                 v-if="reactiveSchema.length > 0"
@@ -94,9 +91,9 @@
       <div class="row-span-2 p-4 flex-1 flex flex-col">
         <p class="ml-2 mb-2 text-slate-700 text-xl font-semibold">Результат запроса</p>
         <div class="h-full rounded-xl bg-white overflow-hidden">
-          <query-result-navbar-top :nrow="nrow" :is-sort-active="isSortActive" @clearSort="clearSort" />
+          <query-result-navbar-top :ncol="ncol" :nrow="nrow" :is-sort-active="isSortActive" @clearSort="clearSort" />
           <div id="queryResultTable" class="relative w-full overflow-auto" style="height: calc(100% - 8rem)">
-            <div class="absolute min-w-max">
+            <div v-if="ncol > 0" class="absolute min-w-max">
               <query-result-table
                 :reactive-schema="reactiveSchema"
                 :table="filteredSortedAndPaginatedTable"
@@ -106,6 +103,21 @@
                 @filter="toggleFilter"
                 @stats="toggleStats"
               />
+            </div>
+            <div v-else class="w-full h-full flex items-center justify-center">
+              <!--              <p class="p-3 text-sm text-gray-600 text-center">Нет данных для отображения</p>-->
+              <div class="text-center">
+                <table-cells-icon class="mx-auto h-16 w-16 text-gray-400" aria-hidden="true" />
+                <h3 class="mt-2 text-lg font-semibold text-gray-900">Нет данных для отображения</h3>
+                <p class="mt-6 inline-flex items-center text-gray-500 cursor-text">
+                  Чтобы начать анализ данных, нажмите на кнопку
+                  <span class="ml-2 inline-flex items-center py-1 pl-1 pr-2 rounded-md border border-gray-300">
+                    <plus-icon class="inline mr-0.5 h-5 w-5" aria-hidden="true" />
+                    Новый запрос</span
+                  >
+                </p>
+                <p class="text-gray-500">в верхнем правом углу экрана.</p>
+              </div>
             </div>
           </div>
           <query-result-navbar-bottom
@@ -152,13 +164,20 @@
 
 <script setup lang="ts">
   //TODO: clearing of all sorts/filters/stats when querying for new data and keeping sorts/filters/stats of remaining columns when editing query
-  //TODO: make querySummary editButton to edit current query (as it is now), but newQuery button in navbarTop to create a query from scratch
+  //TODO: handle comma in number inputs
   //TODO: feedback button and initial alert about fake data / evaluation purposes
-  import { ref, computed, watch, onMounted } from 'vue';
+  import { ref, computed, watch, onMounted, toRaw } from 'vue';
   import { sort } from 'fast-sort';
-  import { PlusIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/20/solid';
+  import { PlusIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon, TableCellsIcon } from '@heroicons/vue/20/solid';
   import logo from '@/assets/RWE-BI-logo.svg';
-  import type { ReactiveTableSchemaInfo, ReactiveTableSchema, TableData, DataQuery } from '@/data/types';
+  import type {
+    ReactiveTableSchemaInfo,
+    ReactiveTableSchema,
+    TableSchema,
+    TableData,
+    DataQuery,
+    TableSchemaInfo,
+  } from '@/data/types';
   import { Database } from '@/data/Database';
   import { FilterTask, FilterType } from '@/classes/FilterTask';
   import { SortTask } from '@/classes/SortTask';
@@ -184,24 +203,55 @@
     statisticsHidden.value = !statisticsHidden.value;
   }
 
-  const database = new Database(123);
-  const completeSchema = database.getCompleteSchema();
-  const reactiveCompleteSchema = ref<ReactiveTableSchemaInfo>(
-    completeSchema
-      .filter((column) => !column.isServiceColumn)
-      .map((columnInfo) => ({
-        ...columnInfo,
-        selected: false,
-      }))
-  );
-
   const isQueryEditOverlayVisible = ref(false);
   function toggleQueryEditOverlayVisibility() {
     isQueryEditOverlayVisible.value = !isQueryEditOverlayVisible.value;
   }
 
+  const database = new Database(123);
+  let completeSchema: ReactiveTableSchemaInfo = [];
+  let completeSchemaBackup: ReactiveTableSchemaInfo = [];
+  function addReactivity(completeSchema: TableSchemaInfo) {
+    return completeSchema
+      .filter((column) => !column.isServiceColumn)
+      .map((columnInfo) => ({
+        ...columnInfo,
+        selected: false,
+      }));
+  }
+  const reactiveCompleteSchema = ref<ReactiveTableSchemaInfo>(completeSchema);
+  function backupReactiveCompleteSchema() {
+    completeSchemaBackup = completeSchema.map((columnInfo) => ({ ...columnInfo }));
+  }
+  function restoreReactiveCompleteSchema() {
+    completeSchema = completeSchemaBackup.map((columnInfo) => ({ ...columnInfo }));
+    reactiveCompleteSchema.value = completeSchema.map((columnInfo) => ({ ...columnInfo }));
+  }
+
+  function createQuery() {
+    backupReactiveCompleteSchema();
+    completeSchema = addReactivity(database.getCompleteSchema());
+    reactiveCompleteSchema.value = completeSchema.map((columnInfo) => ({ ...columnInfo }));
+    toggleQueryEditOverlayVisibility();
+  }
+
+  function editQuery() {
+    backupReactiveCompleteSchema();
+    toggleQueryEditOverlayVisibility();
+  }
+
+  function cancelQueryEdit() {
+    toggleQueryEditOverlayVisibility();
+    restoreReactiveCompleteSchema();
+  }
+
   function toggleCompleteSchemaField(at: { originKey: string; columnKey: string }) {
-    const columnIdx = reactiveCompleteSchema.value.findIndex(
+    let columnIdx = completeSchema.findIndex(
+      (column) => column.origin.key === at.originKey && column.key === at.columnKey
+    );
+    completeSchema[columnIdx].selected = !completeSchema[columnIdx].selected;
+
+    columnIdx = reactiveCompleteSchema.value.findIndex(
       (column) => column.origin.key === at.originKey && column.key === at.columnKey
     );
     reactiveCompleteSchema.value[columnIdx].selected = !reactiveCompleteSchema.value[columnIdx].selected;
@@ -229,9 +279,9 @@
     isQueryEditOverlayVisible.value = false;
   }
 
-  const dbData = database.getAll();
-  const schema = ref(dbData.schema);
-  const data = ref(dbData.data);
+  // const dbData = database.getAll();
+  const schema = ref<TableSchema>([]);
+  const data = ref<TableData>([]);
   const reactiveSchema = ref<ReactiveTableSchema>(
     schema.value
       .filter((column) => !column.primaryKey && !column.belongsTo)
@@ -252,6 +302,7 @@
   const limit = 100;
   const currentPage = ref(1);
   const maxPage = computed<number>(() => Math.ceil(filteredTable.value.length / limit) || 1);
+  const ncol = computed(() => reactiveSchema.value.length);
   const nrow = computed(() => filteredTable.value.length);
   function setPage(page: number) {
     if (page > 0 && page <= maxPage.value) {

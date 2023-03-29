@@ -7,7 +7,7 @@
             <button
               :class="[isFilterActive ? 'hover:bg-gray-50' : 'opacity-50 cursor-default']"
               class="relative inline-flex items-center h-full rounded-md bg-white px-4 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-inset ring-gray-300"
-              @click="emit('clearFilters')"
+              @click="isFilterActive && emit('clearFilters')"
             >
               <trash-icon class="-ml-2 mr-1 h-5 w-5" aria-hidden="true" />
               <span>Удалить все</span>

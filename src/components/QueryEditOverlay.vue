@@ -1,6 +1,6 @@
 <template>
   <TransitionRoot as="template" :show="isVisible">
-    <Dialog :initialFocus="buttonCancel" as="div" class="relative z-10" @close="emit('close')">
+    <Dialog :initialFocus="buttonCancel" as="div" class="relative z-10" @close="emit('cancel')">
       <TransitionChild
         as="template"
         enter="ease-out duration-300"
@@ -57,7 +57,7 @@
                 <button
                   ref="buttonCancel"
                   class="relative px-4 inline-flex items-center h-full rounded-md border border-gray-400 bg-white text-sm font-medium text-slate-700 shadow-sm hover:bg-gray-100"
-                  @click="emit('close')"
+                  @click="emit('cancel')"
                 >
                   <x-mark-icon class="-ml-2 mr-1 h-5 w-5" aria-hidden="true" />
                   <span>Отмена</span>
@@ -95,7 +95,7 @@
     schema: ReactiveTableSchemaInfo;
   }
   const props = defineProps<Props>();
-  const emit = defineEmits(['change', 'sendQuery', 'close']);
+  const emit = defineEmits(['change', 'sendQuery', 'cancel']);
 
   const selectedSchema = computed(() => props.schema.filter((column) => column.selected));
 

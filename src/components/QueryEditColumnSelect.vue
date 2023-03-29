@@ -1,7 +1,23 @@
 <template>
   <div class="w-full space-y-8">
     <div v-for="group in groupedSchema" :key="group.origin.key" class="bg-white">
-      <p class="rounded-xl bg-slate-200 px-2 py-0.5 text-lg font-semibold text-gray-900">{{ group.origin.name }}</p>
+      <div class="w-full flex px-2 py-0.5 items-center justify-between rounded-xl bg-slate-200">
+        <p class="text-lg font-semibold text-gray-900">{{ group.origin.name }}</p>
+        <p
+          v-if="group.columns.every((column) => column.selected)"
+          class="mr-2 text-xs text-gray-600 cursor-pointer hover:text-gray-800"
+          @click="deselectAll(group.origin.key)"
+        >
+          Убрать все
+        </p>
+        <p
+          v-else
+          class="mr-2 text-xs text-gray-600 cursor-pointer hover:text-gray-800"
+          @click="selectAll(group.origin.key)"
+        >
+          Выбрать все
+        </p>
+      </div>
       <ul role="list" class="mt-2 w-full columns-3">
         <li
           v-for="column in group.columns"
@@ -36,7 +52,6 @@
 </template>
 
 <script setup lang="ts">
-  //TODO: 'select all' and 'deselect all' buttons for each section
   import { computed } from 'vue';
   import type { ReactiveTableColumnInfo, ReactiveTableSchemaInfo } from '@/data/types';
 
@@ -72,5 +87,17 @@
 
   function emitChange(at: { originKey: string; columnKey: string }) {
     emit('change', at);
+  }
+
+  function selectAll(originKey: string) {
+    const schema = groupedSchema.value.find((schema) => schema.origin.key === originKey);
+    const columnKeys = schema!.columns.filter((column) => !column.selected).map((column) => column.key);
+    columnKeys.forEach((columnKey) => emitChange({ originKey, columnKey }));
+  }
+
+  function deselectAll(originKey: string) {
+    const schema = groupedSchema.value.find((schema) => schema.origin.key === originKey);
+    const columnKeys = schema!.columns.filter((column) => column.selected).map((column) => column.key);
+    columnKeys.forEach((columnKey) => emitChange({ originKey, columnKey }));
   }
 </script>

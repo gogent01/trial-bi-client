@@ -58,7 +58,7 @@
   const props = defineProps<Props>();
   const emit = defineEmits(['update']);
 
-  const rowNumberStart = computed(() => (props.currentPage - 1) * props.limit + 1);
+  const rowNumberStart = computed(() => Math.min((props.currentPage - 1) * props.limit + 1, props.nrow));
   const rowNumberEnd = computed(() => Math.min(rowNumberStart.value + props.limit - 1, props.nrow));
 
   const displayedPage = ref(props.currentPage);

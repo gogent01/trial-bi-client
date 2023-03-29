@@ -4,7 +4,8 @@
       <thead>
         <tr>
           <th
-            class="sticky top-0 border-r border-b border-gray-200 bg-white bg-opacity-75 px-3 py-3 backdrop-blur backdrop-filter cursor-pointer"
+            :class="[ncol > 0 ? 'border-r' : '']"
+            class="sticky top-0 border-b border-gray-200 bg-white bg-opacity-75 px-3 py-3 backdrop-blur backdrop-filter cursor-pointer"
           >
             <p class="text-left text-sm font-semibold text-gray-900">#</p>
           </th>
@@ -71,7 +72,11 @@
       </tbody>
       <tbody v-else>
         <tr class="hover:bg-slate-50">
-          <td :colspan="visibleSchema.length" class="px-3 py-1 text-sm text-gray-500 text-center whitespace-nowrap">
+          <td
+            :colspan="visibleSchema.length"
+            :class="[ncol > 0 ? 'border-r border-gray-200' : '']"
+            class="px-3 py-1 text-sm text-gray-500 text-center whitespace-nowrap"
+          >
             Нет данных для отображения
           </td>
         </tr>
@@ -96,7 +101,7 @@
   const props = defineProps<Props>();
   const emit = defineEmits(['sort', 'filter', 'stats']);
 
-  const ncol = ref(Object.keys(props.table[0]).length);
+  const ncol = ref(props.table.length > 0 ? Object.keys(props.table[0]).length : 0);
   const nrow = ref(props.table.length);
 
   const visibleSchema = computed(() => {
