@@ -163,7 +163,6 @@
 </template>
 
 <script setup lang="ts">
-  //TODO: clearing of all sorts/filters/stats when querying for new data and keeping sorts/filters/stats of remaining columns when editing query
   //TODO: xlsx table export
   //TODO: handle comma in number inputs
   //TODO: feedback button and initial alert about fake data / evaluation purposes

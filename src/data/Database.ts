@@ -21,6 +21,7 @@ export class Database {
         model.schema.map((column: TableColumn) => {
           return {
             origin: { key: model.key, name: model.name },
+            position: column.position,
             key: column.key,
             name: column.name,
             isServiceColumn: !!column.primaryKey || !!column.belongsTo,

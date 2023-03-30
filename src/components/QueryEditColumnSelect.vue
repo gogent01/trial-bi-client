@@ -74,7 +74,10 @@
   const groupedSchema = computed<GroupedSchema>(() => {
     const includedOrigins: Set<string> = new Set();
     return props.schema
-      .sort((columnA, columnB) => columnA.origin.name.localeCompare(columnB.origin.name))
+      .sort(
+        (columnA, columnB) =>
+          columnA.origin.name.localeCompare(columnB.origin.name) || columnA.position - columnB.position
+      )
       .reduce((groupedSchema: GroupedSchema, column: ReactiveTableColumnInfo) => {
         if (!includedOrigins.has(column.origin.key)) {
           includedOrigins.add(column.origin.key);

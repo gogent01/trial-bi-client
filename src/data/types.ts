@@ -5,6 +5,7 @@ export type TableColumnInfo = {
     key: string;
     name: string;
   };
+  position: number;
   key: string;
   name: string;
   isServiceColumn: boolean;
