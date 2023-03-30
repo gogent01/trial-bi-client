@@ -164,6 +164,7 @@
 
 <script setup lang="ts">
   //TODO: clearing of all sorts/filters/stats when querying for new data and keeping sorts/filters/stats of remaining columns when editing query
+  //TODO: xlsx table export
   //TODO: handle comma in number inputs
   //TODO: feedback button and initial alert about fake data / evaluation purposes
   import { ref, computed, watch, onMounted, toRaw } from 'vue';
@@ -204,6 +205,7 @@
   }
 
   const isQueryEditOverlayVisible = ref(false);
+  const isNewQuery = ref(false);
   function toggleQueryEditOverlayVisibility() {
     isQueryEditOverlayVisible.value = !isQueryEditOverlayVisible.value;
   }
@@ -232,11 +234,13 @@
     backupReactiveCompleteSchema();
     completeSchema = addReactivity(database.getCompleteSchema());
     reactiveCompleteSchema.value = completeSchema.map((columnInfo) => ({ ...columnInfo }));
+    isNewQuery.value = true;
     toggleQueryEditOverlayVisibility();
   }
 
   function editQuery() {
     backupReactiveCompleteSchema();
+    isNewQuery.value = false;
     toggleQueryEditOverlayVisibility();
   }
 
@@ -267,32 +271,70 @@
     const dbData = database.getDataFromQuery(query);
     schema.value = dbData.schema;
     data.value = dbData.data;
-    reactiveSchema.value = schema.value
-      .filter((column) => !column.primaryKey && !column.belongsTo)
-      .map((column) => ({
-        ...column,
-        hasFilter: false,
-        hasSort: 'NONE',
-        hasStats: false,
-        invisible: false,
-      }));
+    currentPage.value = 1;
+
+    if (isNewQuery.value) {
+      clearStats();
+      clearSort();
+      clearFilters();
+
+      reactiveSchema.value = schema.value
+        .filter((column) => column.type !== 'id')
+        .sort((columnA, columnB) => {
+          return columnA.origin.name.localeCompare(columnB.origin.name) || columnA.position - columnB.position;
+        })
+        .map((column) => ({
+          ...column,
+          hasFilter: false,
+          hasSort: 'NONE',
+          hasStats: false,
+          invisible: false,
+        }));
+    } else {
+      const oldColumnKeys = new Set<string>(reactiveSchema.value.map((column) => column.key));
+      const newColumnKeys = new Set<string>(dbData.schema.map((column) => column.key));
+      const columnsToRemove = reactiveSchema.value.filter((column) => !newColumnKeys.has(column.key));
+      const columnsToAdd = dbData.schema
+        .filter((column) => column.type !== 'id')
+        .filter((column) => !oldColumnKeys.has(column.key));
+
+      console.log(oldColumnKeys);
+      console.log(newColumnKeys);
+      console.log(columnsToRemove);
+      console.log(columnsToAdd);
+
+      columnsToRemove.forEach((column) => {
+        if (column.hasStats) clearStats();
+        if (column.hasSort) removeSort(column.key);
+        if (column.hasFilter) {
+          const filterTaskIdx = filterTasks.value.findIndex((task) => task.columnKey === column.key);
+          removeFilter(filterTaskIdx);
+        }
+      });
+
+      reactiveSchema.value = reactiveSchema.value
+        .filter((column) => newColumnKeys.has(column.key))
+        .concat(
+          columnsToAdd.map((column) => ({
+            ...column,
+            hasFilter: false,
+            hasSort: 'NONE',
+            hasStats: false,
+            invisible: false,
+          }))
+        )
+        .sort((columnA, columnB) => {
+          return columnA.origin.name.localeCompare(columnB.origin.name) || columnA.position - columnB.position;
+        });
+    }
+
     isQueryEditOverlayVisible.value = false;
   }
 
   // const dbData = database.getAll();
   const schema = ref<TableSchema>([]);
   const data = ref<TableData>([]);
-  const reactiveSchema = ref<ReactiveTableSchema>(
-    schema.value
-      .filter((column) => !column.primaryKey && !column.belongsTo)
-      .map((column) => ({
-        ...column,
-        hasFilter: false,
-        hasSort: 'NONE',
-        hasStats: false,
-        invisible: false,
-      }))
-  );
+  const reactiveSchema = ref<ReactiveTableSchema>([]);
 
   function toggleColumnVisibility(columnKey: string) {
     const columnIdx = reactiveSchema.value.findIndex((column) => column.key === columnKey);
@@ -418,16 +460,25 @@
         sortTasks.value[sortTaskIndex].setDirection('DESC');
         reactiveSchema.value[columnIdx].hasSort = 'DESC';
       } else {
-        sortTasks.value.splice(sortTaskIndex, 1);
-        reactiveSchema.value[columnIdx].hasSort = 'NONE';
-        reactiveSchema.value[columnIdx].sortPriority = undefined;
-
-        const sortTasksToUpdatePriority = sortTasks.value.slice(sortTaskIndex);
-        sortTasksToUpdatePriority.forEach((st) => {
-          const columnIndex = reactiveSchema.value.findIndex((column) => column.key === st.key);
-          reactiveSchema.value[columnIndex].sortPriority! -= 1;
-        });
+        removeSort(columnKey);
       }
+    }
+  }
+
+  function removeSort(columnKey: string) {
+    const columnIdx = reactiveSchema.value.findIndex((column) => column.key === columnKey);
+    const sortTaskIndex = sortTasks.value.findIndex((task) => task.key === columnKey);
+
+    if (sortTaskIndex !== -1) {
+      sortTasks.value.splice(sortTaskIndex, 1);
+      reactiveSchema.value[columnIdx].hasSort = 'NONE';
+      reactiveSchema.value[columnIdx].sortPriority = undefined;
+
+      const sortTasksToUpdatePriority = sortTasks.value.slice(sortTaskIndex);
+      sortTasksToUpdatePriority.forEach((st) => {
+        const columnIndex = reactiveSchema.value.findIndex((column) => column.key === st.key);
+        reactiveSchema.value[columnIndex].sortPriority! -= 1;
+      });
     }
   }
 
@@ -468,6 +519,13 @@
         statsForColumnAtIndex.value = columnIdx;
         reactiveSchema.value[statsForColumnAtIndex.value].hasStats = true;
       }
+    }
+  }
+
+  function clearStats() {
+    if (statsForColumnAtIndex.value > 0) {
+      reactiveSchema.value[statsForColumnAtIndex.value].hasStats = false;
+      statsForColumnAtIndex.value = -1;
     }
   }
 </script>

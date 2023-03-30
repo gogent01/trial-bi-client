@@ -10,6 +10,11 @@ export type TableColumnInfo = {
   isServiceColumn: boolean;
 };
 export type TableColumn = {
+  origin: {
+    key: string;
+    name: string;
+  };
+  position: number;
   key: string;
   name: string;
   type: ColumnType;
