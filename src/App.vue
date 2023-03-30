@@ -320,6 +320,7 @@
         .sort((columnA, columnB) => {
           return columnB.origin.priority - columnA.origin.priority || columnA.position - columnB.position;
         });
+      statsForColumnAtIndex.value = reactiveSchema.value.findIndex((column) => column.hasStats);
     }
 
     isQueryEditOverlayVisible.value = false;
