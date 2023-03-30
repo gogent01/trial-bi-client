@@ -3,7 +3,6 @@ import { buildCancers } from '@/data/cancers';
 import { Model } from '@/data/Model';
 import type { TableColumn, TableData, TableSchemaInfo, DataQuery } from '@/data/types';
 
-//TODO: some object to depict hierarchy: which table should join which
 //TODO: some mechanism to decide in which order to join tables + deciding to join over parent table when only sibling tables are requested
 
 export class Database {
@@ -20,7 +19,7 @@ export class Database {
       return columns.concat(
         model.schema.map((column: TableColumn) => {
           return {
-            origin: { key: model.key, name: model.name },
+            origin: { key: model.key, name: model.name, priority: model.priority },
             position: column.position,
             key: column.key,
             name: column.name,
@@ -45,7 +44,7 @@ export class Database {
       models.push(selectedModel);
     });
 
-    const sortedModels = models.sort((modelA: Model, modelB: Model) => modelA.key.localeCompare(modelB.key));
+    const sortedModels = models.sort((modelA: Model, modelB: Model) => modelB.priority - modelA.priority);
     let result: Model = sortedModels.pop() || Model.empty();
 
     while (sortedModels.length > 0) {
@@ -102,6 +101,6 @@ export class Database {
       }
     });
 
-    return new Model('all', 'Все', joinedSchema, joinedData);
+    return new Model('all', 'Все', 0, joinedSchema, joinedData);
   }
 }

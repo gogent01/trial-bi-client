@@ -15,7 +15,7 @@ export function buildCancers(patients: TableData): Model {
       id++;
     }
   }
-  return new Model('cancers', 'Онкозаболевания', schema, data);
+  return new Model('cancers', 'Онкозаболевания', 1, schema, data);
 }
 
 function createCancer(id: number, patientId: number): TableRow {

@@ -2,8 +2,7 @@
   <ul role="list" class="w-full divide-y divide-gray-200">
     <li
       v-for="column in props.schema.sort(
-        (columnA, columnB) =>
-          columnA.origin.name.localeCompare(columnB.origin.name) || columnA.position - columnB.position
+        (columnA, columnB) => columnA.origin.priority - columnB.origin.priority || columnA.position - columnB.position
       )"
       :key="column.key"
       class="flex px-3 py-2 bg-white hover:bg-gray-50 cursor-pointer"

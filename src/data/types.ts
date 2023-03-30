@@ -4,6 +4,7 @@ export type TableColumnInfo = {
   origin: {
     key: string;
     name: string;
+    priority: number;
   };
   position: number;
   key: string;
@@ -14,6 +15,7 @@ export type TableColumn = {
   origin: {
     key: string;
     name: string;
+    priority: number;
   };
   position: number;
   key: string;

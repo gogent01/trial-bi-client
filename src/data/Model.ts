@@ -3,24 +3,26 @@ import type { TableData, TableRow, TableSchema } from '@/data/types';
 export class Model {
   key: string;
   name: string;
+  priority: number;
   schema: TableSchema;
   data: TableData;
 
-  constructor(key: string, name: string, schema: TableSchema, data: TableData) {
+  constructor(key: string, name: string, priority: number, schema: TableSchema, data: TableData) {
     this.key = key;
     this.name = name;
+    this.priority = priority;
     this.schema = schema;
     this.data = data;
   }
 
   static empty(): Model {
-    return new Model('empty', 'None', [], []);
+    return new Model('empty', 'None', 100, [], []);
   }
 
   copy(): Model {
     const schema = this.schema.map((column) => ({ ...column }));
     const data = this.data.map((row) => ({ ...row }));
-    return new Model(this.key, this.name, schema, data);
+    return new Model(this.key, this.name, this.priority, schema, data);
   }
 
   selectByColumnKeys(keys: string[]): Model {
@@ -34,7 +36,7 @@ export class Model {
       return filteredRow;
     });
 
-    return new Model(this.key, this.name, schema, data);
+    return new Model(this.key, this.name, this.priority, schema, data);
   }
 
   static getConflictingKeys(left: Model, right: Model): string[] {

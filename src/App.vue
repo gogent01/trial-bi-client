@@ -280,7 +280,7 @@
       reactiveSchema.value = schema.value
         .filter((column) => column.type !== 'id')
         .sort((columnA, columnB) => {
-          return columnA.origin.name.localeCompare(columnB.origin.name) || columnA.position - columnB.position;
+          return columnB.origin.priority - columnA.origin.priority || columnA.position - columnB.position;
         })
         .map((column) => ({
           ...column,
@@ -296,11 +296,6 @@
       const columnsToAdd = dbData.schema
         .filter((column) => column.type !== 'id')
         .filter((column) => !oldColumnKeys.has(column.key));
-
-      console.log(oldColumnKeys);
-      console.log(newColumnKeys);
-      console.log(columnsToRemove);
-      console.log(columnsToAdd);
 
       columnsToRemove.forEach((column) => {
         if (column.hasStats) clearStats();
@@ -323,7 +318,7 @@
           }))
         )
         .sort((columnA, columnB) => {
-          return columnA.origin.name.localeCompare(columnB.origin.name) || columnA.position - columnB.position;
+          return columnB.origin.priority - columnA.origin.priority || columnA.position - columnB.position;
         });
     }
 
