@@ -93,7 +93,13 @@
       <div class="row-span-2 p-4 flex-1 flex flex-col">
         <p class="ml-2 mb-2 text-slate-700 text-xl font-semibold">Результат запроса</p>
         <div class="h-full rounded-xl bg-white overflow-hidden">
-          <query-result-navbar-top :ncol="ncol" :nrow="nrow" :is-sort-active="isSortActive" @clearSort="clearSort" />
+          <query-result-navbar-top
+            :ncol="ncol"
+            :nrow="nrow"
+            :is-sort-active="isSortActive"
+            @clearSort="clearSort"
+            @save="saveQueryResultTable"
+          />
           <div id="queryResultTable" class="relative w-full overflow-auto" style="height: calc(100% - 8rem)">
             <div v-if="ncol > 0" class="absolute min-w-max">
               <query-result-table
@@ -139,7 +145,11 @@
         </div>
 
         <div class="h-full rounded-xl bg-white overflow-hidden">
-          <statistics-navbar-top :variable="stats.variable" :has-data="filteredTable.length > 0" />
+          <statistics-navbar-top
+            :variable="stats.variable"
+            :has-data="filteredTable.length > 0"
+            @save="saveStatsTable"
+          />
           <div class="relative flex justify-center p-3 overflow-auto" style="height: calc(100% - 8rem)">
             <div class="w-full">
               <statistics-table
@@ -166,10 +176,9 @@
 </template>
 
 <script setup lang="ts">
-  //TODO: xlsx table export
   //TODO: handle comma in number inputs
   //TODO: feedback button and initial alert about fake data / evaluation purposes
-  import { ref, computed, watch, onMounted, toRaw } from 'vue';
+  import { ref, computed, watch, onMounted } from 'vue';
   import { sort } from 'fast-sort';
   import { PlusIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon, TableCellsIcon } from '@heroicons/vue/20/solid';
   import logo from '@/assets/RWE-BI-logo.svg';
@@ -177,6 +186,7 @@
     ReactiveTableSchemaInfo,
     ReactiveTableSchema,
     TableSchema,
+    TableRow,
     TableData,
     DataQuery,
     TableSchemaInfo,
@@ -197,6 +207,7 @@
   import QueryResultTable from '@/components/QueryResultTable.vue';
   import StatisticsNavbarTop from '@/components/StatisticsNavbarTop.vue';
   import StatisticsTable from '@/components/StatisticsTable.vue';
+  import { XlsxExport } from '@/classes/XlsxExport';
 
   const queryHidden = ref(false);
   const statisticsHidden = ref(false);
@@ -534,5 +545,31 @@
       reactiveSchema.value[statsForColumnAtIndex.value].hasStats = false;
       statsForColumnAtIndex.value = -1;
     }
+  }
+
+  function saveTable(data: TableData, colnames: string[], sheetName: string, fileName: string) {
+    const xlsxExport = new XlsxExport();
+    xlsxExport.generateXLSX(data, colnames, sheetName, fileName);
+  }
+
+  function saveQueryResultTable() {
+    const schema = reactiveSchema.value.filter((column) => !column.invisible);
+    const colnames = schema.map((column) => column.name);
+    const visibleKeys = schema.map((column) => column.key);
+    const data = filteredAndSortedTable.value.map((row) => {
+      const keys = Object.keys(row);
+      return keys.reduce((visibleRow: TableRow, key) => {
+        if (visibleKeys.includes(key)) visibleRow[key] = row[key];
+        return visibleRow;
+      }, {});
+    });
+    saveTable(data, colnames, 'Данные', 'результаты_запроса');
+  }
+
+  function saveStatsTable() {
+    const data = stats.value.data as TableData;
+    const colnames = ['Параметр', 'Значение'];
+    const filename = stats.value.variable.toLowerCase().replace(/[^а-яa-z0-9_-]/, '_');
+    saveTable(data, colnames, 'Статистика', filename);
   }
 </script>

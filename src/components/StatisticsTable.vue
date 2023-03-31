@@ -42,7 +42,6 @@
 <script setup lang="ts">
   import { computed } from 'vue';
   import { StatsRow } from '@/classes/ColumnStats';
-  import { InformationCircleIcon } from '@heroicons/vue/24/outline';
 
   const colnames = {
     param: 'Параметр',
