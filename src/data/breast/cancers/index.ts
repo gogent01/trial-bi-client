@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { Model } from '@/data/Model';
 import type { TableRow, TableData } from '@/data/types';
-import { cancerSchema } from '@/data/cancers/schema';
+import { cancerSchema } from '@/data/breast/cancers/schema';
 
 export function buildCancers(patients: TableData): Model {
   const schema = cancerSchema;

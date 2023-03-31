@@ -47,6 +47,7 @@ export type TableRow = { [key: string]: string | number | Date | undefined };
 export type TableData = TableRow[];
 
 export type DataQuery = {
+  trialKey: string;
   modelKey: string;
   columnKey: string;
 }[];

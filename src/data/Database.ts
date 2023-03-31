@@ -1,18 +1,16 @@
-import { buildPatients } from '@/data/patients';
-import { buildCancers } from '@/data/cancers';
 import { Model } from '@/data/Model';
 import type { TableColumn, TableData, TableSchemaInfo, DataQuery } from '@/data/types';
 
 //TODO: add some mechanism to decide in which order to join tables + deciding to join over parent table when only sibling tables are requested
 
-export class Database {
+export abstract class Database {
   models: Model[];
 
-  constructor(length: number) {
-    const patients = buildPatients(length);
-    const cancers = buildCancers(patients.data);
-    this.models = [patients, cancers];
+  protected constructor(length: number) {
+    this.models = this.buildDatabase(length);
   }
+
+  abstract buildDatabase(length: number): Model[];
 
   getCompleteSchema(): TableSchemaInfo {
     return this.models.reduce((columns: TableSchemaInfo, model: Model) => {
@@ -56,20 +54,6 @@ export class Database {
 
   getModelByKey(key: string): Model {
     return this.models.find((model) => model.key === key) as Model;
-  }
-
-  getPatients(): Model {
-    return this.getModelByKey('patients');
-  }
-
-  getCancers(): Model {
-    return this.getModelByKey('cancers');
-  }
-
-  getAll(): Model {
-    const patients = this.getModelByKey('patients');
-    const cancers = this.getModelByKey('cancers');
-    return this.leftJoin(patients, cancers);
   }
 
   leftJoin(left: Model, right: Model): Model {

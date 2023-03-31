@@ -10,9 +10,11 @@
               <img class="h-8 w-auto text-white" :src="logo" alt="Your Company" />
             </div>
           </div>
-          <div>
+          <div class="h-10 flex gap-2">
+            <trial-select :trials="trials" :selected-trial-idx="selectedTrialIdx" @update="updateSelectedTrialIdx" />
             <button
-              class="inline-flex items-center rounded-lg border border-transparent bg-teal-900 px-4 py-2 font-medium text-white shadow-sm hover:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+              :class="[selectedTrialIdx > -1 ? 'hover:bg-teal-800' : 'opacity-50 cursor-default']"
+              class="inline-flex items-center min-w-max rounded-lg border border-transparent bg-teal-900 px-4 py-2 font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
               @click="createQuery"
             >
               <plus-icon class="-ml-2 mr-1 h-6 w-6"></plus-icon> Новый запрос
@@ -105,18 +107,19 @@
               />
             </div>
             <div v-else class="w-full h-full flex items-center justify-center">
-              <!--              <p class="p-3 text-sm text-gray-600 text-center">Нет данных для отображения</p>-->
               <div class="text-center">
                 <table-cells-icon class="mx-auto h-16 w-16 text-gray-400" aria-hidden="true" />
                 <h3 class="mt-2 text-lg font-semibold text-gray-900">Нет данных для отображения</h3>
-                <p class="mt-6 inline-flex items-center text-gray-500 cursor-text">
-                  Чтобы начать анализ данных, нажмите на кнопку
+                <p class="mt-6 text-gray-500">
+                  Чтобы начать анализ данных, выберите исследование в верхнем правом углу экрана
+                </p>
+                <p class="inline-flex items-center text-gray-500 cursor-text">
+                  и нажмите на кнопку
                   <span class="ml-2 inline-flex items-center py-1 pl-1 pr-2 rounded-md border border-gray-300">
                     <plus-icon class="inline mr-0.5 h-5 w-5" aria-hidden="true" />
                     Новый запрос</span
                   >
                 </p>
-                <p class="text-gray-500">в верхнем правом углу экрана.</p>
               </div>
             </div>
           </div>
@@ -178,11 +181,12 @@
     DataQuery,
     TableSchemaInfo,
   } from '@/data/types';
-  import { Database } from '@/data/Database';
+  import { Router as APIRouter, TrialPublic } from '@/data/Router';
   import { FilterTask, FilterType } from '@/classes/FilterTask';
   import { SortTask } from '@/classes/SortTask';
   import { ColumnStats } from '@/classes/ColumnStats';
 
+  import TrialSelect from '@/components/TrialSelect.vue';
   import QueryEditOverlay from '@/components/QueryEditOverlay.vue';
   import QueryNavbarTop from '@/components/QuerySummaryNavbarTop.vue';
   import QueryList from '@/components/QueryList.vue';
@@ -209,7 +213,14 @@
     isQueryEditOverlayVisible.value = !isQueryEditOverlayVisible.value;
   }
 
-  const database = new Database(123);
+  const apiRouter = new APIRouter();
+  const trials: TrialPublic[] = apiRouter.getTrials();
+  const selectedTrialIdx = ref(-1);
+  function updateSelectedTrialIdx(idx: number) {
+    selectedTrialIdx.value = idx;
+    console.log(selectedTrialIdx.value);
+  }
+
   let completeSchema: ReactiveTableSchemaInfo = [];
   let completeSchemaBackup: ReactiveTableSchemaInfo = [];
   function addReactivity(completeSchema: TableSchemaInfo) {
@@ -230,8 +241,9 @@
   }
 
   function createQuery() {
+    if (selectedTrialIdx.value < 0) return;
     backupReactiveCompleteSchema();
-    completeSchema = addReactivity(database.getCompleteSchema());
+    completeSchema = addReactivity(apiRouter.getCompleteSchema(trials[selectedTrialIdx.value].key));
     reactiveCompleteSchema.value = completeSchema.map((columnInfo) => ({ ...columnInfo }));
     isNewQuery.value = true;
     toggleQueryEditOverlayVisibility();
@@ -264,10 +276,11 @@
     const query: DataQuery = reactiveCompleteSchema.value
       .filter((column) => column.selected)
       .map((column) => ({
+        trialKey: trials[selectedTrialIdx.value].key,
         modelKey: column.origin.key,
         columnKey: column.key,
       }));
-    const dbData = database.getDataFromQuery(query);
+    const dbData = apiRouter.getDataFromQuery(query);
     schema.value = dbData.schema;
     data.value = dbData.data;
     currentPage.value = 1;
@@ -326,7 +339,6 @@
     isQueryEditOverlayVisible.value = false;
   }
 
-  // const dbData = database.getAll();
   const schema = ref<TableSchema>([]);
   const data = ref<TableData>([]);
   const reactiveSchema = ref<ReactiveTableSchema>([]);
