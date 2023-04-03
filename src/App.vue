@@ -229,7 +229,6 @@
   const selectedTrialIdx = ref(-1);
   function updateSelectedTrialIdx(idx: number) {
     selectedTrialIdx.value = idx;
-    console.log(selectedTrialIdx.value);
   }
 
   let completeSchema: ReactiveTableSchemaInfo = [];
@@ -304,7 +303,11 @@
       reactiveSchema.value = schema.value
         .filter((column) => column.type !== 'id')
         .sort((columnA, columnB) => {
-          return columnB.origin.priority - columnA.origin.priority || columnA.position - columnB.position;
+          return (
+            columnA.origin.priority - columnB.origin.priority ||
+            columnA.origin.name.localeCompare(columnB.origin.name) ||
+            columnA.position - columnB.position
+          );
         })
         .map((column) => ({
           ...column,
@@ -342,7 +345,11 @@
           }))
         )
         .sort((columnA, columnB) => {
-          return columnB.origin.priority - columnA.origin.priority || columnA.position - columnB.position;
+          return (
+            columnA.origin.priority - columnB.origin.priority ||
+            columnA.origin.name.localeCompare(columnB.origin.name) ||
+            columnA.position - columnB.position
+          );
         });
       statsForColumnAtIndex.value = reactiveSchema.value.findIndex((column) => column.hasStats);
     }

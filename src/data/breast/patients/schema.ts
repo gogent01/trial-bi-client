@@ -5,7 +5,7 @@ export const patientSchema: TableSchema = [
     key: 'id',
     name: 'Код',
     type: 'id' as ColumnType,
-    primaryKey: true,
+    primaryKey: 'patients',
   },
   {
     key: 'center',
@@ -54,4 +54,4 @@ export const patientSchema: TableSchema = [
     name: 'ИМТ',
     type: 'number' as ColumnType,
   },
-].map((column, idx) => ({ origin: { key: 'patients', name: 'Пациенты' }, position: idx, ...column }));
+].map((column, idx) => ({ origin: { key: 'patients', name: 'Пациенты', priority: 0 }, position: idx, ...column }));

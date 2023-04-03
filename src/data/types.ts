@@ -22,7 +22,7 @@ export type TableColumn = {
   name: string;
   type: ColumnType;
   levels?: string[];
-  primaryKey?: boolean;
+  primaryKey?: string;
   belongsTo?: string;
 };
 type ReactiveColumnInfo = {
@@ -46,8 +46,9 @@ export type ReactiveTableSchema = ReactiveTableColumn[];
 export type TableRow = { [key: string]: string | number | Date | undefined };
 export type TableData = TableRow[];
 
-export type DataQuery = {
+export type DataQueryRow = {
   trialKey: string;
   modelKey: string;
   columnKey: string;
-}[];
+};
+export type DataQuery = DataQueryRow[];

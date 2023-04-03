@@ -42,11 +42,10 @@ export abstract class Database {
       models.push(selectedModel);
     });
 
-    const sortedModels = models.sort((modelA: Model, modelB: Model) => modelB.priority - modelA.priority);
-    let result: Model = sortedModels.pop() || Model.empty();
+    let result: Model = models.shift() || Model.empty();
 
-    while (sortedModels.length > 0) {
-      result = this.leftJoin(result, sortedModels.pop()!);
+    while (models.length > 0) {
+      result = this.leftJoin(result, models.shift()!);
     }
 
     return result;
@@ -57,8 +56,11 @@ export abstract class Database {
   }
 
   leftJoin(left: Model, right: Model): Model {
-    const primaryKeyIdx = left.schema.findIndex((column) => column.primaryKey);
-    const foreignKeyIdx = right.schema.findIndex((column) => (column.belongsTo || '') === left.key);
+    // console.log(`${left.key} joins ${right.key}...`);
+    const foreignKeyIdx = right.schema.findIndex((column) => column.belongsTo);
+    const primaryKeyIdx = left.schema.findIndex(
+      (column) => column.primaryKey === right.schema[foreignKeyIdx].belongsTo
+    );
     const namingConflictColumnKeys = Model.getConflictingKeys(left, right);
 
     const safeLeftModel = left.copy();
@@ -68,19 +70,28 @@ export abstract class Database {
       safeRightModel.resolveNamingConflict(key, 'right');
     }
 
+    // console.log(
+    //   `PK index ${primaryKeyIdx} column ${JSON.stringify(
+    //     safeLeftModel.schema[primaryKeyIdx],
+    //     null,
+    //     3
+    //   )}, FK index ${foreignKeyIdx} column ${JSON.stringify(safeRightModel.schema[foreignKeyIdx], null, 3)}...`
+    // );
+
     const joinedSchema = [...safeLeftModel.schema, ...safeRightModel.schema];
     const joinedData = [] as TableData;
-    left.data.forEach((leftRow, idx) => {
-      const primaryKey = left.schema[primaryKeyIdx].key;
-      const foreignKey = right.schema[foreignKeyIdx].key;
-      const indexesOfAllForeignRows = right.data.reduce((indexes: number[], rightRow, idx) => {
+
+    safeLeftModel.data.forEach((leftRow, idx) => {
+      const primaryKey = safeLeftModel.schema[primaryKeyIdx].key;
+      const foreignKey = safeRightModel.schema[foreignKeyIdx].key;
+      const indexesOfAllForeignRows = safeRightModel.data.reduce((indexes: number[], rightRow, idx) => {
         if (leftRow[primaryKey] === rightRow[foreignKey]) indexes.push(idx);
         return indexes;
       }, []);
 
       while (indexesOfAllForeignRows.length > 0) {
         const foreignIdx = indexesOfAllForeignRows.shift() as number;
-        const rightRow = right.data[foreignIdx];
+        const rightRow = safeRightModel.data[foreignIdx];
         joinedData.push({ ...leftRow, ...rightRow });
       }
     });

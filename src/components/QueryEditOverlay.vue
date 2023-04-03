@@ -94,6 +94,7 @@
     isVisible: boolean;
     schema: ReactiveTableSchemaInfo;
   }
+
   const props = defineProps<Props>();
   const emit = defineEmits(['change', 'sendQuery', 'cancel']);
 

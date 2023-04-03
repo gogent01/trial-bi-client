@@ -1,6 +1,8 @@
 import { Database } from '@/data/Database';
 import { buildPatients } from '@/data/breast/patients';
+import { buildComorbidities } from '@/data/breast/comorbidities';
 import { buildCancers } from '@/data/breast/cancers';
+import { buildNeoTherapies } from '@/data/breast/neoTherapy';
 import type { Model } from '@/data/Model';
 
 export class BreastDatabase extends Database {
@@ -10,7 +12,9 @@ export class BreastDatabase extends Database {
 
   buildDatabase(length: number): Model[] {
     const patients = buildPatients(length);
+    const comorbidities = buildComorbidities(patients.data);
     const cancers = buildCancers(patients.data);
-    return [patients, cancers];
+    const neoTherapies = buildNeoTherapies(cancers.data);
+    return [patients, comorbidities, cancers, neoTherapies];
   }
 }

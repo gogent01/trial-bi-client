@@ -15,6 +15,12 @@ export class Model {
     this.data = data;
   }
 
+  get parentKey(): string {
+    const referenceColumn = this.schema.find((column) => !!column.belongsTo);
+    if (!referenceColumn) return '';
+    return referenceColumn.belongsTo!;
+  }
+
   static empty(): Model {
     return new Model('empty', 'None', 100, [], []);
   }

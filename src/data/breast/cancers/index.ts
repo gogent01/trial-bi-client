@@ -10,7 +10,7 @@ export function buildCancers(patients: TableData): Model {
   for (let i = 0, id = 0; i < patients.length; i++) {
     data.push(createCancer(id, patients[i].id as number));
     id++;
-    while (Math.random() > 0.7) {
+    while (Math.random() > 0.9) {
       data.push(createCancer(id, patients[i].id as number));
       id++;
     }

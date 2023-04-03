@@ -5,7 +5,7 @@ export const cancerSchema: TableSchema = [
     key: 'id',
     name: 'Код',
     type: 'id' as ColumnType,
-    primaryKey: true,
+    primaryKey: 'cancers',
   },
   {
     key: 'patient_id',
@@ -70,4 +70,8 @@ export const cancerSchema: TableSchema = [
     type: 'factor' as ColumnType,
     levels: ['3+', '2+', '1+', '0'],
   },
-].map((column, idx) => ({ origin: { key: 'cancers', name: 'Онкозаболевание' }, position: idx, ...column }));
+].map((column, idx) => ({
+  origin: { key: 'cancers', name: 'Онкозаболевание', priority: 1 },
+  position: idx,
+  ...column,
+}));

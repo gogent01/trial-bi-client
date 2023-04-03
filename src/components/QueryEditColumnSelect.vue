@@ -46,6 +46,25 @@
             </div>
           </div>
         </li>
+        <li
+          v-for="placeholder in Array.from({
+            length: group.columns.length % 3 === 0 ? 0 : 3 - group.columns.length,
+          }).fill(0)"
+          :key="placeholder"
+          class="invisible flex p-2 bg-white hover:bg-gray-50 cursor-pointer"
+        >
+          <div class="flex flex-1 gap-2 items-center justify-between">
+            <div class="space-y-2 flex-1">
+              <div class="flex gap-2 items-center">
+                <input
+                  type="checkbox"
+                  class="h-4 w-4 rounded border-gray-300 text-teal-600 cursor-pointer focus:ring-teal-600"
+                />
+                <label class="text-sm text-gray-900 cursor-pointer select-none">{{ placeholder }}</label>
+              </div>
+            </div>
+          </div>
+        </li>
       </ul>
     </div>
   </div>
@@ -75,7 +94,10 @@
     const includedOrigins: Set<string> = new Set();
     return props.schema
       .sort(
-        (columnA, columnB) => columnA.origin.priority - columnB.origin.priority || columnA.position - columnB.position
+        (columnA, columnB) =>
+          columnA.origin.priority - columnB.origin.priority ||
+          columnA.origin.name.localeCompare(columnB.origin.name) ||
+          columnA.position - columnB.position
       )
       .reduce((groupedSchema: GroupedSchema, column: ReactiveTableColumnInfo) => {
         if (!includedOrigins.has(column.origin.key)) {

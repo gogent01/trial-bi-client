@@ -3,6 +3,7 @@ import type { DataQuery, TableSchemaInfo } from '@/data/types';
 import { Model } from '@/data/Model';
 import { BreastDatabase } from '@/data/breast/BreastDatabase';
 import { MelanomaDatabase } from '@/data/melanoma/MelanomaDatabase';
+import { QueryPlanner } from '@/data/QueryPlanner';
 
 type Trial = {
   key: string;
@@ -59,6 +60,9 @@ export class Router {
     const database = trial.database;
     const homogenousQuery = query.filter((dataQuery) => dataQuery.trialKey === trial.key);
 
-    return database.getDataFromQuery(homogenousQuery);
+    const planner = new QueryPlanner(database, homogenousQuery);
+    const orderedQuery = planner.orderQuery();
+
+    return database.getDataFromQuery(orderedQuery);
   }
 }

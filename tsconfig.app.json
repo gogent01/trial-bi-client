@@ -10,7 +10,7 @@
   ],
   "compilerOptions": {
     "target": "es2017",
-    "lib": ["es2017", "dom"],
+    "lib": ["es2019", "dom"],
     "composite": true,
     "resolveJsonModule": true,
     "baseUrl": ".",
