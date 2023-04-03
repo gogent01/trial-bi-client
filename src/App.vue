@@ -554,9 +554,9 @@
     }
   }
 
-  function saveTable(data: TableData, colnames: string[], sheetName: string, fileName: string) {
+  async function saveTable(schema: TableSchema, data: TableData, sheetName: string, fileName: string) {
     const xlsxExport = new XlsxExport();
-    xlsxExport.generateXLSX(data, colnames, sheetName, fileName);
+    await xlsxExport.generateXLSX(schema, data, sheetName, fileName);
   }
 
   function saveQueryResultTable() {
@@ -570,7 +570,7 @@
         return visibleRow;
       }, {});
     });
-    saveTable(data, colnames, 'Данные', 'результаты_запроса');
+    saveTable(schema, data, 'Данные', 'результаты_запроса');
   }
 
   function saveStatsTable() {
