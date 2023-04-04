@@ -28,21 +28,23 @@
             <div v-if="task.columnType === 'number'" class="flex items-center gap-2">
               <label for="from" class="text-sm text-gray-900">от</label>
               <input
-                :type="task.columnType"
+                type="text"
                 :value="task.rangeValues[0] || ''"
                 name="from"
                 class="flex px-2 py-1 w-20 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
                 placeholder="от"
+                @input="sanitizeNumberInput"
                 @keyup.enter="$event.target.blur()"
                 @blur="updateFilterRangeValues($event, taskIdx)"
               />
               <label for="to" class="text-sm text-gray-900">до</label>
               <input
-                :type="task.columnType"
+                type="text"
                 :value="task.rangeValues[1] || ''"
                 name="to"
                 class="flex px-2 py-1 w-20 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
                 placeholder="до"
+                @input="sanitizeNumberInput"
                 @keyup.enter="$event.target.blur()"
                 @blur="updateFilterRangeValues($event, taskIdx)"
               />
@@ -84,9 +86,19 @@
                 @keyup.enter="updateFilterValue($event, taskIdx)"
               />
             </template>
+            <template v-else-if="task.columnType === 'number'">
+              <input
+                type="text"
+                :value="task.value"
+                class="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
+                placeholder="введите значение"
+                @input="sanitizeNumberInput"
+                @keyup.enter="updateFilterValue($event, taskIdx)"
+              />
+            </template>
             <template v-else>
               <input
-                :type="task.columnType === 'factor' ? 'text' : task.columnType"
+                type="text"
                 :value="task.value"
                 class="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
                 placeholder="введите значение"
@@ -177,9 +189,12 @@
     const value = target.value;
     const columnType = props.tasks[filterTaskIndex].columnType;
 
+    if (value.length === 0) return;
+
     let typedValue: string | number | Date;
     if (columnType === 'number') {
       typedValue = parseFloat(value);
+      if (isNaN(typedValue)) return;
     } else if (columnType === 'date') {
       typedValue = new Date(value);
     } else {
@@ -215,5 +230,19 @@
 
   function remove(filterTaskIndex: number) {
     emit('remove', filterTaskIndex);
+  }
+
+  function sanitizeNumberInput(event: Event) {
+    const input = event.target! as HTMLInputElement;
+
+    let i = 0;
+    input.value = input.value
+      .replace(',', '.')
+      .replace(/[^0-9\.-]/g, '')
+      .replace(/(.)-/g, '$1')
+      .replace(/\./g, function (match) {
+        return match === '.' ? (i++ === 0 ? '.' : '') : '';
+      })
+      .replace(/^\./g, '');
   }
 </script>

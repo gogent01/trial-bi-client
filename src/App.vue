@@ -176,7 +176,6 @@
 </template>
 
 <script setup lang="ts">
-  //TODO: handle comma in number inputs
   //TODO: feedback button and initial alert about fake data / evaluation purposes
   import { ref, computed, watch, onMounted } from 'vue';
   import { sort } from 'fast-sort';
