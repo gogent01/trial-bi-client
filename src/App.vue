@@ -176,6 +176,7 @@
 </template>
 
 <script setup lang="ts">
+  //TODO: check on how everything manages with NA data
   //TODO: feedback button and initial alert about fake data / evaluation purposes
   import { ref, computed, watch, onMounted } from 'vue';
   import { sort } from 'fast-sort';
@@ -573,9 +574,32 @@
   }
 
   function saveStatsTable() {
+    const schema: TableSchema = [
+      {
+        origin: {
+          key: 'stats',
+          name: 'Статистика',
+          priority: 0,
+        },
+        key: 'param',
+        name: 'Параметр',
+        type: 'text',
+        position: 0,
+      },
+      {
+        origin: {
+          key: 'stats',
+          name: 'Статистика',
+          priority: 0,
+        },
+        key: 'value',
+        name: 'Значение',
+        type: 'text',
+        position: 1,
+      },
+    ];
     const data = stats.value.data as TableData;
-    const colnames = ['Параметр', 'Значение'];
     const filename = stats.value.variable.toLowerCase().replace(/[^а-яa-z0-9_-]/, '_');
-    saveTable(data, colnames, 'Статистика', filename);
+    saveTable(schema, data, 'Статистика', filename);
   }
 </script>
