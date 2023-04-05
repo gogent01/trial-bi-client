@@ -50,7 +50,7 @@
           v-for="placeholder in Array.from({
             length: group.columns.length % 3 === 0 ? 0 : 3 - group.columns.length,
           }).fill(0)"
-          :key="placeholder"
+          :key="placeholder as number"
           class="invisible flex p-2 bg-white hover:bg-gray-50 cursor-pointer"
         >
           <div class="flex flex-1 gap-2 items-center justify-between">

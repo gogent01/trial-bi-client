@@ -30,7 +30,7 @@
               ]"
               style="min-width: 2rem"
             >
-              {{ dataRow[colname] }}
+              {{ dataRow[colname as 'param' | 'value'] }}
             </td>
           </tr>
         </tbody>
@@ -41,7 +41,7 @@
 
 <script setup lang="ts">
   import { computed } from 'vue';
-  import { StatsRow } from '@/classes/ColumnStats';
+  import type { StatsRow } from '@/classes/ColumnStats';
 
   const colnames = {
     param: 'Параметр',

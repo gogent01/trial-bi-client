@@ -66,7 +66,9 @@
             ]"
             style="min-width: 2rem; max-width: 12rem"
           >
-            {{ row[column.key] instanceof Date ? row[column.key].toLocaleDateString('ru') : row[column.key] }}
+            {{
+              row[column.key] instanceof Date ? (row[column.key]! as Date).toLocaleDateString('ru') : row[column.key]
+            }}
           </td>
         </tr>
       </tbody>
@@ -89,7 +91,7 @@
   import { ref, computed } from 'vue';
   import { FunnelIcon, ChartBarIcon, ChevronUpIcon, ChevronDownIcon } from '@heroicons/vue/24/outline';
   import { FunnelIcon as FunnelIconActive, ChartBarIcon as ChartBarIconActive } from '@heroicons/vue/24/solid';
-  import { ReactiveTableSchema, TableData } from '@/data/types';
+  import type { ReactiveTableSchema, TableData } from '@/data/types';
 
   interface Props {
     table: TableData;

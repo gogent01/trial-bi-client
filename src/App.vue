@@ -191,8 +191,10 @@
     DataQuery,
     TableSchemaInfo,
   } from '@/data/types';
-  import { Router as APIRouter, TrialPublic } from '@/data/Router';
-  import { FilterTask, FilterType } from '@/classes/FilterTask';
+  import { Router as APIRouter } from '@/data/Router';
+  import type { TrialPublic } from '@/data/Router';
+  import { FilterTask } from '@/classes/FilterTask';
+  import type { FilterType } from '@/classes/FilterTask';
   import { SortTask } from '@/classes/SortTask';
   import { ColumnStats } from '@/classes/ColumnStats';
 

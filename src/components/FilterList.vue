@@ -19,7 +19,7 @@
           </select>
           <div v-if="task.type === 'any'">
             <multiple-select
-              :options="task.columnLevels"
+              :options="task.columnLevels || []"
               :selected="task.multipleValues"
               @change="updateFilterMultipleValues($event, taskIdx)"
             />
@@ -34,7 +34,7 @@
                 class="flex px-2 py-1 w-20 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
                 placeholder="от"
                 @input="sanitizeNumberInput"
-                @keyup.enter="$event.target.blur()"
+                @keyup.enter="($event.target as HTMLInputElement).blur()"
                 @blur="updateFilterRangeValues($event, taskIdx)"
               />
               <label for="to" class="text-sm text-gray-900">до</label>
@@ -45,31 +45,31 @@
                 class="flex px-2 py-1 w-20 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
                 placeholder="до"
                 @input="sanitizeNumberInput"
-                @keyup.enter="$event.target.blur()"
+                @keyup.enter="($event.target as HTMLInputElement).blur()"
                 @blur="updateFilterRangeValues($event, taskIdx)"
               />
             </div>
             <div v-else-if="task.columnType === 'date'" class="flex items-center gap-2">
               <label for="from" class="text-sm text-gray-900">от</label>
               <input
-                :value="task.rangeValues[0] ? task.rangeValues[0].toISOString().split('T')[0] : ''"
+                :value="task.rangeValues[0] ? (task.rangeValues[0] as Date).toISOString().split('T')[0] : ''"
                 :class="[
                   task.rangeValues[0] ? 'text-gray-900' : 'placeholder:text-gray-400',
                   'flex p-1 rounded-md border-0  shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6',
                 ]"
                 type="date"
-                @keyup.enter="$event.target.blur()"
+                @keyup.enter="($event.target as HTMLInputElement).blur()"
                 @blur="updateFilterRangeValues($event, taskIdx)"
               />
               <label for="to" class="text-sm text-gray-900">до</label>
               <input
-                :value="task.rangeValues[1] ? task.rangeValues[1].toISOString().split('T')[0] : ''"
+                :value="task.rangeValues[1] ? (task.rangeValues[1] as Date).toISOString().split('T')[0] : ''"
                 :class="[
                   task.rangeValues[0] ? 'text-gray-900' : 'placeholder:text-gray-400',
                   'flex p-1 rounded-md border-0  shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6',
                 ]"
                 type="date"
-                @keyup.enter="$event.target.blur()"
+                @keyup.enter="($event.target as HTMLInputElement).blur()"
                 @blur="updateFilterRangeValues($event, taskIdx)"
               />
             </div>
@@ -77,7 +77,7 @@
           <template v-else-if="task.type">
             <template v-if="task.columnType === 'date'">
               <input
-                :value="task.value ? task.value.toISOString().split('T')[0] : ''"
+                :value="task.value ? (task.value as Date).toISOString().split('T')[0] : ''"
                 :class="[
                   task.value ? 'text-gray-900' : 'placeholder:text-gray-400',
                   'flex p-1 rounded-md border-0  shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6',
@@ -114,20 +114,10 @@
 
 <script setup lang="ts">
   import { nextTick } from 'vue';
-  import { XMarkIcon } from '@heroicons/vue/20/solid';
+  import type { ColumnType } from '@/data/types';
+  import type { FilterType, FilterTask } from '@/classes/FilterTask';
   import { TrashIcon } from '@heroicons/vue/24/outline';
   import MultipleSelect from '@/components/MultipleSelect.vue';
-
-  type ColumnType = 'text' | 'number' | 'date' | 'factor';
-  type FilterType = 'eq' | 'gt' | 'gte' | 'lt' | 'lte' | 'sw' | 'has' | 'ew' | 'range' | 'any';
-  type FilterTask = {
-    columnKey: string;
-    columnName: string;
-    columnType: ColumnType;
-    columnLevels?: string[];
-    type?: FilterType;
-    value?: string | number | Date;
-  };
 
   interface Props {
     tasks: FilterTask[];
@@ -137,6 +127,7 @@
   const emit = defineEmits(['updateType', 'updateValue', 'updateRangeValues', 'updateMultipleValues', 'remove']);
 
   const filterOptions = {
+    id: [],
     text: [
       { name: 'точное соответствие', value: 'eq' },
       { name: 'начинается с', value: 'sw' },
@@ -167,7 +158,7 @@
     ],
   };
 
-  function getOption(columnType: ColumnType, filterType: FilterType) {
+  function getOption(columnType: ColumnType, filterType?: FilterType) {
     if (!filterType) return '- выберите фильтр -';
     const options = filterOptions[columnType].filter((option) => option.value === filterType);
     if (options.length > 0) return options[0].name;
@@ -238,7 +229,7 @@
     let i = 0;
     input.value = input.value
       .replace(',', '.')
-      .replace(/[^0-9\.-]/g, '')
+      .replace(/[^0-9.-]/g, '')
       .replace(/(.)-/g, '$1')
       .replace(/\./g, function (match) {
         return match === '.' ? (i++ === 0 ? '.' : '') : '';
