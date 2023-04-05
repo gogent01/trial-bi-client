@@ -1,5 +1,7 @@
 import { Database } from '@/data/Database';
 import type { Model } from '@/data/Model';
+import { buildPatients } from '@/data/melanoma/patients';
+import { buildCancers } from '@/data/melanoma/cancers';
 
 export class MelanomaDatabase extends Database {
   constructor(length: number) {
@@ -7,6 +9,8 @@ export class MelanomaDatabase extends Database {
   }
 
   buildDatabase(length: number): Model[] {
-    return [];
+    const patients = buildPatients(length);
+    const cancers = buildCancers(patients.data);
+    return [patients, cancers];
   }
 }

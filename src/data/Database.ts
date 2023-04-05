@@ -68,14 +68,6 @@ export abstract class Database {
       safeRightModel.resolveNamingConflict(key, 'right');
     }
 
-    // console.log(
-    //   `PK index ${primaryKeyIdx} column ${JSON.stringify(
-    //     safeLeftModel.schema[primaryKeyIdx],
-    //     null,
-    //     3
-    //   )}, FK index ${foreignKeyIdx} column ${JSON.stringify(safeRightModel.schema[foreignKeyIdx], null, 3)}...`
-    // );
-
     const joinedSchema = [...safeLeftModel.schema, ...safeRightModel.schema];
     const joinedData = [] as TableData;
 

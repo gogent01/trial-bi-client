@@ -22,9 +22,10 @@
                 v-model="displayedPage"
                 name="page"
                 id="page"
-                type="number"
+                type="text"
                 class="block p-2 w-7 h-7 border border-transparent rounded-md bg-slate-300 text-center focus:border-teal-500 focus:ring-teal-500"
                 placeholder="1"
+                @input="sanitizeNumberInput"
                 @keyup.enter="emitUpdate"
               />
               <p>из {{ maxPage }}</p>
@@ -82,5 +83,11 @@
 
     displayedPage.value = displayedPage.value + delta;
     emit('update', displayedPage.value);
+  }
+
+  function sanitizeNumberInput(event: Event) {
+    const input = event.target! as HTMLInputElement;
+
+    input.value = input.value.replace(/[^0-9]/g, '');
   }
 </script>

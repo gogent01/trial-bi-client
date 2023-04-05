@@ -19,14 +19,14 @@ const trials: Trial[] = [
   {
     key: 'breast',
     name: 'RWE: рак молочной железы',
-    database: new BreastDatabase(120),
+    database: new BreastDatabase(279),
     created_at: new Date('2022-01-10'),
     updated_at: new Date('2023-01-18'),
   },
   {
     key: 'melanoma',
     name: 'RWE: меланома',
-    database: new MelanomaDatabase(105),
+    database: new MelanomaDatabase(350),
     created_at: new Date('2022-02-01'),
     updated_at: new Date('2022-12-05'),
   },

@@ -11,7 +11,12 @@
             </div>
           </div>
           <div class="h-10 flex gap-2">
-            <trial-select :trials="trials" :selected-trial-idx="selectedTrialIdx" @update="updateSelectedTrialIdx" />
+            <trial-select
+              :trials="trials"
+              :selected-trial-idx="selectedTrialIdx"
+              @update="updateSelectedTrialIdx"
+              class="hidden lg:block"
+            />
             <button
               :class="[selectedTrialIdx > -1 ? 'hover:bg-teal-800' : 'opacity-50 cursor-default']"
               class="inline-flex items-center min-w-max rounded-lg border border-transparent bg-teal-900 px-4 py-2 font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
@@ -34,7 +39,19 @@
 
     <!-- 3 column wrapper -->
     <div
-      class="mx-auto w-full flex-grow bg-slate-300 grid grid-rows-4 lg:flex lg:flex-row"
+      class="w-full h-full flex items-center justify-center p-3 bg-slate-300 lg:hidden"
+      style="height: calc(100vh - 4rem)"
+    >
+      <div class="w-full px-4 py-6 text-center bg-gray-50 rounded-xl">
+        <tv-icon class="mx-auto h-16 w-16 text-gray-500" aria-hidden="true" />
+        <h3 class="mt-1 text-lg font-semibold text-gray-900">
+          Приложение поддерживает работу только на широких экранах!
+        </h3>
+        <p class="mt-4 text-gray-500">Чтобы приступить к анализу данных, откройте эту страницу на компьютере.</p>
+      </div>
+    </div>
+    <div
+      class="hidden mx-auto w-full flex-grow bg-slate-300 lg:flex lg:flex-row"
       style="max-height: calc(100vh - 4rem)"
     >
       <div
@@ -51,7 +68,10 @@
           <div class="ml-2 mb-2 text-slate-700 text-xl font-semibold">
             <p class="text-xl font-semibold">Запрос</p>
           </div>
-          <div class="h-full flex flex-col bg-white rounded-xl overflow-hidden">
+          <div
+            class="h-full flex flex-col rounded-xl overflow-hidden"
+            :class="[reactiveSchema.length > 0 ? 'bg-white' : 'bg-gray-50']"
+          >
             <query-navbar-top :is-query-active="ncol > 0" @edit-query="editQuery" />
             <div class="flex-1 flex justify-center rounded-b-xl overflow-auto">
               <query-list
@@ -70,7 +90,7 @@
           <div class="ml-2 mb-2 text-slate-700 text-xl font-semibold">
             <p class="text-xl font-semibold">Фильтры</p>
           </div>
-          <div class="h-full rounded-xl bg-white overflow-hidden">
+          <div class="h-full rounded-xl overflow-hidden" :class="[filterTasks.length > 0 ? 'bg-white' : 'bg-gray-50']">
             <filter-navbar-top :is-filter-active="filterTasks.length > 0" @clearFilters="clearFilters" />
             <div class="flex justify-center overflow-auto" style="height: calc(100% - 4rem)">
               <filter-list
@@ -112,15 +132,15 @@
                 @stats="toggleStats"
               />
             </div>
-            <div v-else class="w-full h-full flex items-center justify-center">
+            <div v-else class="w-full h-full flex items-center justify-center p-3 bg-gray-50">
               <div class="text-center">
-                <table-cells-icon class="mx-auto h-16 w-16 text-gray-400" aria-hidden="true" />
-                <h3 class="mt-2 text-lg font-semibold text-gray-900">Нет данных для отображения</h3>
-                <p class="mt-6 text-gray-500">
-                  Чтобы начать анализ данных, выберите исследование в верхнем правом углу экрана
+                <cube-transparent-icon class="mx-auto h-20 w-20 text-gray-500" aria-hidden="true" />
+                <h3 class="mt-3 mb-6 text-lg font-semibold text-gray-900">Нет данных для отображения</h3>
+                <p class="inline text-gray-500">
+                  Чтобы начать анализ данных, выберите исследование в верхнем правом углу
                 </p>
-                <p class="inline-flex items-center text-gray-500 cursor-text">
-                  и нажмите на кнопку
+                <p class="mt-1 inline-flex items-center text-gray-500 cursor-text">
+                  экрана и нажмите на кнопку
                   <span class="ml-2 inline-flex items-center py-1 pl-1 pr-2 rounded-md border border-gray-300">
                     <plus-icon class="inline mr-0.5 h-5 w-5" aria-hidden="true" />
                     Новый запрос</span
@@ -144,7 +164,10 @@
           <p class="text-xl font-semibold">Статистика</p>
         </div>
 
-        <div class="h-full rounded-xl bg-white overflow-hidden">
+        <div
+          class="h-full rounded-xl overflow-hidden"
+          :class="[stats.variable && filteredTable.length > 0 ? 'bg-white' : 'bg-gray-50']"
+        >
           <statistics-navbar-top
             :variable="stats.variable"
             :has-data="filteredTable.length > 0"
@@ -180,7 +203,8 @@
   //TODO: feedback button and initial alert about fake data / evaluation purposes
   import { ref, computed, watch, onMounted } from 'vue';
   import { sort } from 'fast-sort';
-  import { PlusIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon, TableCellsIcon } from '@heroicons/vue/20/solid';
+  import { TvIcon, CubeTransparentIcon } from '@heroicons/vue/24/outline';
+  import { PlusIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/20/solid';
   import logo from '@/assets/RWE-BI-logo.svg';
   import type {
     ReactiveTableSchemaInfo,
