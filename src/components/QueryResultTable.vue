@@ -50,7 +50,7 @@
           <td
             :class="[
               rowIdx < nrow - 1 ? 'border-b border-gray-200' : '',
-              'px-3 py-1 text-sm text-gray-500 whitespace-pre-wrap border-r border-gray-200',
+              'px-3 py-1 text-sm text-gray-600 whitespace-pre-wrap border-r border-gray-200',
             ]"
             style="min-width: 2rem; max-width: 20rem"
           >
@@ -62,7 +62,7 @@
             :class="[
               rowIdx < nrow - 1 ? 'border-b border-gray-200' : '',
               columnIdx < ncol - 1 ? 'border-r border-gray-200' : '',
-              'px-3 py-1 text-sm text-gray-500 whitespace-pre-wrap',
+              'px-3 py-1 text-sm text-gray-600 whitespace-pre-wrap',
             ]"
             style="min-width: 2rem; max-width: 12rem"
           >
@@ -77,7 +77,7 @@
           <td
             :colspan="visibleSchema.length + 1"
             :class="[ncol > 0 ? 'border-r border-gray-200' : '']"
-            class="px-3 py-1 text-sm text-gray-500 text-center whitespace-nowrap"
+            class="px-3 py-1 text-sm text-gray-600 text-center whitespace-nowrap"
           >
             Нет данных для отображения
           </td>

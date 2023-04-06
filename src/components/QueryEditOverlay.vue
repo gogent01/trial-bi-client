@@ -1,6 +1,11 @@
 <template>
   <TransitionRoot as="template" :show="isVisible">
-    <Dialog :initialFocus="buttonCancel" as="div" class="relative z-10" @close="emit('cancel')">
+    <Dialog
+      :initialFocus="buttonCancel as unknown as HTMLElement"
+      as="div"
+      class="relative z-10"
+      @close="emit('cancel')"
+    >
       <TransitionChild
         as="template"
         enter="ease-out duration-300"
@@ -30,25 +35,25 @@
             >
               <div class="flex-1 flex gap-6 overflow-hidden">
                 <div class="basis-1/4 flex-shrink-0 flex-grow-0 flex flex-col">
-                  <div class="flex mb-2 ml-2 items-center justify-between text-slate-700">
+                  <div class="flex mb-2 ml-2 items-center justify-between text-slate-900">
                     <p class="text-xl font-semibold">Запрос</p>
                   </div>
 
                   <div class="h-full rounded-xl bg-white overflow-auto">
                     <query-edit-column-list v-if="selectedSchema.length > 0" :schema="selectedSchema" />
-                    <p v-else class="p-4 text-sm text-gray-600 text-center">Нет данных для отображения</p>
+                    <p v-else class="p-4 text-sm text-gray-800 text-center">Нет данных для отображения</p>
                   </div>
                 </div>
 
                 <div class="basis-3/4 flex flex-col">
-                  <div class="flex mb-2 ml-2 items-center justify-between text-slate-700">
+                  <div class="flex mb-2 ml-2 items-center justify-between text-slate-900">
                     <p class="text-xl font-semibold">Доступные данные</p>
                   </div>
 
                   <div class="h-full rounded-xl bg-white overflow-auto">
                     <div class="w-full p-4 relative flex justify-center">
                       <query-edit-column-select v-if="schema.length > 0" :schema="schema" @change="emitChange" />
-                      <p v-else class="text-sm text-gray-600 text-center">Нет данных для отображения</p>
+                      <p v-else class="text-sm text-gray-800 text-center">Нет данных для отображения</p>
                     </div>
                   </div>
                 </div>
@@ -56,7 +61,7 @@
               <div class="mt-4 basis-10 flex gap-2 items-center justify-end">
                 <button
                   ref="buttonCancel"
-                  class="relative px-4 inline-flex items-center h-full rounded-md border border-gray-400 bg-white text-sm font-medium text-slate-700 shadow-sm hover:bg-gray-100"
+                  class="relative px-4 inline-flex items-center h-full rounded-md border border-gray-400 bg-white text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-100"
                   @click="emit('cancel')"
                 >
                   <x-mark-icon class="-ml-2 mr-1 h-5 w-5" aria-hidden="true" />

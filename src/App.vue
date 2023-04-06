@@ -43,19 +43,20 @@
       style="height: calc(100vh - 4rem)"
     >
       <div class="w-full px-4 py-6 text-center bg-gray-50 rounded-xl">
-        <tv-icon class="mx-auto h-16 w-16 text-gray-500" aria-hidden="true" />
+        <tv-icon class="mx-auto h-16 w-16 text-gray-600" aria-hidden="true" />
         <h3 class="mt-1 text-lg font-semibold text-gray-900">
           Приложение поддерживает работу только на широких экранах!
         </h3>
-        <p class="mt-4 text-gray-500">Чтобы приступить к анализу данных, откройте эту страницу на компьютере.</p>
+        <p class="mt-4 text-gray-600">Чтобы приступить к анализу данных, откройте эту страницу на компьютере.</p>
       </div>
     </div>
+
     <div
       class="hidden mx-auto w-full flex-grow bg-slate-300 lg:flex lg:flex-row"
       style="max-height: calc(100vh - 4rem)"
     >
       <div
-        class="pt-2 w-8 mx-auto bg-slate-400 flex flex-col gap-1 items-center text-slate-800 cursor-pointer hover:text-slate-700"
+        class="pt-2 w-8 mx-auto bg-slate-400 flex flex-col gap-1 items-center text-slate-900 cursor-pointer hover:text-slate-700"
         @click="toggleQueryVisibility"
       >
         <chevron-double-right-icon v-if="queryHidden" class="h-6 w-6 cursor-pointer"></chevron-double-right-icon>
@@ -80,7 +81,7 @@
                 @toggleColumnVisibility="toggleColumnVisibility"
               />
               <div v-else class="w-full p-3">
-                <p class="text-sm text-gray-600 text-center">Нет данных для отображения</p>
+                <p class="text-sm text-gray-700 text-center">Нет данных для отображения</p>
               </div>
             </div>
           </div>
@@ -103,7 +104,7 @@
                 @remove="removeFilter"
               />
               <div v-else class="w-full p-3">
-                <p class="text-sm text-gray-600 text-center">Нет фильтров для отображения</p>
+                <p class="text-sm text-gray-700 text-center">Нет фильтров для отображения</p>
               </div>
             </div>
           </div>
@@ -134,14 +135,14 @@
             </div>
             <div v-else class="w-full h-full flex items-center justify-center p-3 bg-gray-50">
               <div class="text-center">
-                <cube-transparent-icon class="mx-auto h-20 w-20 text-gray-500" aria-hidden="true" />
+                <cube-transparent-icon class="mx-auto h-20 w-20 text-gray-600" aria-hidden="true" />
                 <h3 class="mt-3 mb-6 text-lg font-semibold text-gray-900">Нет данных для отображения</h3>
-                <p class="inline text-gray-500">
+                <p class="inline text-gray-600">
                   Чтобы начать анализ данных, выберите исследование в верхнем правом углу
                 </p>
-                <p class="mt-1 inline-flex items-center text-gray-500 cursor-text">
+                <p class="mt-1 inline-flex items-center text-gray-600 cursor-text">
                   экрана и нажмите на кнопку
-                  <span class="ml-2 inline-flex items-center py-1 pl-1 pr-2 rounded-md border border-gray-300">
+                  <span class="ml-2 inline-flex items-center py-1 pl-1 pr-2 rounded-md border border-gray-400">
                     <plus-icon class="inline mr-0.5 h-5 w-5" aria-hidden="true" />
                     Новый запрос</span
                   >
@@ -180,14 +181,14 @@
                 :variable="stats.variable"
                 :data="stats.data"
               />
-              <p v-else class="text-sm text-gray-600 text-center">Нет данных для отображения</p>
+              <p v-else class="text-sm text-gray-700 text-center">Нет данных для отображения</p>
             </div>
           </div>
         </div>
       </div>
 
       <div
-        class="pt-2 w-8 mx-auto bg-slate-400 flex flex-col gap-1 items-center text-slate-800 cursor-pointer hover:text-slate-700"
+        class="pt-2 w-8 mx-auto bg-slate-400 flex flex-col gap-1 items-center text-slate-900 cursor-pointer hover:text-slate-700"
         @click="toggleStatisticsVisibility"
       >
         <chevron-double-left-icon v-if="statisticsHidden" class="h-6 w-6 cursor-pointer"></chevron-double-left-icon>

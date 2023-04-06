@@ -23,10 +23,11 @@
                 name="page"
                 id="page"
                 type="text"
-                class="block p-2 w-7 h-7 border border-transparent rounded-md bg-slate-300 text-center focus:border-teal-500 focus:ring-teal-500"
+                class="block p-2 w-7 h-7 border border-transparent rounded-md bg-slate-200 text-center focus:border-teal-500 focus:ring-teal-500"
                 placeholder="1"
                 @input="sanitizeNumberInput"
                 @keyup.enter="emitUpdate"
+                @blur="restore"
               />
               <p>из {{ maxPage }}</p>
             </div>
@@ -62,27 +63,33 @@
   const rowNumberStart = computed(() => Math.min((props.currentPage - 1) * props.limit + 1, props.nrow));
   const rowNumberEnd = computed(() => Math.min(rowNumberStart.value + props.limit - 1, props.nrow));
 
-  const displayedPage = ref(props.currentPage);
+  const displayedPage = ref(props.currentPage.toString());
   watchEffect(() => {
-    displayedPage.value = props.currentPage;
+    displayedPage.value = props.currentPage.toString();
   });
 
+  function restore() {
+    displayedPage.value = props.currentPage.toString();
+  }
+
   function emitUpdate() {
-    if (displayedPage.value === props.currentPage) return;
-    if (displayedPage.value < 1 || displayedPage.value > props.maxPage) {
-      displayedPage.value = props.currentPage;
+    const displayedPageNumber = parseInt(displayedPage.value, 10);
+    if (displayedPageNumber === props.currentPage) return;
+    if (displayedPageNumber < 1 || displayedPageNumber > props.maxPage) {
+      displayedPage.value = props.currentPage.toString();
       return;
     }
 
-    emit('update', displayedPage.value);
+    emit('update', parseInt(displayedPage.value, 10));
   }
 
   function incrementPage(delta: number) {
-    if (displayedPage.value + delta < 1) return;
-    if (displayedPage.value + delta > props.maxPage) return;
+    const displayedPageNumber = parseInt(displayedPage.value, 10);
+    if (displayedPageNumber + delta < 1) return;
+    if (displayedPageNumber + delta > props.maxPage) return;
 
-    displayedPage.value = displayedPage.value + delta;
-    emit('update', displayedPage.value);
+    displayedPage.value = (displayedPageNumber + delta).toString();
+    emit('update', parseInt(displayedPage.value, 10));
   }
 
   function sanitizeNumberInput(event: Event) {

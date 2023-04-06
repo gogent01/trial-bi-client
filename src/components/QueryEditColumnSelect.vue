@@ -5,7 +5,7 @@
         <p class="text-lg font-semibold text-gray-900">{{ group.origin.name }}</p>
         <p
           v-if="group.columns.every((column) => column.selected)"
-          class="mr-2 text-xs text-gray-600 cursor-pointer hover:text-gray-800"
+          class="mr-2 text-xs text-gray-700 cursor-pointer hover:text-gray-800"
           @click="deselectAll(group.origin.key)"
         >
           Убрать все
