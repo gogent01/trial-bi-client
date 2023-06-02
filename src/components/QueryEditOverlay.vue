@@ -30,7 +30,7 @@
             leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <DialogPanel
-              class="relative flex flex-col p-6 transform overflow-hidden rounded-lg bg-slate-300 text-left shadow-xl transition-all w-2/3"
+              class="relative flex flex-col p-6 transform overflow-hidden rounded-lg bg-slate-300 text-left shadow-xl transition-all xl:w-4/5"
               style="height: 80vh"
             >
               <div class="flex-1 flex gap-6 overflow-hidden">

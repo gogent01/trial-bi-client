@@ -18,7 +18,7 @@
           Выбрать все
         </p>
       </div>
-      <ul role="list" class="mt-2 w-full columns-3">
+      <ul role="list" class="mt-2 w-full columns-2 xl:columns-3">
         <li
           v-for="column in group.columns"
           :key="column.key"

@@ -202,6 +202,7 @@
 <script setup lang="ts">
   //TODO: check on how everything manages with NA data
   //TODO: feedback button and initial alert about fake data / evaluation purposes
+
   import { ref, computed, watch, onMounted } from 'vue';
   import { sort } from 'fast-sort';
   import { TvIcon, CubeTransparentIcon } from '@heroicons/vue/24/outline';
@@ -216,7 +217,7 @@
     DataQuery,
     TableSchemaInfo,
   } from '@/data/types';
-  import { Router as APIRouter } from '@/data/Router';
+  import { FakeRouter, APIRouter } from '@/data/Router';
   import type { TrialPublic } from '@/data/Router';
   import { FilterTask } from '@/classes/FilterTask';
   import type { FilterType } from '@/classes/FilterTask';
@@ -252,7 +253,12 @@
   }
 
   const apiRouter = new APIRouter();
-  const trials: TrialPublic[] = apiRouter.getTrials();
+  const trials = ref<TrialPublic[]>([]);
+
+  onMounted(async () => {
+    trials.value = await apiRouter.getTrials();
+  });
+
   const selectedTrialIdx = ref(-1);
   function updateSelectedTrialIdx(idx: number) {
     selectedTrialIdx.value = idx;
@@ -277,10 +283,10 @@
     reactiveCompleteSchema.value = completeSchema.map((columnInfo) => ({ ...columnInfo }));
   }
 
-  function createQuery() {
+  async function createQuery() {
     if (selectedTrialIdx.value < 0) return;
     backupReactiveCompleteSchema();
-    completeSchema = addReactivity(apiRouter.getCompleteSchema(trials[selectedTrialIdx.value].key));
+    completeSchema = addReactivity(await apiRouter.getCompleteSchema(trials.value[selectedTrialIdx.value].key));
     reactiveCompleteSchema.value = completeSchema.map((columnInfo) => ({ ...columnInfo }));
     isNewQuery.value = true;
     toggleQueryEditOverlayVisibility();
@@ -309,15 +315,15 @@
     reactiveCompleteSchema.value[columnIdx].selected = !reactiveCompleteSchema.value[columnIdx].selected;
   }
 
-  function getDataFromQuery() {
+  async function getDataFromQuery() {
     const query: DataQuery = reactiveCompleteSchema.value
       .filter((column) => column.selected)
       .map((column) => ({
-        trialKey: trials[selectedTrialIdx.value].key,
+        trialKey: trials.value[selectedTrialIdx.value].key,
         modelKey: column.origin.key,
         columnKey: column.key,
       }));
-    const dbData = apiRouter.getDataFromQuery(query);
+    const dbData = await apiRouter.getDataFromQuery(query);
     schema.value = dbData.schema;
     data.value = dbData.data;
     currentPage.value = 1;

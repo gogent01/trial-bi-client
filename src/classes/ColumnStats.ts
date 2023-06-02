@@ -21,9 +21,10 @@ export class ColumnStats {
     if (columnValues.length === 0) {
       this.data = [{ param: 'Число наблюдений', value: columnValues.length.toString() }];
     } else if (columnMetadata.type === 'number') {
-      const values = columnValues as number[];
+      const values = (columnValues as number[]).filter((value) => value !== null);
       this.data = [
-        { param: 'Число наблюдений', value: values.length.toString() },
+        { param: 'Число наблюдений', value: columnValues.length.toString() },
+        { param: 'Заполненных значений', value: values.length.toString() },
         { param: 'Минимум', value: this.pretty(min(values)) },
         { param: '1-ый квартиль', value: this.pretty(quantile(values, 0.25)) },
         { param: 'Медиана', value: this.pretty(median(values)) },
@@ -34,27 +35,38 @@ export class ColumnStats {
         { param: 'Станд. отклонение', value: this.pretty(standardDeviation(values)) },
       ];
     } else if (columnMetadata.type === 'text') {
-      const values = columnValues as string[];
-      this.data = [{ param: 'Число наблюдений', value: values.length.toString() }];
+      const values = (columnValues as string[]).filter((value) => value !== null);
+      this.data = [
+        { param: 'Число наблюдений', value: columnValues.length.toString() },
+        { param: 'Заполненных значений', value: values.length.toString() },
+      ];
     } else if (columnMetadata.type === 'factor') {
-      const values = columnValues as string[];
-      this.data = [{ param: 'Число наблюдений', value: values.length.toString() }]
+      const values = (columnValues as string[]).filter((value) => value !== null);
+      this.data = [
+        { param: 'Число наблюдений', value: columnValues.length.toString() },
+        { param: 'Заполненных значений', value: values.length.toString() },
+      ]
         .concat(
-          columnMetadata.levels!.map((level) => ({
-            param: level,
-            value: values.filter((value) => value === level).length.toString(),
-          }))
+          columnMetadata
+            .levels!.filter((level) => level !== null && level !== 'Нет данных')
+            .map((level) => ({
+              param: level,
+              value: (values as string[]).filter((value) => value === level).length.toString(),
+            }))
         )
         .concat([
           {
             param: 'Нет данных',
-            value: values.filter((value) => value === undefined).length.toString(),
+            value: (columnValues as string[])
+              .filter((value) => value === null || value === 'Нет данных')
+              .length.toString(),
           },
         ]);
     } else if (columnMetadata.type === 'date') {
-      const values = columnValues as Date[];
+      const values = (columnValues as Date[]).filter((value) => value !== null);
       this.data = [
-        { param: 'Число наблюдений', value: values.length.toString() },
+        { param: 'Число наблюдений', value: columnValues.length.toString() },
+        { param: 'Заполненных значений', value: values.length.toString() },
         { param: 'Минимум', value: new Date(min(values.map((d) => d.getTime()))).toLocaleDateString('ru') },
         { param: 'Максимум', value: new Date(max(values.map((d) => d.getTime()))).toLocaleDateString('ru') },
       ];
