@@ -9,10 +9,11 @@
           <div v-if="isSortActive" class="flex-shrink-0 h-full">
             <button
               type="button"
-              class="relative inline-flex items-center h-full rounded-md bg-white px-4 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+              :class="[isSortActive ? 'hover:bg-gray-50' : 'opacity-50 cursor-default']"
+              class="relative inline-flex items-center h-full rounded-md bg-white px-4 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-inset ring-gray-300"
               @click="isSortActive && emit('clearSort')"
             >
-              <x-mark-icon class="-ml-2 mr-1 h-5 w-5" aria-hidden="true" />
+              <trash-icon class="-ml-2 mr-1 h-5 w-5" aria-hidden="true" />
               <span>Сбросить сортировку</span>
             </button>
           </div>
@@ -35,7 +36,8 @@
 </template>
 
 <script setup lang="ts">
-  import { ArrowDownTrayIcon, XMarkIcon } from '@heroicons/vue/20/solid';
+  import { ArrowDownTrayIcon } from '@heroicons/vue/20/solid';
+  import { TrashIcon } from '@heroicons/vue/24/outline';
 
   interface Props {
     ncol: number;

@@ -3,7 +3,7 @@
     <div class="mx-auto">
       <div class="flex justify-between h-16 p-3">
         <div class="flex items-center gap-2 h-full">
-          <div class="flex-shrink-0 h-full">
+          <div v-if="isFilterActive" class="flex-shrink-0 h-full">
             <button
               :class="[isFilterActive ? 'hover:bg-gray-50' : 'opacity-50 cursor-default']"
               class="relative inline-flex items-center h-full rounded-md bg-white px-4 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-inset ring-gray-300"
@@ -31,8 +31,7 @@
 </template>
 
 <script setup lang="ts">
-  import { FunnelIcon, TrashIcon } from '@heroicons/vue/24/outline';
-  import { XMarkIcon } from '@heroicons/vue/20/solid';
+  import { TrashIcon } from '@heroicons/vue/24/outline';
 
   interface Props {
     isFilterActive: boolean;
