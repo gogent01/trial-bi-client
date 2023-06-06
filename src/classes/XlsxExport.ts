@@ -27,9 +27,9 @@ export class XlsxExport {
       width: Math.min(Math.max(column.name.length, colwidths[idx]), 30) + 1,
     }));
     worksheet.addRows(data);
-    worksheet.eachRow({ includeEmpty: true }, (row, idx) => {
+    worksheet.eachRow({ includeEmpty: true }, (row, rowIdx) => {
       row.eachCell((cell) => {
-        if (idx === 1) {
+        if (rowIdx === 1) {
           cell.font = { bold: true };
           cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
         } else {
@@ -37,7 +37,7 @@ export class XlsxExport {
         }
 
         const stringValue = (cell.value || '').toString();
-        if (stringValue.split('.').length <= 1) {
+        if (stringValue.split('.').length <= 2) {
           const numericValue = parseFloat(stringValue);
           if (!isNaN(numericValue)) {
             cell.value = numericValue;
@@ -47,8 +47,8 @@ export class XlsxExport {
     });
 
     const buffer = await workbook.xlsx.writeBuffer();
-    let blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    let link = document.createElement('a');
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = `${fileName}.xlsx`;
     link.click();

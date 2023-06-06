@@ -6,10 +6,18 @@ import type { Model } from '@/data/Model';
 // import { QueryPlanner } from '@/data/QueryPlanner';
 import { axiosInstance } from '@/services/axios';
 
-type Trial = {
+type APITrial = {
+  id: number;
   key: string;
   name: string;
-  database?: Database;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Trial = {
+  id: number;
+  key: string;
+  name: string;
   created_at: Date;
   updated_at: Date;
 };
@@ -17,7 +25,7 @@ type Trial = {
 export type TrialPublic = Omit<Trial, 'database'>;
 
 abstract class Router {
-  abstract getTrials(): Promise<TrialPublic[]>;
+  abstract getTrials(): Promise<Trial[]>;
   abstract getCompleteSchema(trialKey: string): Promise<TableSchemaInfo>;
   abstract getDataFromQuery(query: DataQuery): Promise<Model>;
 }
@@ -80,25 +88,21 @@ abstract class Router {
 // }
 
 export class APIRouter extends Router {
-  async getTrials(): Promise<TrialPublic[]> {
-    const trials: Trial[] = [
-      {
-        key: 'rwe_breast',
-        name: 'RWE: рак молочной железы',
-        created_at: new Date('2022-01-10'),
-        updated_at: new Date('2023-01-18'),
-      },
-      {
-        key: 'rwe_melanoma',
-        name: 'RWE: меланома',
-        created_at: new Date('2022-01-10'),
-        updated_at: new Date('2023-01-18'),
-      },
-    ];
+  async getTrials(): Promise<Trial[]> {
+    const response = await axiosInstance.get('/api/1.0/trials').catch((error) => console.log(error));
 
-    return new Promise((resolve) => {
-      resolve(trials.map((trial) => ({ ...trial, database: undefined })));
-    });
+    if (!response) return [];
+
+    const apiTrials: APITrial[] = response.data;
+    return apiTrials.map(
+      (trial: APITrial): Trial => ({
+        id: trial.id,
+        key: trial.key,
+        name: trial.name,
+        created_at: new Date(trial.created_at),
+        updated_at: new Date(trial.updated_at),
+      })
+    );
   }
   async getCompleteSchema(trialKey: string): Promise<TableSchemaInfo> {
     return axiosInstance

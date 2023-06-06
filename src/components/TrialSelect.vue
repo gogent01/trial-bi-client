@@ -52,10 +52,10 @@
   import { computed } from 'vue';
   import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue';
   import { CheckIcon, ChevronDownIcon } from '@heroicons/vue/20/solid';
-  import type { TrialPublic } from '@/data/Router';
+  import type { Trial } from '@/data/Router';
 
   interface Props {
-    trials: TrialPublic[];
+    trials: Trial[];
     selectedTrialIdx: number;
   }
 

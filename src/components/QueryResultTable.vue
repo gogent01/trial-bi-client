@@ -103,8 +103,8 @@
   const props = defineProps<Props>();
   const emit = defineEmits(['sort', 'filter', 'stats']);
 
-  const ncol = ref(props.table.length > 0 ? Object.keys(props.table[0]).length : 0);
-  const nrow = ref(props.table.length);
+  const ncol = computed(() => (props.table.length > 0 ? Object.keys(props.table[0]).length : 0));
+  const nrow = computed(() => props.table.length);
 
   const visibleSchema = computed(() => {
     return props.reactiveSchema.filter((column) => !column.invisible);

@@ -1,11 +1,6 @@
 <template>
   <TransitionRoot as="template" :show="isVisible">
-    <Dialog
-      :initialFocus="buttonCancel as unknown as HTMLElement"
-      as="div"
-      class="relative z-10"
-      @close="emit('cancel')"
-    >
+    <Dialog :initialFocus="buttonCancel as unknown as HTMLElement" as="div" class="relative z-10" @close="cancel">
       <TransitionChild
         as="template"
         enter="ease-out duration-300"
@@ -30,7 +25,7 @@
             leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <DialogPanel
-              class="relative flex flex-col p-6 transform overflow-hidden rounded-lg bg-slate-300 text-left shadow-xl transition-all xl:w-4/5"
+              class="relative w-full flex flex-col p-6 transform overflow-hidden rounded-lg bg-slate-300 text-left shadow-xl transition-all xl:w-4/5"
               style="height: 80vh"
             >
               <div class="flex-1 flex gap-6 overflow-hidden">
@@ -62,18 +57,29 @@
                 <button
                   ref="buttonCancel"
                   class="relative px-4 inline-flex items-center h-full rounded-md border border-gray-400 bg-white text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-100"
-                  @click="emit('cancel')"
+                  @click="cancel"
                 >
                   <x-mark-icon class="-ml-2 mr-1 h-5 w-5" aria-hidden="true" />
                   <span>Отмена</span>
                 </button>
                 <button
                   type="button"
-                  class="relative px-4 inline-flex items-center h-full rounded-md border border-transparent bg-teal-600 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-                  @click="emit('sendQuery')"
+                  :class="
+                    !isRequestSent
+                      ? 'bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2'
+                      : 'bg-teal-700'
+                  "
+                  class="relative w-44 inline-flex items-center h-full rounded-md border border-transparent text-sm font-medium text-white shadow-sm"
+                  @click="sendQuery"
                 >
-                  <chevron-right-icon class="-ml-2 mr-1 h-5 w-5" aria-hidden="true" />
-                  Отправить запрос
+                  <span v-if="!isRequestSent" class="mx-auto inline-flex items-center">
+                    <chevron-right-icon class="-ml-2 mr-1 h-5 w-5" aria-hidden="true" />
+                    Отправить запрос</span
+                  >
+                  <span
+                    v-else
+                    class="mx-auto h-7 w-7 rounded-full border-4 border-l-white border-t-white border-r-white border-b-teal-700 animate-spin"
+                  ></span>
                 </button>
               </div>
             </DialogPanel>
@@ -85,7 +91,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed } from 'vue';
+  import { ref, computed, watch } from 'vue';
   import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue';
   import { XMarkIcon, ChevronRightIcon } from '@heroicons/vue/24/outline';
   import type { ReactiveTableSchemaInfo } from '@/data/types';
@@ -93,19 +99,45 @@
   import QueryEditColumnList from '@/components/QueryEditColumnList.vue';
   import QueryEditColumnSelect from '@/components/QueryEditColumnSelect.vue';
 
+  const isRequestSent = ref(false);
   const buttonCancel = ref(null);
 
   interface Props {
     isVisible: boolean;
     schema: ReactiveTableSchemaInfo;
   }
-
   const props = defineProps<Props>();
-  const emit = defineEmits(['change', 'sendQuery', 'cancel']);
+
+  interface Emits {
+    (e: 'cancel'): void;
+    (e: 'change', at: { originKey: string; columnKey: string }): void;
+    (e: 'sendQuery'): void;
+  }
+  const emit = defineEmits<Emits>();
+
+  watch(
+    () => props.isVisible,
+    () => {
+      if (props.isVisible) {
+        isRequestSent.value = false;
+      }
+    }
+  );
 
   const selectedSchema = computed(() => props.schema.filter((column) => column.selected));
 
   function emitChange(at: { originKey: string; columnKey: string }) {
     emit('change', at);
+  }
+
+  function sendQuery() {
+    if (props.schema.some((column) => column.selected)) {
+      isRequestSent.value = true;
+      emit('sendQuery');
+    }
+  }
+
+  function cancel() {
+    emit('cancel');
   }
 </script>

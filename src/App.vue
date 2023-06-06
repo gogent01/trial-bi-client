@@ -10,19 +10,26 @@
               <img class="h-8 w-auto text-white" :src="logo" alt="Your Company" />
             </div>
           </div>
-          <div class="h-10 flex gap-2">
+          <div class="h-10 flex gap-2 items-center">
+            <div
+              v-if="!areTrialsLoaded"
+              class="h-7 w-7 rounded-full border-4 border-l-white border-t-white border-r-white border-b-teal-600 animate-spin"
+            ></div>
+
             <trial-select
               :trials="trials"
               :selected-trial-idx="selectedTrialIdx"
-              @update="updateSelectedTrialIdx"
+              :disabled="!areTrialsLoaded"
+              :class="[areTrialsLoaded ? '' : 'opacity-50 cursor-default']"
               class="hidden lg:block"
+              @update="updateSelectedTrialIdx"
             />
             <button
               :class="[selectedTrialIdx > -1 ? 'hover:bg-teal-800' : 'opacity-50 cursor-default']"
               class="inline-flex items-center min-w-max rounded-lg border border-transparent bg-teal-900 px-4 py-2 font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
               @click="createQuery"
             >
-              <plus-icon class="-ml-2 mr-1 h-6 w-6"></plus-icon> Новый запрос
+              <plus-icon class="-ml-2 mr-1 h-6 w-6"></plus-icon>Новый запрос
             </button>
           </div>
         </div>
@@ -35,6 +42,7 @@
       @change="toggleCompleteSchemaField"
       @sendQuery="getDataFromQuery"
       @cancel="cancelQueryEdit"
+      class="hidden lg:block"
     />
 
     <!-- 3 column wrapper -->
@@ -200,12 +208,13 @@
 </template>
 
 <script setup lang="ts">
-  //TODO: check on how everything manages with NA data
-  //TODO: feedback button and initial alert about fake data / evaluation purposes
+  // TODO: check on how everything manages with NA data
+  // TODO: feedback button and initial alert about fake data / evaluation purposes
+  // TODO: some loading feedback on send query modal
 
   import { ref, computed, watch, onMounted } from 'vue';
   import { sort } from 'fast-sort';
-  import { TvIcon, CubeTransparentIcon } from '@heroicons/vue/24/outline';
+  import { TvIcon, CubeTransparentIcon, ArrowPathIcon } from '@heroicons/vue/24/outline';
   import { PlusIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/20/solid';
   import logo from '@/assets/RWE-BI-logo.svg';
   import type {
@@ -218,7 +227,7 @@
     TableSchemaInfo,
   } from '@/data/types';
   import { APIRouter } from '@/data/Router';
-  import type { TrialPublic } from '@/data/Router';
+  import type { Trial } from '@/data/Router';
   import { FilterTask } from '@/classes/FilterTask';
   import type { FilterType } from '@/classes/FilterTask';
   import { SortTask } from '@/classes/SortTask';
@@ -237,6 +246,7 @@
   import StatisticsTable from '@/components/StatisticsTable.vue';
   import { XlsxExport } from '@/classes/XlsxExport';
 
+  const areTrialsLoaded = ref(false);
   const queryHidden = ref(false);
   const statisticsHidden = ref(false);
   function toggleQueryVisibility() {
@@ -253,10 +263,12 @@
   }
 
   const apiRouter = new APIRouter();
-  const trials = ref<TrialPublic[]>([]);
+  const trials = ref<Trial[]>([]);
 
   onMounted(async () => {
+    areTrialsLoaded.value = false;
     trials.value = await apiRouter.getTrials();
+    areTrialsLoaded.value = true;
   });
 
   const selectedTrialIdx = ref(-1);
