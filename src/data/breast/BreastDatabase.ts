@@ -1,10 +1,10 @@
-import { Database } from '@/data/Database';
-import { buildPatients } from '@/data/breast/patients';
-import { buildComorbidities } from '@/data/breast/comorbidities';
-import { buildCancers } from '@/data/breast/cancers';
-import { buildNeoTherapies } from '@/data/breast/neoTherapy';
-import { buildNeoDrugs } from '@/data/breast/neoDrugs';
-import type { Model } from '@/data/Model';
+import { Database } from '../Database';
+import { buildPatients } from '../breast/patients';
+import { buildComorbidities } from '../breast/comorbidities';
+import { buildCancers } from '../breast/cancers';
+import { buildNeoTherapies } from '../breast/neoTherapy';
+import { buildNeoDrugs } from '../breast/neoDrugs';
+import type { Model } from '../Model';
 
 export class BreastDatabase extends Database {
   constructor(length: number) {

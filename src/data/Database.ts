@@ -1,5 +1,5 @@
-import { Model } from '@/data/Model';
-import type { TableColumn, TableData, TableSchemaInfo, DataQuery } from '@/data/types';
+import { Model } from './Model';
+import type { TableColumn, TableData, TableSchemaInfo, DataQuery } from './types';
 
 export abstract class Database {
   models: Model[];

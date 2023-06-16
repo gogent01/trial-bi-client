@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
-import { Model } from '@/data/Model';
-import type { TableRow, TableData } from '@/data/types';
-import { neoTherapySchema } from '@/data/breast/neoTherapy/schema';
+import { Model } from '../../Model';
+import type { TableRow, TableData } from '../../types';
+import { neoTherapySchema } from '../../breast/neoTherapy/schema';
 
 export function buildNeoTherapies(cancers: TableData): Model {
   const schema = neoTherapySchema;

@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
-import { Model } from '@/data/Model';
-import type { TableRow, TableData } from '@/data/types';
-import { comorbiditySchema } from '@/data/breast/comorbidities/schema';
+import { Model } from '../../Model';
+import type { TableRow, TableData } from '../../types';
+import { comorbiditySchema } from '../../breast/comorbidities/schema';
 
 export function buildComorbidities(patients: TableData): Model {
   const schema = comorbiditySchema;

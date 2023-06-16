@@ -26,7 +26,7 @@
             />
             <button
               :class="[selectedTrialIdx > -1 ? 'hover:bg-teal-800' : 'opacity-50 cursor-default']"
-              class="inline-flex items-center min-w-max rounded-lg border border-transparent bg-teal-900 px-4 py-2 font-medium text-white shadow-sm"
+              class="inline-flex items-center min-w-max rounded-lg border border-transparent bg-teal-900 px-4 py-2 font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
               @click="createQuery"
             >
               <plus-icon class="-ml-2 mr-1 h-6 w-6"></plus-icon>Новый запрос
@@ -210,13 +210,12 @@
 <script setup lang="ts">
   // TODO: check on how everything manages with NA data
   // TODO: feedback button and initial alert about fake data / evaluation purposes
-  // TODO: some loading feedback on send query modal
 
   import { ref, computed, watch, onMounted } from 'vue';
   import { sort } from 'fast-sort';
   import { TvIcon, CubeTransparentIcon, ArrowPathIcon } from '@heroicons/vue/24/outline';
   import { PlusIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/20/solid';
-  import logo from '@/assets/RWE-BI-logo.svg';
+  import logo from './assets/RWE-BI-logo.svg';
   import type {
     ReactiveTableSchemaInfo,
     ReactiveTableSchema,
@@ -225,26 +224,26 @@
     TableData,
     DataQuery,
     TableSchemaInfo,
-  } from '@/data/types';
-  import { APIRouter } from '@/data/Router';
-  import type { Trial } from '@/data/Router';
-  import { FilterTask } from '@/classes/FilterTask';
-  import type { FilterType } from '@/classes/FilterTask';
-  import { SortTask } from '@/classes/SortTask';
-  import { ColumnStats } from '@/classes/ColumnStats';
+  } from './data/types';
+  import { APIRouter } from './data/Router';
+  import type { Trial } from './data/Router';
+  import { FilterTask } from './classes/FilterTask';
+  import type { FilterType } from './classes/FilterTask';
+  import { SortTask } from './classes/SortTask';
+  import { ColumnStats } from './classes/ColumnStats';
 
-  import TrialSelect from '@/components/TrialSelect.vue';
-  import QueryEditOverlay from '@/components/QueryEditOverlay.vue';
-  import QueryNavbarTop from '@/components/QuerySummaryNavbarTop.vue';
-  import QueryList from '@/components/QueryList.vue';
-  import FilterNavbarTop from '@/components/FilterNavbarTop.vue';
-  import FilterList from '@/components/FilterList.vue';
-  import QueryResultNavbarTop from '@/components/QueryResultNavbarTop.vue';
-  import QueryResultNavbarBottom from '@/components/QueryResultNavbarBottom.vue';
-  import QueryResultTable from '@/components/QueryResultTable.vue';
-  import StatisticsNavbarTop from '@/components/StatisticsNavbarTop.vue';
-  import StatisticsTable from '@/components/StatisticsTable.vue';
-  import { XlsxExport } from '@/classes/XlsxExport';
+  import TrialSelect from './components/TrialSelect.vue';
+  import QueryEditOverlay from './components/QueryEditOverlay.vue';
+  import QueryNavbarTop from './components/QuerySummaryNavbarTop.vue';
+  import QueryList from './components/QueryList.vue';
+  import FilterNavbarTop from './components/FilterNavbarTop.vue';
+  import FilterList from './components/FilterList.vue';
+  import QueryResultNavbarTop from './components/QueryResultNavbarTop.vue';
+  import QueryResultNavbarBottom from './components/QueryResultNavbarBottom.vue';
+  import QueryResultTable from './components/QueryResultTable.vue';
+  import StatisticsNavbarTop from './components/StatisticsNavbarTop.vue';
+  import StatisticsTable from './components/StatisticsTable.vue';
+  import { XlsxExport } from './classes/XlsxExport';
 
   const areTrialsLoaded = ref(false);
   const queryHidden = ref(false);

@@ -94,10 +94,10 @@
   import { ref, computed, watch } from 'vue';
   import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue';
   import { XMarkIcon, ChevronRightIcon } from '@heroicons/vue/24/outline';
-  import type { ReactiveTableSchemaInfo } from '@/data/types';
+  import type { ReactiveTableSchemaInfo } from '../data/types';
 
-  import QueryEditColumnList from '@/components/QueryEditColumnList.vue';
-  import QueryEditColumnSelect from '@/components/QueryEditColumnSelect.vue';
+  import QueryEditColumnList from './QueryEditColumnList.vue';
+  import QueryEditColumnSelect from './QueryEditColumnSelect.vue';
 
   const isRequestSent = ref(false);
   const buttonCancel = ref(null);

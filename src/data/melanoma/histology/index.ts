@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
-import { Model } from '@/data/Model';
-import type { TableRow, TableData } from '@/data/types';
-import { histologicCharacteristicSchema } from '@/data/melanoma/histology/schema';
+import { Model } from '../../Model';
+import type { TableRow, TableData } from '../../types';
+import { histologicCharacteristicSchema } from '../../melanoma/histology/schema';
 
 export function buildhistologicCharacteristics(cancers: TableData): Model {
   const schema = histologicCharacteristicSchema;

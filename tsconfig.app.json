@@ -3,19 +3,20 @@
   "include": [
     "env.d.ts",
     "src/**/*",
-    "src/**/*.vue"
+    "src/**/*.vue",
+    "__tests__/**/*",
+    "jest.config.ts"
   ],
   "exclude": [
     "src/**/__tests__/*"
   ],
   "compilerOptions": {
+    "types": ["jest"],
     "target": "es2017",
     "lib": ["es2019", "dom"],
     "composite": true,
     "resolveJsonModule": true,
+    "esModuleInterop": true,
     "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
   }
 }
