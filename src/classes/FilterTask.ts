@@ -1,4 +1,4 @@
-import type { ColumnType, TableRow } from '@/data/types';
+import type { ColumnType, TableRow } from '../data/types';
 
 export type FilterType = 'eq' | 'gt' | 'gte' | 'lt' | 'lte' | 'sw' | 'has' | 'ew' | 'range' | 'any';
 

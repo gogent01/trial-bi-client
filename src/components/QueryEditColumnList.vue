@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { ReactiveTableSchemaInfo } from '@/data/types';
+  import type { ReactiveTableSchemaInfo } from '../data/types';
 
   interface Props {
     schema: ReactiveTableSchemaInfo;

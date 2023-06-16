@@ -41,7 +41,7 @@
 
 <script setup lang="ts">
   import { computed } from 'vue';
-  import type { StatsRow } from '@/classes/ColumnStats';
+  import type { StatsRow } from '../classes/ColumnStats';
 
   const colnames = {
     param: 'Параметр',

@@ -1,4 +1,4 @@
-import type { TableData, TableRow, TableSchema } from '@/data/types';
+import type { TableData, TableRow, TableSchema } from './types';
 
 export class Model {
   key: string;

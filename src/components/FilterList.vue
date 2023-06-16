@@ -114,10 +114,10 @@
 
 <script setup lang="ts">
   import { nextTick } from 'vue';
-  import type { ColumnType } from '@/data/types';
-  import type { FilterType, FilterTask } from '@/classes/FilterTask';
+  import type { ColumnType } from '../data/types';
+  import type { FilterType, FilterTask } from '../classes/FilterTask';
   import { TrashIcon } from '@heroicons/vue/24/outline';
-  import MultipleSelect from '@/components/MultipleSelect.vue';
+  import MultipleSelect from '../components/MultipleSelect.vue';
 
   interface Props {
     tasks: FilterTask[];
