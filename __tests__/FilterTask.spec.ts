@@ -1,32 +1,33 @@
-import { describe, it, expect } from "@jest/globals";
-import { testPatientModel as model } from "./objects.utils";
-import { getColumnMetadata } from "./functions.utils";
-import { FilterTask } from "../src/classes/FilterTask";
-import type { FilterType } from "../src/classes/FilterTask";
-import type { TableData, TableColumn, TableRow } from "../src/data/types";
+import { describe, it, expect } from '@jest/globals';
+import { testPatientModel as model } from './objects.utils';
+import { getColumnMetadata } from './functions.utils';
+import { FilterTask } from '../src/classes/FilterTask';
+import type { FilterType } from '../src/classes/FilterTask';
+import type { TableData, TableColumn, TableRow } from '../src/data/types';
 
-describe("FilterTask filtering logic: \"text\" columns", () => {
+describe('FilterTask filtering logic: "text" columns', () => {
   it.each`
-    filterType | filter                 | result
-    ${"eq"}    | ${"Василиса Макарова"} | ${1}
-    ${"sw"}    | ${"Василиса"}          | ${1}
-    ${"ew"}    | ${"Савельев"}          | ${1}
-    ${"has"}   | ${"Макарова"}          | ${1}
-  `(`correctly filters rows due to different filter types`, ({ filterType, filter, result }) => {
-    const columnKey = "fullname";
+    filterType | filterValue            | filteredRowsCount
+    ${'eq'}    | ${'Василиса Макарова'} | ${1}
+    ${'sw'}    | ${'Василиса'}          | ${1}
+    ${'ew'}    | ${'Савельев'}          | ${1}
+    ${'has'}   | ${'Макарова'}          | ${1}
+  `(`correctly filters rows due to different filter types`, ({ filterType, filterValue, filteredRowsCount }) => {
+    const columnKey = 'fullname';
 
     const rows: TableData = model.data;
     const column: TableColumn | undefined = getColumnMetadata(model, columnKey);
     if (!column) {
-      throw new Error("no such column!");
+      throw new Error('no such column!');
     }
+
     const filterTask = new FilterTask(column.key, column.name, column.type, column.levels);
     filterTask.setType(filterType as FilterType);
-    filterTask.setValue("Василиса Макарова");
+    filterTask.setValue(filterValue);
 
     const filteredRows: TableData = rows.filter((row: TableRow) => filterTask.apply(row));
 
-    expect(filteredRows.length).toBe(result);
+    expect(filteredRows.length).toBe(filteredRowsCount);
   });
   // it("correctly performs eq (equality) check", async () => {
   //   const columnKey = "fullname";
