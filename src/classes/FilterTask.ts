@@ -21,19 +21,19 @@ export class FilterTask {
     this.rangeValues = [undefined, undefined];
   }
 
-  updateType(filterType: FilterType) {
+  setType(filterType: FilterType) {
     this.type = filterType;
   }
 
-  updateValue(value?: unknown) {
+  setValue(value?: unknown) {
     this.value = value;
   }
 
-  updateRangeValues(rangeValues: [unknown | undefined, unknown | undefined]) {
+  setRangeValues(rangeValues: [unknown | undefined, unknown | undefined]) {
     this.rangeValues = rangeValues;
   }
 
-  updateMultipleValues(values: string[]) {
+  setMultipleValues(values: string[]) {
     this.multipleValues = values;
   }
 
@@ -64,8 +64,8 @@ export class FilterTask {
       if (this.type === 'lte') return cellValue <= (this.value as number);
       if (this.type === 'range')
         return (
-          cellValue >= ((this.rangeValues[0] as number) || Number.NEGATIVE_INFINITY) &&
-          cellValue < ((this.rangeValues[1] as number) || Number.POSITIVE_INFINITY)
+            cellValue >= ((this.rangeValues[0] as number) || Number.NEGATIVE_INFINITY) &&
+            cellValue < ((this.rangeValues[1] as number) || Number.POSITIVE_INFINITY)
         );
     } else if (this.columnType === 'date') {
       const cellValue = row[this.columnKey] as Date;
@@ -76,8 +76,8 @@ export class FilterTask {
       if (this.type === 'lte') return cellValue <= (this.value as Date);
       if (this.type === 'range')
         return (
-          cellValue >= ((this.rangeValues[0] as Date) || Number.NEGATIVE_INFINITY) &&
-          cellValue < ((this.rangeValues[1] as Date) || Number.POSITIVE_INFINITY)
+            cellValue >= ((this.rangeValues[0] as Date) || Number.NEGATIVE_INFINITY) &&
+            cellValue < ((this.rangeValues[1] as Date) || Number.POSITIVE_INFINITY)
         );
     } else if (this.columnType === 'factor') {
       const cellValue = row[this.columnKey] as string;
