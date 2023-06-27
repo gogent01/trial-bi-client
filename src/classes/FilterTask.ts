@@ -69,7 +69,7 @@ export class FilterTask {
           cellValue < ((this.rangeValues[1] as number) || Number.POSITIVE_INFINITY)
         );
     } else if (this.columnType === 'date') {
-      const cellValue = row[this.columnKey] as Date;
+      const cellValue = (row[this.columnKey] || new Date(NaN)) as Date;
       if (cellValue.toString() === 'Invalid Date') return false;
       if (this.type === 'eq') return cellValue.toDateString() === (this.value as Date).toDateString();
       if (this.type === 'gt') return cellValue > (this.value as Date);
