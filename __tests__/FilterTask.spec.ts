@@ -9,9 +9,9 @@ describe('FilterTask filtering logic: "text" columns', () => {
   it.each`
     filterType | filterValue            | filteredRowsCount
     ${'eq'}    | ${'Василиса Макарова'} | ${1}
-    ${'sw'}    | ${'Василиса'}          | ${1}
-    ${'ew'}    | ${'Савельев'}          | ${1}
-    ${'has'}   | ${'Макарова'}          | ${1}
+    ${'sw'}    | ${'Вас'}               | ${1}
+    ${'ew'}    | ${'ьев'}               | ${1}
+    ${'has'}   | ${'кар'}               | ${1}
   `(`correctly filters rows with filter type $text`, ({ filterType, filterValue, filteredRowsCount }) => {
     const columnKey = 'fullname';
 
@@ -132,9 +132,15 @@ describe('FilterTask filtering logic: "number" columns', () => {
 });
 
 describe('FilterTask filtering logic: "date" columns', () => {
-  it('correctly filters rows with filter type $eq', () => {
+  it.each`
+    filterType | filterValue                             | filteredRowsCount
+    ${'eq'}    | ${new Date('1992-03-01T01:45:38.117Z')} | ${1}
+    ${'gt'}    | ${new Date('1992-03-01T01:45:38.117Z')} | ${1}
+    ${'gte'}   | ${new Date('1992-03-01T01:45:38.117Z')} | ${2}
+    ${'lt'}    | ${new Date('1954-05-12T11:25:52.131Z')} | ${0}
+    ${'lte'}   | ${new Date('1954-05-12T11:25:52.131Z')} | ${1}
+  `(`correctly filters rows with filter type $date`, ({ filterType, filterValue, filteredRowsCount }) => {
     const columnKey = 'date_of_birth';
-
     const rows: TableData = model.data;
     const column: TableColumn | undefined = getColumnMetadata(model, columnKey);
     if (!column) {
@@ -142,89 +148,12 @@ describe('FilterTask filtering logic: "date" columns', () => {
     }
 
     const filterTask = new FilterTask(column.key, column.name, column.type, column.levels);
-    filterTask.setType('eq');
-    const firstDate = new Date('1992-03-01T01:45:38.117Z');
-    filterTask.setValue(firstDate);
+    filterTask.setType(filterType as FilterType);
+    filterTask.setValue(filterValue);
 
     const filteredRows: TableData = rows.filter((row: TableRow) => filterTask.apply(row));
 
-    expect(filteredRows.length).toBe(1);
-  });
-
-  it('correctly filters rows with filter type $gt', () => {
-    const columnKey = 'date_of_birth';
-
-    const rows: TableData = model.data;
-    const column: TableColumn | undefined = getColumnMetadata(model, columnKey);
-    if (!column) {
-      throw new Error('no such column!');
-    }
-
-    const filterTask = new FilterTask(column.key, column.name, column.type, column.levels);
-    filterTask.setType('gt');
-    const firstDate = new Date('1992-03-01T01:45:38.117Z');
-    filterTask.setValue(firstDate);
-
-    const filteredRows: TableData = rows.filter((row: TableRow) => filterTask.apply(row));
-
-    expect(filteredRows.length).toBe(1);
-  });
-
-  it('correctly filters rows with filter type $gte', () => {
-    const columnKey = 'date_of_birth';
-
-    const rows: TableData = model.data;
-    const column: TableColumn | undefined = getColumnMetadata(model, columnKey);
-    if (!column) {
-      throw new Error('no such column!');
-    }
-
-    const filterTask = new FilterTask(column.key, column.name, column.type, column.levels);
-    filterTask.setType('gte');
-    const firstDate = new Date('1992-03-01T01:45:38.117Z');
-    filterTask.setValue(firstDate);
-
-    const filteredRows: TableData = rows.filter((row: TableRow) => filterTask.apply(row));
-
-    expect(filteredRows.length).toBe(2);
-  });
-
-  it('correctly filters rows with filter type $lt', () => {
-    const columnKey = 'date_of_birth';
-
-    const rows: TableData = model.data;
-    const column: TableColumn | undefined = getColumnMetadata(model, columnKey);
-    if (!column) {
-      throw new Error('no such column!');
-    }
-
-    const filterTask = new FilterTask(column.key, column.name, column.type, column.levels);
-    filterTask.setType('lt');
-    const firstDate = new Date('1973-03-28T00:00:32.955Z');
-    filterTask.setValue(firstDate);
-
-    const filteredRows: TableData = rows.filter((row: TableRow) => filterTask.apply(row));
-
-    expect(filteredRows.length).toBe(1);
-  });
-
-  it('correctly filters rows with filter type $lte', () => {
-    const columnKey = 'date_of_birth';
-
-    const rows: TableData = model.data;
-    const column: TableColumn | undefined = getColumnMetadata(model, columnKey);
-    if (!column) {
-      throw new Error('no such column!');
-    }
-
-    const filterTask = new FilterTask(column.key, column.name, column.type, column.levels);
-    filterTask.setType('lte');
-    const firstDate = new Date('1973-03-28T00:00:32.955Z');
-    filterTask.setValue(firstDate);
-
-    const filteredRows: TableData = rows.filter((row: TableRow) => filterTask.apply(row));
-
-    expect(filteredRows.length).toBe(2);
+    expect(filteredRows.length).toBe(filteredRowsCount);
   });
 
   it('correctly filters rows with filter type $range', () => {
@@ -249,7 +178,12 @@ describe('FilterTask filtering logic: "date" columns', () => {
 });
 
 describe('FilterTask filtering logic: "factor" columns', () => {
-  it('performs testing if filter $sw', () => {
+  it.each`
+    filterType | filterValue | filteredRowsCount
+    ${'sw'}    | ${'ГК'}     | ${6}
+    ${'ew'}    | ${'62'}     | ${3}
+    ${'has'}   | ${'ОБ'}     | ${6}
+  `(`correctly filters rows with filter type $factor`, ({ filterType, filterValue, filteredRowsCount }) => {
     const columnKey = 'center';
 
     const rows: TableData = model.data;
@@ -259,48 +193,12 @@ describe('FilterTask filtering logic: "factor" columns', () => {
       throw new Error('no such column!');
     }
     const filterTask = new FilterTask(column.key, column.name, column.type, column.levels);
-    filterTask.setType('sw');
-    filterTask.setValue(['МКНЦ им. А.С. Логинова', 'ГКОБ 62']);
+    filterTask.setType(filterType as FilterType);
+    filterTask.setValue(filterValue);
 
     const filteredRows: TableData = rows.filter((row: TableRow) => filterTask.apply(row));
 
-    expect(filteredRows).toBe('МКНЦ им. А.С. Логинова');
-  });
-
-  it('performs testing if filter $ew', () => {
-    const columnKey = 'center';
-
-    const rows: TableData = model.data;
-    const column: TableColumn | undefined = getColumnMetadata(model, columnKey);
-
-    if (!column) {
-      throw new Error('no such column!');
-    }
-    const filterTask = new FilterTask(column.key, column.name, column.type, column.levels);
-    filterTask.setType('ew');
-    filterTask.setValue(['МКНЦ им. А.С. Логинова', 'ГКОБ 62']);
-
-    const filteredRows: TableData = rows.filter((row: TableRow) => filterTask.apply(row));
-
-    expect(filteredRows.length).toBe(1);
-  });
-
-  it('performs testing if filter $has', () => {
-    const columnKey = 'center';
-
-    const rows: TableData = model.data;
-    const column: TableColumn | undefined = getColumnMetadata(model, columnKey);
-
-    if (!column) {
-      throw new Error('no such column!');
-    }
-    const filterTask = new FilterTask(column.key, column.name, column.type, column.levels);
-    filterTask.setType('has');
-    filterTask.setValue(['ГКОБ 62']);
-
-    const filteredRows: TableData = rows.filter((row: TableRow) => filterTask.apply(row));
-
-    expect(filteredRows.length).toBe(3);
+    expect(filteredRows.length).toBe(filteredRowsCount);
   });
 
   it('performs testing if filter $any', () => {
