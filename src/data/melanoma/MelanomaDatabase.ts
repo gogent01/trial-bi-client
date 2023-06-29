@@ -1,10 +1,10 @@
-import { Database } from '@/data/Database';
-import type { Model } from '@/data/Model';
-import { buildPatients } from '@/data/melanoma/patients';
-import { buildLifeStatuses } from '@/data/melanoma/status';
-import { buildCancers } from '@/data/melanoma/cancers';
-import { buildhistologicCharacteristics } from '@/data/melanoma/histology';
-import { buildSurgeries } from '@/data/melanoma/surgery';
+import { Database } from '../Database';
+import type { Model } from '../Model';
+import { buildPatients } from '../melanoma/patients';
+import { buildLifeStatuses } from '../melanoma/status';
+import { buildCancers } from '../melanoma/cancers';
+import { buildhistologicCharacteristics } from '../melanoma/histology';
+import { buildSurgeries } from '../melanoma/surgery';
 
 export class MelanomaDatabase extends Database {
   constructor(length: number) {

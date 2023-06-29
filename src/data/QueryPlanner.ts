@@ -1,6 +1,6 @@
-import type { Database } from '@/data/Database';
-import type { DataQuery, DataQueryRow } from '@/data/types';
-import { QueryPlan } from '@/data/QueryPlan';
+import type { Database } from './Database';
+import type { DataQuery, DataQueryRow } from './types';
+import { QueryPlan } from './QueryPlan';
 
 export class QueryPlanner {
   db: Database;

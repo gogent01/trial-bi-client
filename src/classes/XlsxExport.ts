@@ -1,4 +1,4 @@
-import type { TableData, TableSchema } from '@/data/types';
+import type { TableData, TableSchema } from '../data/types';
 import * as XLSX from 'exceljs';
 
 export class XlsxExport {

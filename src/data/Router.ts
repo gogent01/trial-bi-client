@@ -1,10 +1,10 @@
-import type { Database } from '@/data/Database';
-import type { DataQuery, TableSchemaInfo } from '@/data/types';
-import type { Model } from '@/data/Model';
-// import { BreastDatabase } from '@/data/breast/BreastDatabase';
-// import { MelanomaDatabase } from '@/data/melanoma/MelanomaDatabase';
-// import { QueryPlanner } from '@/data/QueryPlanner';
-import { axiosInstance } from '@/services/axios';
+import type { Database } from './Database';
+import type { DataQuery, TableSchemaInfo } from './types';
+import type { Model } from './Model';
+// import { BreastDatabase } from './breast/BreastDatabase';
+// import { MelanomaDatabase } from './melanoma/MelanomaDatabase';
+// import { QueryPlanner } from './QueryPlanner';
+import { axiosInstance } from '../services/axios';
 
 type APITrial = {
   id: number;

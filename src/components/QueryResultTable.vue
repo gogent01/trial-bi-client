@@ -91,7 +91,7 @@
   import { ref, computed } from 'vue';
   import { FunnelIcon, ChartBarIcon, ChevronUpIcon, ChevronDownIcon } from '@heroicons/vue/24/outline';
   import { FunnelIcon as FunnelIconActive, ChartBarIcon as ChartBarIconActive } from '@heroicons/vue/24/solid';
-  import type { ReactiveTableSchema, TableData } from '@/data/types';
+  import type { ReactiveTableSchema, TableData } from '../data/types';
 
   interface Props {
     table: TableData;

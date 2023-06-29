@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
-import { Model } from '@/data/Model';
-import type { TableRow, TableData } from '@/data/types';
-import { lifeStatusSchema } from '@/data/melanoma/status/schema';
+import { Model } from '../../Model';
+import type { TableRow, TableData } from '../../types';
+import { lifeStatusSchema } from '../../melanoma/status/schema';
 
 export function buildLifeStatuses(patients: TableData): Model {
   const schema = lifeStatusSchema;

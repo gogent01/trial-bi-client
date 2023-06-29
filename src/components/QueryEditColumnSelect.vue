@@ -72,7 +72,7 @@
 
 <script setup lang="ts">
   import { computed } from 'vue';
-  import type { ReactiveTableColumnInfo, ReactiveTableSchemaInfo } from '@/data/types';
+  import type { ReactiveTableColumnInfo, ReactiveTableSchemaInfo } from '../data/types';
 
   interface Props {
     schema: ReactiveTableSchemaInfo;

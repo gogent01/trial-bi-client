@@ -1,4 +1,4 @@
-import type { ColumnType, TableSchema } from '@/data/types';
+import type { ColumnType, TableSchema } from '../../types';
 
 export const comorbiditySchema: TableSchema = [
   {

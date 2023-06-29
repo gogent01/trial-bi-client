@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { ReactiveTableSchema } from '@/data/types';
+  import type { ReactiveTableSchema } from '../data/types';
   import {
     CheckIcon,
     EyeSlashIcon,

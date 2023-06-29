@@ -52,7 +52,7 @@
   import { computed } from 'vue';
   import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue';
   import { CheckIcon, ChevronDownIcon } from '@heroicons/vue/20/solid';
-  import type { Trial } from '@/data/Router';
+  import type { Trial } from '../data/Router';
 
   interface Props {
     trials: Trial[];

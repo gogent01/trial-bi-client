@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker';
 faker.setLocale('ru');
-import { Model } from '@/data/Model';
-import type { TableRow } from '@/data/types';
-import { patientSchema } from '@/data/melanoma/patients/schema';
+import { Model } from '../../Model';
+import type { TableRow } from '../../types';
+import { patientSchema } from '../../melanoma/patients/schema';
 
 export function buildPatients(length: number): Model {
   const schema = patientSchema;
