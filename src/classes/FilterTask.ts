@@ -21,19 +21,19 @@ export class FilterTask {
     this.rangeValues = [undefined, undefined];
   }
 
-  updateType(filterType: FilterType) {
+  setType(filterType: FilterType) {
     this.type = filterType;
   }
 
-  updateValue(value?: unknown) {
+  setValue(value?: unknown) {
     this.value = value;
   }
 
-  updateRangeValues(rangeValues: [unknown | undefined, unknown | undefined]) {
+  setRangeValues(rangeValues: [unknown | undefined, unknown | undefined]) {
     this.rangeValues = rangeValues;
   }
 
-  updateMultipleValues(values: string[]) {
+  setMultipleValues(values: string[]) {
     this.multipleValues = values;
   }
 
@@ -50,13 +50,14 @@ export class FilterTask {
     if (this.isEmpty()) return true;
 
     if (this.columnType === 'text') {
-      const cellValue = row[this.columnKey] as string;
+      const cellValue = (row[this.columnKey] || '') as string;
       if (this.type === 'eq') return cellValue === (this.value as string);
       if (this.type === 'sw') return cellValue.startsWith(this.value as string);
       if (this.type === 'ew') return cellValue.endsWith(this.value as string);
       if (this.type === 'has') return cellValue.includes(this.value as string);
     } else if (this.columnType === 'number') {
       const cellValue = row[this.columnKey] as number;
+      if (cellValue === undefined || cellValue === null || isNaN(cellValue)) return false;
       if (this.type === 'eq') return cellValue === (this.value as number);
       if (this.type === 'gt') return cellValue > (this.value as number);
       if (this.type === 'gte') return cellValue >= (this.value as number);
@@ -68,7 +69,8 @@ export class FilterTask {
           cellValue < ((this.rangeValues[1] as number) || Number.POSITIVE_INFINITY)
         );
     } else if (this.columnType === 'date') {
-      const cellValue = row[this.columnKey] as Date;
+      const cellValue = (row[this.columnKey] || new Date(NaN)) as Date;
+      if (cellValue.toString() === 'Invalid Date') return false;
       if (this.type === 'eq') return cellValue.toDateString() === (this.value as Date).toDateString();
       if (this.type === 'gt') return cellValue > (this.value as Date);
       if (this.type === 'gte') return cellValue >= (this.value as Date);
@@ -80,7 +82,7 @@ export class FilterTask {
           cellValue < ((this.rangeValues[1] as Date) || Number.POSITIVE_INFINITY)
         );
     } else if (this.columnType === 'factor') {
-      const cellValue = row[this.columnKey] as string;
+      const cellValue = (row[this.columnKey] || '') as string;
       if (this.type === 'sw') return cellValue.startsWith(this.value as string);
       if (this.type === 'ew') return cellValue.endsWith(this.value as string);
       if (this.type === 'has') return cellValue.includes(this.value as string);
