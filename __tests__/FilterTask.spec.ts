@@ -12,7 +12,7 @@ describe('FilterTask filtering logic: "text" columns', () => {
     ${'sw'}    | ${'Вас'}               | ${1}
     ${'ew'}    | ${'ьев'}               | ${1}
     ${'has'}   | ${'кар'}               | ${1}
-  `(`correctly filters rows with filter type $text`, ({ filterType, filterValue, filteredRowsCount }) => {
+  `(`correctly filters rows with filter type $filterType`, ({ filterType, filterValue, filteredRowsCount }) => {
     const columnKey = 'fullname';
 
     const rows: TableData = model.data;
@@ -96,7 +96,7 @@ describe('FilterTask filtering logic: "number" columns', () => {
     ${'gte'}   | ${50}       | ${4}
     ${'lt'}    | ${35}       | ${2}
     ${'lte'}   | ${28}       | ${1}
-  `(`correctly filters rows with filter type $`, ({ filterType, filterValue, filteredRowsCount }) => {
+  `(`correctly filters rows with filter type $filterType`, ({ filterType, filterValue, filteredRowsCount }) => {
     const columnKey = 'age';
 
     const rows: TableData = model.data;
@@ -113,7 +113,7 @@ describe('FilterTask filtering logic: "number" columns', () => {
     expect(filteredRows.length).toBe(filteredRowsCount);
   });
 
-  it('correctly filters rows with filter type $range', () => {
+  it('correctly filters rows with filter type range', () => {
     const columnKey = 'age';
 
     const rows: TableData = model.data;
@@ -139,7 +139,7 @@ describe('FilterTask filtering logic: "date" columns', () => {
     ${'gte'}   | ${new Date('1992-03-01T01:45:38.117Z')} | ${2}
     ${'lt'}    | ${new Date('1954-05-12T11:25:52.131Z')} | ${0}
     ${'lte'}   | ${new Date('1954-05-12T11:25:52.131Z')} | ${1}
-  `(`correctly filters rows with filter type $date`, ({ filterType, filterValue, filteredRowsCount }) => {
+  `(`correctly filters rows with filter type $filterType`, ({ filterType, filterValue, filteredRowsCount }) => {
     const columnKey = 'date_of_birth';
     const rows: TableData = model.data;
     const column: TableColumn | undefined = getColumnMetadata(model, columnKey);
@@ -156,7 +156,7 @@ describe('FilterTask filtering logic: "date" columns', () => {
     expect(filteredRows.length).toBe(filteredRowsCount);
   });
 
-  it('correctly filters rows with filter type $range', () => {
+  it('correctly filters rows with filter type range', () => {
     const columnKey = 'date_of_birth';
 
     const rows: TableData = model.data;
@@ -183,7 +183,7 @@ describe('FilterTask filtering logic: "factor" columns', () => {
     ${'sw'}    | ${'ГК'}     | ${6}
     ${'ew'}    | ${'62'}     | ${3}
     ${'has'}   | ${'ОБ'}     | ${6}
-  `(`correctly filters rows with filter type $factor`, ({ filterType, filterValue, filteredRowsCount }) => {
+  `(`correctly filters rows with filter type $filterType`, ({ filterType, filterValue, filteredRowsCount }) => {
     const columnKey = 'center';
 
     const rows: TableData = model.data;
@@ -201,7 +201,7 @@ describe('FilterTask filtering logic: "factor" columns', () => {
     expect(filteredRows.length).toBe(filteredRowsCount);
   });
 
-  it('performs testing if filter $any', () => {
+  it('correctly filters rows with filter type any', () => {
     const columnKey = 'center';
 
     const rows: TableData = model.data;

@@ -12,26 +12,26 @@ function getColumnValues(model: Model, columnKey: string): unknown[] {
   return model.data.map((row) => row[columnKey]);
 }
 
-describe('Building of stats table for different types of data columns', () => {
-  it('does something', async () => {
-    const columnKey = 'date_of_birth';
-    const columnMetadata = getColumnMetadata(model, columnKey);
-    const columnValues = getColumnValues(model, columnKey);
-
-    if (!columnMetadata) {
-      throw new Error('no such column!');
-    }
-
-    const stats = new ColumnStats();
-    const output = stats.calculate(columnMetadata, columnValues);
-
-    console.log(columnMetadata);
-    console.log(columnValues);
-    console.log(output);
-
-    expect(true).toBe(true);
-  });
-});
+// describe('Building of stats table for different types of data columns', () => {
+//   it('does something', async () => {
+//     const columnKey = 'date_of_birth';
+//     const columnMetadata = getColumnMetadata(model, columnKey);
+//     const columnValues = getColumnValues(model, columnKey);
+//
+//     if (!columnMetadata) {
+//       throw new Error('no such column!');
+//     }
+//
+//     const stats = new ColumnStats();
+//     const output = stats.calculate(columnMetadata, columnValues);
+//
+//     console.log(columnMetadata);
+//     console.log(columnValues);
+//     console.log(output);
+//
+//     expect(true).toBe(true);
+//   });
+// });
 
 describe('Checks for a correct work of stats functions', () => {
   it('should build number stats if columnMetadata.type is "number"', () => {
@@ -79,7 +79,7 @@ describe('Checks for a correct work of stats functions', () => {
   });
 });
 
-describe('Check if all values and NA are correctly counted', () => {
+describe('Checks if all values and NA are correctly counted', () => {
   it('should count all values and of filled values if columnMetadata.type is "number"', () => {
     const stats = new ColumnStats();
     const columnKey = 'age';
@@ -137,7 +137,7 @@ describe('Check if all values and NA are correctly counted', () => {
   });
 });
 
-describe('check for correct perform of basic statistics', () => {
+describe('Checks for correct calculations of basic statistics', () => {
   it('should correctly count basic statistics in number columns', () => {
     const stats = new ColumnStats();
     const columnKey = 'age';
@@ -158,38 +158,34 @@ describe('check for correct perform of basic statistics', () => {
     expect(actualValue.data.slice(2, 10)).toStrictEqual(expectedValue);
   });
 
-  describe('correct count of factors in factor column', () => {
-    it('should correctly perform count of factors', () => {
-      const stats = new ColumnStats();
-      const columnKey = 'center';
-      const columnMetadata = getColumnMetadata(model, columnKey) as TableColumn;
-      const columnValues = getColumnValues(model, columnKey);
-      const expectedValue = [
-        { param: 'Число наблюдений', value: '10' },
-        { param: 'Заполненных значений', value: '7' },
-        { param: 'МКНЦ им. А.С. Логинова', value: '1' },
-        { param: 'ГКОБ 1', value: '3' },
-        { param: 'ГКОБ 62', value: '3' },
-        { param: 'Нет данных', value: '0' },
-      ];
-      const actualValue = stats.calculate(columnMetadata, columnValues);
+  it('should correctly perform count of factors', () => {
+    const stats = new ColumnStats();
+    const columnKey = 'center';
+    const columnMetadata = getColumnMetadata(model, columnKey) as TableColumn;
+    const columnValues = getColumnValues(model, columnKey);
+    const expectedValue = [
+      { param: 'Число наблюдений', value: '10' },
+      { param: 'Заполненных значений', value: '7' },
+      { param: 'МКНЦ им. А.С. Логинова', value: '1' },
+      { param: 'ГКОБ 1', value: '3' },
+      { param: 'ГКОБ 62', value: '3' },
+      { param: 'Нет данных', value: '0' },
+    ];
+    const actualValue = stats.calculate(columnMetadata, columnValues);
 
-      expect(actualValue.data).toStrictEqual(expectedValue);
-    });
+    expect(actualValue.data).toStrictEqual(expectedValue);
   });
 
-  describe('check min and max values in date columns', () => {
-    it('should correctly find max and min date', () => {
-      const stats = new ColumnStats();
-      const columnKey = 'date_of_birth';
-      const columnMetadata = getColumnMetadata(model, columnKey) as TableColumn;
-      const columnValues = getColumnValues(model, columnKey);
-      const result = stats.calculate(columnMetadata, columnValues);
-      const max = result.data.find((item) => item.param === 'Максимум')?.value;
-      const min = result.data.find((item) => item.param === 'Минимум')?.value;
+  it('should correctly find max and min date', () => {
+    const stats = new ColumnStats();
+    const columnKey = 'date_of_birth';
+    const columnMetadata = getColumnMetadata(model, columnKey) as TableColumn;
+    const columnValues = getColumnValues(model, columnKey);
+    const result = stats.calculate(columnMetadata, columnValues);
+    const max = result.data.find((item) => item.param === 'Максимум')?.value;
+    const min = result.data.find((item) => item.param === 'Минимум')?.value;
 
-      expect(max).toBe('03.04.1995');
-      expect(min).toBe('12.05.1954');
-    });
+    expect(max).toBe('03.04.1995');
+    expect(min).toBe('12.05.1954');
   });
 });
