@@ -72,8 +72,8 @@
         <p class="font-semibold" style="writing-mode: vertical-rl; transform: scale(-1)">Запрос и фильтры</p>
       </div>
 
-      <div v-if="!queryHidden" class="p-4 basis-1/5 flex-shrink-0 flex-grow-0 flex flex-col">
-        <div class="h-3/5 flex flex-col overflow-hidden">
+      <div v-if="!queryHidden" class="pl-4 py-4 basis-1/5 flex-shrink-0 flex-grow-0 flex flex-col 2xl:pr-4">
+        <div class="h-1/2 flex flex-col overflow-hidden">
           <div class="ml-2 mb-2 text-slate-700 text-xl font-semibold">
             <p class="text-xl font-semibold">Запрос</p>
           </div>
@@ -95,7 +95,7 @@
           </div>
         </div>
 
-        <div class="h-2/5 mt-4 flex flex-col">
+        <div class="h-1/2 mt-4 flex flex-col">
           <div class="ml-2 mb-2 text-slate-700 text-xl font-semibold">
             <p class="text-xl font-semibold">Фильтры</p>
           </div>
@@ -168,7 +168,7 @@
         </div>
       </div>
 
-      <div v-if="!statisticsHidden" class="p-4 basis-1/5 flex-shrink-0 flex-grow-0 flex flex-col">
+      <div v-if="!statisticsHidden" class="pr-4 py-4 basis-1/5 flex-shrink-0 flex-grow-0 flex flex-col 2xl:pl-4">
         <div class="flex mb-2 ml-2 items-center justify-between text-slate-700">
           <p class="text-xl font-semibold">Статистика</p>
         </div>
@@ -469,13 +469,13 @@
 
   function updateFilterType(filterTaskIdx: number, filterType: FilterType) {
     const filterTask = filterTasks.value[filterTaskIdx];
-    filterTask.updateType(filterType);
+    filterTask.setType(filterType);
     if (filterTask.value) currentPage.value = 1;
   }
 
   function updateValue(filterTaskIdx: number, value: string | number | Date) {
     const filterTask = filterTasks.value[filterTaskIdx];
-    filterTask.updateValue(value);
+    filterTask.setValue(value);
     currentPage.value = 1;
   }
 
@@ -484,13 +484,13 @@
     rangeValues: [number | Date | undefined, number | Date | undefined]
   ) {
     const filterTask = filterTasks.value[filterTaskIdx];
-    filterTask.updateRangeValues(rangeValues);
+    filterTask.setRangeValues(rangeValues);
     currentPage.value = 1;
   }
 
   function updateMultipleValues(filterTaskIdx: number, values: string[]) {
     const filterTask = filterTasks.value[filterTaskIdx];
-    filterTask.updateMultipleValues(values);
+    filterTask.setMultipleValues(values);
     currentPage.value = 1;
   }
 
