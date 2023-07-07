@@ -1,26 +1,10 @@
-import type { Database } from './Database';
-import type { DataQuery, TableSchemaInfo } from './types';
-import type { Model } from './Model';
-// import { BreastDatabase } from './breast/BreastDatabase';
-// import { MelanomaDatabase } from './melanoma/MelanomaDatabase';
-// import { QueryPlanner } from './QueryPlanner';
+import type { DemoDatabase } from './DemoDatabase';
+import type { Trial, APITrial, DataQuery, TableSchemaInfo } from './types';
+import { Model } from './Model';
+import { BreastDatabase } from './breast/BreastDatabase';
+import { MelanomaDatabase } from './melanoma/MelanomaDatabase';
+import { QueryPlanner } from './QueryPlanner';
 import { axiosInstance } from '../services/axios';
-
-type APITrial = {
-  id: number;
-  key: string;
-  name: string;
-  created_at: string;
-  updated_at: string;
-};
-
-export type Trial = {
-  id: number;
-  key: string;
-  name: string;
-  created_at: Date;
-  updated_at: Date;
-};
 
 export type TrialPublic = Omit<Trial, 'database'>;
 
@@ -30,62 +14,64 @@ abstract class Router {
   abstract getDataFromQuery(query: DataQuery): Promise<Model>;
 }
 
-// export class FakeRouter extends Router {
-//   trials: Trial[];
-//
-//   constructor() {
-//     super();
-//     this.trials = [
-//       {
-//         key: 'breast',
-//         name: 'RWE: рак молочной железы',
-//         database: new BreastDatabase(279),
-//         created_at: new Date('2022-01-10'),
-//         updated_at: new Date('2023-01-18'),
-//       },
-//       {
-//         key: 'melanoma',
-//         name: 'RWE: меланома',
-//         database: new MelanomaDatabase(350),
-//         created_at: new Date('2022-02-01'),
-//         updated_at: new Date('2022-12-05'),
-//       },
-//     ];
-//   }
-//
-//   async getTrials(): Promise<TrialPublic[]> {
-//     return new Promise((resolve) => {
-//       resolve(this.trials.map((trial) => ({ ...trial, database: undefined })));
-//     });
-//   }
-//
-//   async getCompleteSchema(trialKey: string): Promise<TableSchemaInfo> {
-//     return new Promise((resolve) => {
-//       const trial = this.trials.find((trial) => trial.key === trialKey);
-//       if (!trial) return [];
-//
-//       resolve(trial.database!.getCompleteSchema());
-//     });
-//   }
-//
-//   async getDataFromQuery(query: DataQuery): Promise<Model> {
-//     return new Promise((resolve) => {
-//       if (query.length === 0) resolve(Model.empty());
-//
-//       const trialKey = query[0].trialKey;
-//       const trial = this.trials.find((trial) => trial.key === trialKey);
-//       if (!trial) resolve(Model.empty());
-//
-//       const database = trial!.database;
-//       const homogenousQuery = query.filter((dataQuery) => dataQuery.trialKey === trial!.key);
-//
-//       const planner = new QueryPlanner(database!, homogenousQuery);
-//       const orderedQuery = planner.orderQuery();
-//
-//       resolve(database!.getDataFromQuery(orderedQuery));
-//     });
-//   }
-// }
+export class FakeRouter extends Router {
+  trials: Trial[];
+
+  constructor() {
+    super();
+    this.trials = [
+      {
+        id: 0,
+        key: 'breast',
+        name: 'RWE: рак молочной железы',
+        database: new BreastDatabase(279),
+        created_at: new Date('2022-01-10'),
+        updated_at: new Date('2023-01-18'),
+      },
+      {
+        id: 1,
+        key: 'melanoma',
+        name: 'RWE: меланома',
+        database: new MelanomaDatabase(350),
+        created_at: new Date('2022-02-01'),
+        updated_at: new Date('2022-12-05'),
+      },
+    ];
+  }
+
+  async getTrials(): Promise<TrialPublic[]> {
+    return new Promise((resolve) => {
+      resolve(this.trials.map((trial) => ({ ...trial, database: undefined })));
+    });
+  }
+
+  async getCompleteSchema(trialKey: string): Promise<TableSchemaInfo> {
+    return new Promise((resolve) => {
+      const trial = this.trials.find((trial) => trial.key === trialKey);
+      if (!trial) return [];
+
+      resolve(trial.database!.getCompleteSchema());
+    });
+  }
+
+  async getDataFromQuery(query: DataQuery): Promise<Model> {
+    return new Promise((resolve) => {
+      if (query.length === 0) resolve(Model.empty());
+
+      const trialKey = query[0].trialKey;
+      const trial = this.trials.find((trial) => trial.key === trialKey);
+      if (!trial) resolve(Model.empty());
+
+      const database = trial!.database;
+      const homogenousQuery = query.filter((dataQuery) => dataQuery.trialKey === trial!.key);
+
+      const planner = new QueryPlanner(database!, homogenousQuery);
+      const orderedQuery = planner.orderQuery();
+
+      resolve(database!.getDataFromQuery(orderedQuery));
+    });
+  }
+}
 
 export class APIRouter extends Router {
   async getTrials(): Promise<Trial[]> {

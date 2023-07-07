@@ -1,7 +1,7 @@
 import { Model } from './Model';
-import type { TableColumn, TableData, TableSchemaInfo, DataQuery } from './types';
+import type { Database, TableColumn, TableData, TableSchemaInfo, DataQuery } from './types';
 
-export abstract class Database {
+export abstract class DemoDatabase implements Database {
   models: Model[];
 
   protected constructor(length: number) {

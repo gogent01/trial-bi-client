@@ -1,4 +1,4 @@
-import { Database } from '../Database';
+import { DemoDatabase } from '../DemoDatabase';
 import { buildPatients } from '../breast/patients';
 import { buildComorbidities } from '../breast/comorbidities';
 import { buildCancers } from '../breast/cancers';
@@ -6,7 +6,7 @@ import { buildNeoTherapies } from '../breast/neoTherapy';
 import { buildNeoDrugs } from '../breast/neoDrugs';
 import type { Model } from '../Model';
 
-export class BreastDatabase extends Database {
+export class BreastDatabase extends DemoDatabase {
   constructor(length: number) {
     super(length);
   }

@@ -45,6 +45,15 @@
       class="hidden lg:block"
     />
 
+    <grouping-overlay
+      ref="groupingOverlay"
+      :is-visible="isGroupingOverlayVisible"
+      :schema="reactiveSchema"
+      class="hidden lg:block"
+      @group="performGrouping"
+      @cancel="cancelGrouping"
+    />
+
     <!-- 3 column wrapper -->
     <div
       class="w-full h-full flex items-center justify-center p-3 bg-slate-300 lg:hidden"
@@ -116,6 +125,27 @@
               </div>
             </div>
           </div>
+        </div>
+
+        <div class="w-full mt-4 flex flex-col">
+          <button
+            :class="[nrow > 0 ? 'hover:bg-teal-700' : 'opacity-50 cursor-default']"
+            class="inline-flex items-center justify-center rounded-lg border border-transparent bg-teal-600 px-4 py-3 font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+            @click="toggleGroupingOverlayVisibility"
+          >
+            <rectangle-stack-icon class="flex-shrink-0 mr-2 h-5 w-5"></rectangle-stack-icon
+            ><span v-if="!isGrouped">Группировать данные</span><span v-else>Редактировать группы</span>
+          </button>
+        </div>
+
+        <div v-if="isGrouped" class="w-full mt-2 flex flex-col">
+          <button
+            :class="[nrow > 0 ? 'hover:bg-orange-700' : 'opacity-50 cursor-default']"
+            class="inline-flex items-center justify-center rounded-lg border border-transparent bg-orange-600 px-4 py-3 font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+            @click="ungroup"
+          >
+            <rectangle-group-icon class="flex-shrink-0 mr-2 h-5 w-5"></rectangle-group-icon>Разгруппировать
+          </button>
         </div>
       </div>
 
@@ -213,10 +243,11 @@
 
   import { ref, computed, watch, onMounted } from 'vue';
   import { sort } from 'fast-sort';
-  import { TvIcon, CubeTransparentIcon, ArrowPathIcon } from '@heroicons/vue/24/outline';
+  import { TvIcon, CubeTransparentIcon, RectangleStackIcon, RectangleGroupIcon } from '@heroicons/vue/24/outline';
   import { PlusIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/20/solid';
   import logo from './assets/RWE-BI-logo.svg';
   import type {
+    Trial,
     ReactiveTableSchemaInfo,
     ReactiveTableSchema,
     TableSchema,
@@ -224,9 +255,11 @@
     TableData,
     DataQuery,
     TableSchemaInfo,
+    GroupingReactiveTableColumn,
+    GroupingReactiveTableSchema,
   } from './data/types';
-  import { APIRouter } from './data/Router';
-  import type { Trial } from './data/Router';
+  import { APIRouter, FakeRouter } from './data/Router';
+  import { StateStorage } from './classes/StateStorage';
   import { FilterTask } from './classes/FilterTask';
   import type { FilterType } from './classes/FilterTask';
   import { SortTask } from './classes/SortTask';
@@ -238,6 +271,7 @@
   import QueryList from './components/QueryList.vue';
   import FilterNavbarTop from './components/FilterNavbarTop.vue';
   import FilterList from './components/FilterList.vue';
+  import GroupingOverlay from './components/GroupingOverlay.vue';
   import QueryResultNavbarTop from './components/QueryResultNavbarTop.vue';
   import QueryResultNavbarBottom from './components/QueryResultNavbarBottom.vue';
   import QueryResultTable from './components/QueryResultTable.vue';
@@ -245,9 +279,10 @@
   import StatisticsTable from './components/StatisticsTable.vue';
   import { XlsxExport } from './classes/XlsxExport';
 
-  const areTrialsLoaded = ref(false);
-  const queryHidden = ref(false);
-  const statisticsHidden = ref(false);
+  const areTrialsLoaded = ref<boolean>(false);
+  const queryHidden = ref<boolean>(false);
+  const statisticsHidden = ref<boolean>(false);
+
   function toggleQueryVisibility() {
     queryHidden.value = !queryHidden.value;
   }
@@ -255,13 +290,23 @@
     statisticsHidden.value = !statisticsHidden.value;
   }
 
-  const isQueryEditOverlayVisible = ref(false);
-  const isNewQuery = ref(false);
+  const isQueryEditOverlayVisible = ref<boolean>(false);
+  const isNewQuery = ref<boolean>(false);
   function toggleQueryEditOverlayVisibility() {
     isQueryEditOverlayVisible.value = !isQueryEditOverlayVisible.value;
   }
 
-  const apiRouter = new APIRouter();
+  const groupingOverlay = ref<typeof GroupingOverlay | null>(null);
+  const isGroupingOverlayVisible = ref<boolean>(false);
+  const isGrouped = ref<boolean>(false);
+  function toggleGroupingOverlayVisibility() {
+    if (!isGroupingOverlayVisible.value) {
+      groupingOverlay.value!.backupGrouping();
+    }
+    isGroupingOverlayVisible.value = !isGroupingOverlayVisible.value;
+  }
+
+  const apiRouter = new FakeRouter();
   const trials = ref<Trial[]>([]);
 
   onMounted(async () => {
@@ -272,7 +317,11 @@
 
   const selectedTrialIdx = ref(-1);
   function updateSelectedTrialIdx(idx: number) {
-    selectedTrialIdx.value = idx;
+    if (selectedTrialIdx.value !== idx) {
+      storage.clear();
+      updateTableState();
+      selectedTrialIdx.value = idx;
+    }
   }
 
   let completeSchema: ReactiveTableSchemaInfo = [];
@@ -326,6 +375,17 @@
     reactiveCompleteSchema.value[columnIdx].selected = !reactiveCompleteSchema.value[columnIdx].selected;
   }
 
+  const storage = new StateStorage();
+  const reactiveSchema = ref<ReactiveTableSchema>(storage.reactiveSchema);
+  const data = ref<TableData>(storage.data);
+  const filterTasks = ref<FilterTask[]>(storage.filters);
+
+  function updateTableState(): void {
+    reactiveSchema.value = storage.reactiveSchema;
+    data.value = storage.data;
+    filterTasks.value = storage.filters;
+  }
+
   async function getDataFromQuery() {
     const query: DataQuery = reactiveCompleteSchema.value
       .filter((column) => column.selected)
@@ -335,8 +395,6 @@
         columnKey: column.key,
       }));
     const dbData = await apiRouter.getDataFromQuery(query);
-    schema.value = dbData.schema;
-    data.value = dbData.data;
     currentPage.value = 1;
 
     if (isNewQuery.value) {
@@ -344,7 +402,7 @@
       clearSort();
       clearFilters();
 
-      reactiveSchema.value = schema.value
+      const rSchema: ReactiveTableSchema = dbData.schema
         .filter((column) => column.type !== 'id')
         .sort((columnA, columnB) => {
           return (
@@ -360,7 +418,13 @@
           hasStats: false,
           invisible: false,
         }));
+
+      storage.add({ reactiveSchema: rSchema, data: dbData.data, filters: [] });
+      updateTableState();
     } else {
+      storage.duplicateState();
+      updateTableState();
+
       const oldColumnKeys = new Set<string>(reactiveSchema.value.map((column) => column.key));
       const newColumnKeys = new Set<string>(dbData.schema.map((column) => column.key));
       const columnsToRemove = reactiveSchema.value.filter((column) => !newColumnKeys.has(column.key));
@@ -395,15 +459,14 @@
             columnA.position - columnB.position
           );
         });
+
+      data.value = dbData.data;
+
       statsForColumnAtIndex.value = reactiveSchema.value.findIndex((column) => column.hasStats);
     }
 
     isQueryEditOverlayVisible.value = false;
   }
-
-  const schema = ref<TableSchema>([]);
-  const data = ref<TableData>([]);
-  const reactiveSchema = ref<ReactiveTableSchema>([]);
 
   function toggleColumnVisibility(columnKey: string) {
     const columnIdx = reactiveSchema.value.findIndex((column) => column.key === columnKey);
@@ -448,7 +511,184 @@
     });
   });
 
-  const filterTasks = ref<FilterTask[]>([]);
+  function performGrouping(groupingSchema: GroupingReactiveTableSchema): void {
+    if (isGrouped.value) {
+      groupingOverlay.value!.backupGrouping();
+      ungroup();
+      groupingOverlay.value!.restoreGroupingBackup();
+    }
+
+    storage.duplicateState();
+    updateTableState();
+    clearStats();
+    clearSort();
+    clearFilters();
+
+    const makePostfix = (groupingColumn: GroupingReactiveTableColumn): string => {
+      const groupingAction = groupingColumn.grouping.action;
+      const groupingParam = groupingColumn.grouping.param;
+
+      if (groupingAction === 'hide') return '(посл. знач.)';
+      if (groupingAction === 'count') return '(кол-во набл.)';
+      if (groupingAction === 'first') return '(перв. знач.)';
+      if (groupingAction === 'last') return '(посл. знач.)';
+      if (groupingAction === 'nth') return `(${groupingParam}-е знач.)`;
+      if (groupingAction === 'sum') return '(сумма)';
+      if (groupingAction === 'mean') return '(среднее)';
+      if (groupingAction === 'median') return '(медиана)';
+      if (groupingAction === 'all') return '(все. знач.)';
+      if (groupingAction === 'unique') return '(уник. знач.)';
+
+      return '';
+    };
+
+    groupingSchema.forEach((groupingColumn) => {
+      const stateColumn = reactiveSchema.value.find(
+        (stateColumn) => stateColumn.origin.key === groupingColumn.origin.key && stateColumn.key === groupingColumn.key
+      );
+
+      if (!stateColumn) return;
+
+      if (groupingColumn.grouping.action === 'hide') {
+        stateColumn.invisible = true;
+      }
+
+      stateColumn.name = `${stateColumn.name} ${makePostfix(groupingColumn)}`.trim();
+
+      if (['count', 'sum', 'mean', 'median'].includes(groupingColumn.grouping.action)) {
+        stateColumn.type = 'number';
+      } else if (['all', 'unique'].includes(groupingColumn.grouping.action)) {
+        stateColumn.type = 'text';
+      }
+    });
+
+    const groupingColumnsKeys = groupingSchema
+      .filter((column) => column.grouping.action === 'group')
+      .map((column) => column.key);
+
+    let lastGroupingKey: string = '';
+    let groupDataAccumulator: TableData = [];
+
+    data.value = sort(data.value).asc(groupingColumnsKeys);
+
+    data.value = data.value.reduce((groupedData, row, idx, data) => {
+      const groupingKey = groupingColumnsKeys.map((key) => row[key] || 'empty').join('_');
+
+      if (idx === 0) {
+        groupDataAccumulator = [row];
+        lastGroupingKey = groupingKey;
+      } else if (groupingKey === lastGroupingKey) {
+        groupDataAccumulator.push(row);
+      } else {
+        const compressedGroupRow = compressRowGroup(groupDataAccumulator, groupingSchema);
+        groupedData.push(compressedGroupRow);
+        groupDataAccumulator = [row];
+        lastGroupingKey = groupingKey;
+      }
+
+      if (idx === data.length - 1) {
+        const compressedGroupRow = compressRowGroup(groupDataAccumulator, groupingSchema);
+        groupedData.push(compressedGroupRow);
+      }
+
+      return groupedData;
+    }, [] as TableData);
+
+    isGrouped.value = true;
+    toggleGroupingOverlayVisibility();
+  }
+
+  function compressRowGroup(rowGroup: TableRow[], groupingSchema: GroupingReactiveTableSchema): TableRow {
+    const compressedRow: TableRow = {};
+    groupingSchema.forEach((column) => {
+      const dataValues = rowGroup.map((row) => row[column.key]);
+      if (column.grouping.action === 'count') {
+        compressedRow[column.key] = dataValues.length;
+      } else if (column.grouping.action === 'first') {
+        compressedRow[column.key] = dataValues[0];
+      } else if (
+        column.grouping.action === 'last' ||
+        column.grouping.action === 'hide' ||
+        column.grouping.action === 'none' ||
+        column.grouping.action === 'group'
+      ) {
+        compressedRow[column.key] = dataValues[dataValues.length - 1];
+      } else if (column.grouping.action === 'nth') {
+        const n = parseInt(column.grouping.param || '0', 10);
+        compressedRow[column.key] = n < dataValues.length ? dataValues[n] : undefined;
+      } else if (column.grouping.action === 'all') {
+        const separator = column.grouping.param || '; ';
+        if (column.type === 'date') {
+          compressedRow[column.key] = sort(dataValues as Date[])
+            .asc()
+            .map((d) => (d ? d.toLocaleDateString('ru') : 'NA'))
+            .join(separator);
+        } else {
+          compressedRow[column.key] = sort(dataValues)
+            .asc()
+            .map((v) => (v ? v : 'NA'))
+            .join(separator);
+        }
+      } else if (column.grouping.action === 'unique') {
+        const separator = column.grouping.param || '; ';
+        compressedRow[column.key] = sort(Array.from(new Set(dataValues)))
+          .asc()
+          .map((v) => (v ? v : 'NA'))
+          .join(separator);
+      } else if (column.grouping.action === 'sum') {
+        const validValues = (dataValues as number[]).filter((value) => value !== undefined && value !== null);
+        if (column.type === 'number' && validValues.length > 0) {
+          const sum = validValues.reduce((sum, value) => sum + value);
+          compressedRow[column.key] = prettyNumber(sum);
+        } else {
+          compressedRow[column.key] = undefined;
+        }
+      } else if (column.grouping.action === 'mean') {
+        const validValues = (dataValues as number[]).filter((value) => value !== undefined && value !== null);
+        if (column.type === 'number' && validValues.length > 0) {
+          const sum = validValues.reduce((sum, value) => sum + value);
+          const mean = sum / validValues.length;
+          compressedRow[column.key] = prettyNumber(mean);
+        } else {
+          compressedRow[column.key] = undefined;
+        }
+      } else if (column.grouping.action === 'median') {
+        const validValues = (dataValues as number[]).filter((value) => value !== undefined && value !== null);
+        if (column.type === 'number' && validValues.length > 0) {
+          const ordered = sort(validValues).asc();
+          const middleIdx = (ordered.length - (ordered.length % 2)) / 2;
+          if (ordered.length % 2 === 1) {
+            const median = ordered[middleIdx];
+            compressedRow[column.key] = prettyNumber(median);
+          } else {
+            const median = (ordered[middleIdx] + ordered[middleIdx + 1]) / 2;
+            compressedRow[column.key] = prettyNumber(median);
+          }
+        } else {
+          compressedRow[column.key] = undefined;
+        }
+      }
+    });
+
+    return compressedRow;
+  }
+
+  function prettyNumber(n: number): number {
+    return parseFloat(n.toFixed(3));
+  }
+
+  function cancelGrouping(): void {
+    toggleGroupingOverlayVisibility();
+    groupingOverlay.value!.restoreGroupingBackup();
+  }
+
+  function ungroup(): void {
+    clearStats();
+    storage.back();
+    updateTableState();
+    groupingOverlay.value!.clearGrouping();
+    isGrouped.value = false;
+  }
 
   function toggleFilter(columnKey: string) {
     const columnIdx = reactiveSchema.value.findIndex((column) => column.key === columnKey);
