@@ -1,4 +1,4 @@
-import { Database } from '../Database';
+import { DemoDatabase } from '../DemoDatabase';
 import type { Model } from '../Model';
 import { buildPatients } from '../melanoma/patients';
 import { buildLifeStatuses } from '../melanoma/status';
@@ -6,7 +6,7 @@ import { buildCancers } from '../melanoma/cancers';
 import { buildhistologicCharacteristics } from '../melanoma/histology';
 import { buildSurgeries } from '../melanoma/surgery';
 
-export class MelanomaDatabase extends Database {
+export class MelanomaDatabase extends DemoDatabase {
   constructor(length: number) {
     super(length);
   }

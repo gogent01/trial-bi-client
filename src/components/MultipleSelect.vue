@@ -60,9 +60,12 @@
     options: string[];
     selected: string[];
   }
-
   const props = defineProps<Props>();
-  const emit = defineEmits(['change']);
+
+  interface Emits {
+    (e: 'change', values: string[]): void;
+  }
+  const emit = defineEmits<Emits>();
 
   const selectedOptions = ref<string[]>(props.selected);
 

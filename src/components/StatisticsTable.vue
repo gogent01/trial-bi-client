@@ -52,7 +52,6 @@
     variable: string;
     data: StatsRow[];
   }
-
   const props = defineProps<Props>();
 
   const ncol = Object.keys(colnames).length;

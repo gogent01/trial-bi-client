@@ -1,5 +1,5 @@
 import type { Model } from './Model';
-import type { Database } from './Database';
+import type { Database } from './types';
 
 export class QueryPlan {
   db: Database;

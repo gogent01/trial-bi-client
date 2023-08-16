@@ -78,7 +78,11 @@
     schema: ReactiveTableSchemaInfo;
   }
   const props = defineProps<Props>();
-  const emit = defineEmits(['change']);
+
+  interface Emits {
+    (e: 'change', at: { originKey: string; columnKey: string }): void;
+  }
+  const emit = defineEmits<Emits>();
 
   type SchemaGroup = {
     origin: {

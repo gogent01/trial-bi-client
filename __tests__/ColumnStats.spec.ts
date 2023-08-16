@@ -12,27 +12,6 @@ function getColumnValues(model: Model, columnKey: string): unknown[] {
   return model.data.map((row) => row[columnKey]);
 }
 
-// describe('Building of stats table for different types of data columns', () => {
-//   it('does something', async () => {
-//     const columnKey = 'date_of_birth';
-//     const columnMetadata = getColumnMetadata(model, columnKey);
-//     const columnValues = getColumnValues(model, columnKey);
-//
-//     if (!columnMetadata) {
-//       throw new Error('no such column!');
-//     }
-//
-//     const stats = new ColumnStats();
-//     const output = stats.calculate(columnMetadata, columnValues);
-//
-//     console.log(columnMetadata);
-//     console.log(columnValues);
-//     console.log(output);
-//
-//     expect(true).toBe(true);
-//   });
-// });
-
 describe('Checks for a correct work of stats functions', () => {
   it('should build number stats if columnMetadata.type is "number"', () => {
     const stats = new ColumnStats();

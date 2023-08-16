@@ -32,7 +32,10 @@
     variable: string;
     hasData: boolean;
   }
-
   const props = defineProps<Props>();
-  const emit = defineEmits(['save']);
+
+  interface Emits {
+    (e: 'save'): void;
+  }
+  const emit = defineEmits<Emits>();
 </script>

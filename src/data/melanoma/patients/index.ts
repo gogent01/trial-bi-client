@@ -1,5 +1,4 @@
-import { faker } from '@faker-js/faker';
-faker.setLocale('ru');
+import { faker } from '@faker-js/faker/locale/ru';
 import { Model } from '../../Model';
 import type { TableRow } from '../../types';
 import { patientSchema } from '../../melanoma/patients/schema';

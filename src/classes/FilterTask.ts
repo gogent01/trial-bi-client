@@ -21,6 +21,16 @@ export class FilterTask {
     this.rangeValues = [undefined, undefined];
   }
 
+  clone(): FilterTask {
+    const clonedFilterTask = new FilterTask(this.columnKey, this.columnName, this.columnType, this.columnLevels);
+
+    clonedFilterTask.setValue(this.value);
+    clonedFilterTask.setMultipleValues(this.multipleValues);
+    clonedFilterTask.setRangeValues(this.rangeValues);
+
+    return clonedFilterTask;
+  }
+
   setType(filterType: FilterType) {
     this.type = filterType;
   }

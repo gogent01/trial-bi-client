@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker/locale/ru';
 import { Model } from '../../Model';
 import type { TableRow, TableData } from '../../types';
 import { cancerSchema } from '../../breast/cancers/schema';

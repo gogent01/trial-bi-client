@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker/locale/ru';
 import { Model } from '../../Model';
 import type { TableRow, TableData } from '../../types';
 import { neoDrugSchema } from '../../breast/neoDrugs/schema';

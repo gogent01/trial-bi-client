@@ -44,10 +44,13 @@
     nrow: number;
     isSortActive: boolean;
   }
-
   const props = defineProps<Props>();
 
-  const emit = defineEmits(['clearSort', 'save']);
+  interface Emits {
+    (e: 'clearSort'): void;
+    (e: 'save'): void;
+  }
+  const emit = defineEmits<Emits>();
 
   function toLocaleRowCount(n: number) {
     const foundCases = {
