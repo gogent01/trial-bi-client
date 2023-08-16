@@ -240,6 +240,7 @@
 
 <script setup lang="ts">
   // TODO: check on how everything manages with NA data
+  // TODO: move data manipulation code to pinia
 
   import { ref, computed, watch, onMounted } from 'vue';
   import { sort } from 'fast-sort';
