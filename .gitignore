@@ -2,8 +2,6 @@
 node_modules
 public
 dist
-server/tests
-*.tsbuildinfo
 
 # local env files
 .env.local
@@ -25,6 +23,10 @@ lerna-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Other
+*.tsbuildinfo
+stats.html
 
 dist-ssr
 coverage
