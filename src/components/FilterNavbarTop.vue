@@ -36,8 +36,10 @@
   interface Props {
     isFilterActive: boolean;
   }
-
   const props = defineProps<Props>();
 
-  const emit = defineEmits(['clearFilters']);
+  interface Emits {
+    (e: 'clearFilters'): void;
+  }
+  const emit = defineEmits<Emits>();
 </script>

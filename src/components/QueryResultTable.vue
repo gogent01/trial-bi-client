@@ -99,9 +99,14 @@
     currentPage: number;
     limit: number;
   }
-
   const props = defineProps<Props>();
-  const emit = defineEmits(['sort', 'filter', 'stats']);
+
+  interface Emits {
+    (e: 'filter', columnKey: string): void;
+    (e: 'sort', columnKey: string): void;
+    (e: 'stats', columnKey: string): void;
+  }
+  const emit = defineEmits<Emits>();
 
   const ncol = computed(() => (props.table.length > 0 ? Object.keys(props.table[0]).length : 0));
   const nrow = computed(() => props.table.length);

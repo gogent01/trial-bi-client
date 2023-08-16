@@ -24,6 +24,5 @@
   interface Props {
     schema: ReactiveTableSchemaInfo;
   }
-
   const props = defineProps<Props>();
 </script>

@@ -58,9 +58,12 @@
     trials: Trial[];
     selectedTrialIdx: number;
   }
-
   const props = defineProps<Props>();
-  const emit = defineEmits(['update']);
+
+  interface Emits {
+    (e: 'update', trialIdx: number): void;
+  }
+  const emit = defineEmits<Emits>();
 
   type TrialInfo = {
     value: string;
