@@ -39,10 +39,12 @@
   interface Props {
     schema: ReactiveTableSchema;
   }
-
   const props = defineProps<Props>();
 
-  const emit = defineEmits(['toggleColumnVisibility']);
+  interface Emits {
+    (e: 'toggleColumnVisibility', columnKey: string): void;
+  }
+  const emit = defineEmits<Emits>();
 
   function emitToggleColumnVisibility(columnKey: string) {
     emit('toggleColumnVisibility', columnKey);

@@ -1,11 +1,11 @@
 <template>
-  <Listbox as="div" v-model="selectedOptions" multiple>
-    <div class="relative mt-2">
+  <Listbox as="div" v-model="selected">
+    <div class="relative">
       <ListboxButton
         class="relative w-full cursor-default rounded-md bg-white py-1 pl-3 pr-10 text-left text-gray-900 ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-600 sm:text-sm sm:leading-6"
       >
         <span class="block whitespace-pre-wrap h-8 overflow-hidden" style="max-height: 1.5rem">{{
-          selectedOptions.join(', ')
+          selected.text
         }}</span>
         <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
           <ChevronUpDownIcon class="h-5 w-5 text-gray-500" aria-hidden="true" />
@@ -23,10 +23,11 @@
           <ListboxOption
             as="template"
             v-for="option in props.options"
-            :key="option"
+            :key="option.value"
             :value="option"
             v-slot="{ active, selected }"
             class="cursor-default"
+            :disabled="!!option.disabled"
           >
             <li
               :class="[
@@ -35,7 +36,7 @@
                 'relative select-none py-2 pl-8 pr-4 focus:outline-none',
               ]"
             >
-              <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{ option }}</span>
+              <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{ option.text }}</span>
 
               <span
                 v-if="selected"
@@ -55,21 +56,25 @@
   import { ref, watch } from 'vue';
   import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue';
   import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid';
+  import type { SelectOption } from '../data/types';
 
   interface Props {
-    options: string[];
-    selected: string[];
+    options: SelectOption[];
+    selected?: SelectOption;
   }
   const props = defineProps<Props>();
 
   interface Emits {
-    (e: 'change', values: string[]): void;
+    (e: 'change', option: SelectOption): void;
   }
   const emit = defineEmits<Emits>();
 
-  const selectedOptions = ref<string[]>(props.selected);
+  const selected = ref<SelectOption>(props.selected ? props.selected : props.options[0]);
 
-  watch(selectedOptions, (newValue) => {
-    emit('change', Array.from(newValue));
-  });
+  watch(
+    () => selected.value,
+    (newOption) => {
+      emit('change', newOption);
+    }
+  );
 </script>

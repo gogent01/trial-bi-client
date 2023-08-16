@@ -122,10 +122,20 @@
   interface Props {
     tasks: FilterTask[];
   }
-
   const props = defineProps<Props>();
 
-  const emit = defineEmits(['updateType', 'updateValue', 'updateRangeValues', 'updateMultipleValues', 'remove']);
+  interface Emits {
+    (e: 'updateType', filterTaskIdx: number, filterType: FilterType): void;
+    (e: 'updateValue', filterTaskIdx: number, value: string | number | Date): void;
+    (
+      e: 'updateRangeValues',
+      filterTaskIdx: number,
+      rangeValues: [number | Date | undefined, number | Date | undefined]
+    ): void;
+    (e: 'updateMultipleValues', filterTaskIdx: number, values: string[]): void;
+    (e: 'remove', filterTaskIdx: number): void;
+  }
+  const emit = defineEmits<Emits>();
 
   const filterOptions = {
     id: [],
@@ -170,7 +180,7 @@
     const target = event.target as HTMLSelectElement;
     const optionName = target.value;
     const columnType = props.tasks[filterTaskIndex].columnType;
-    const filterType = filterOptions[columnType].filter((option) => option.name === optionName)[0].value;
+    const filterType = filterOptions[columnType].filter((option) => option.name === optionName)[0].value as FilterType;
     emit('updateType', filterTaskIndex, filterType);
 
     nextTick(() => (target.nextElementSibling as HTMLInputElement).focus());

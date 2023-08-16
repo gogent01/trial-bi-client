@@ -52,15 +52,18 @@
   import { computed } from 'vue';
   import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue';
   import { CheckIcon, ChevronDownIcon } from '@heroicons/vue/20/solid';
-  import type { Trial } from '../data/Router';
+  import type { Trial } from '../data/types';
 
   interface Props {
     trials: Trial[];
     selectedTrialIdx: number;
   }
-
   const props = defineProps<Props>();
-  const emit = defineEmits(['update']);
+
+  interface Emits {
+    (e: 'update', trialIdx: number): void;
+  }
+  const emit = defineEmits<Emits>();
 
   type TrialInfo = {
     value: string;

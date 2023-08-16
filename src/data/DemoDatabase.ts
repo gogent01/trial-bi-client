@@ -1,7 +1,7 @@
 import { Model } from './Model';
-import type { TableColumn, TableData, TableSchemaInfo, DataQuery } from './types';
+import type { Database, TableColumn, TableData, TableSchemaInfo, DataQuery } from './types';
 
-export abstract class Database {
+export abstract class DemoDatabase implements Database {
   models: Model[];
 
   protected constructor(length: number) {
@@ -54,7 +54,6 @@ export abstract class Database {
   }
 
   leftJoin(left: Model, right: Model): Model {
-    // console.log(`${left.key} joins ${right.key}...`);
     const foreignKeyIdx = right.schema.findIndex((column) => column.belongsTo);
     const primaryKeyIdx = left.schema.findIndex(
       (column) => column.primaryKey === right.schema[foreignKeyIdx].belongsTo

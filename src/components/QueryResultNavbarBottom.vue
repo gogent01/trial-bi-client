@@ -56,9 +56,12 @@
     currentPage: number;
     maxPage: number;
   }
-
   const props = defineProps<Props>();
-  const emit = defineEmits(['update']);
+
+  interface Emits {
+    (e: 'update', value: number): void;
+  }
+  const emit = defineEmits<Emits>();
 
   const rowNumberStart = computed(() => Math.min((props.currentPage - 1) * props.limit + 1, props.nrow));
   const rowNumberEnd = computed(() => Math.min(rowNumberStart.value + props.limit - 1, props.nrow));

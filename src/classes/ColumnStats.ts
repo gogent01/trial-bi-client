@@ -85,7 +85,7 @@ export class ColumnStats {
         {
           param: 'Нет данных',
           value: (columnValues as string[])
-            .filter((value) => value === null || value === 'Нет данных')
+            .filter((value) => value === undefined || value === null || value === 'Нет данных')
             .length.toString(),
         },
       ]);
