@@ -3,6 +3,7 @@ node_modules
 public
 dist
 server/tests
+*.tsbuildinfo
 
 # local env files
 .env.local

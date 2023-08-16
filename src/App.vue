@@ -6,8 +6,9 @@
         <div class="relative flex h-16 items-center justify-between">
           <!-- Logo section -->
           <div class="flex items-center">
-            <div class="flex-shrink-0">
-              <img class="h-8 w-auto text-white" :src="logo" alt="Your Company" />
+            <div class="flex-shrink-0 flex gap-3 items-center">
+              <img class="h-8 w-auto text-white" :src="logo" alt="Trial BI" />
+              <p class="min-w-max text-2xl text-white font-semibold">Trial BI</p>
             </div>
           </div>
           <div class="h-10 flex gap-2 items-center">
@@ -239,7 +240,6 @@
 
 <script setup lang="ts">
   // TODO: check on how everything manages with NA data
-  // TODO: feedback button and initial alert about fake data / evaluation purposes
 
   import { ref, computed, watch, onMounted } from 'vue';
   import { sort } from 'fast-sort';
