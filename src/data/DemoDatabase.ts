@@ -54,7 +54,6 @@ export abstract class DemoDatabase implements Database {
   }
 
   leftJoin(left: Model, right: Model): Model {
-    // console.log(`${left.key} joins ${right.key}...`);
     const foreignKeyIdx = right.schema.findIndex((column) => column.belongsTo);
     const primaryKeyIdx = left.schema.findIndex(
       (column) => column.primaryKey === right.schema[foreignKeyIdx].belongsTo
