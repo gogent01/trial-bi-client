@@ -23,7 +23,7 @@ export class FakeRouter extends Router {
       {
         id: 0,
         key: 'breast',
-        name: 'RWE: рак молочной железы',
+        name: 'Trial: рак молочной железы',
         database: new BreastDatabase(279),
         created_at: new Date('2022-01-10'),
         updated_at: new Date('2023-01-18'),
@@ -31,7 +31,7 @@ export class FakeRouter extends Router {
       {
         id: 1,
         key: 'melanoma',
-        name: 'RWE: меланома',
+        name: 'Trial: меланома',
         database: new MelanomaDatabase(350),
         created_at: new Date('2022-02-01'),
         updated_at: new Date('2022-12-05'),
