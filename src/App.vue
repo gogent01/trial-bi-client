@@ -246,7 +246,7 @@
   import { sort } from 'fast-sort';
   import { TvIcon, CubeTransparentIcon, RectangleStackIcon, RectangleGroupIcon } from '@heroicons/vue/24/outline';
   import { PlusIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/20/solid';
-  import logo from './assets/RWE-BI-logo.svg';
+  import logo from './assets/Trial-BI-logo.svg';
   import type {
     Trial,
     ReactiveTableSchemaInfo,

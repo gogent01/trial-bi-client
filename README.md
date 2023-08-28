@@ -1,6 +1,7 @@
 # Trial BI
 
 ### Description
+
 This is a system for performing data analysis of clinical trial data. The capabilities of Trial BI include:
 - selection of a trial to get data from
 - support of 4 column data types: number, text, factor and date
@@ -12,8 +13,10 @@ This is a system for performing data analysis of clinical trial data. The capabi
 
 This repository contains only the front-end of a system. In a current state it does not connect to any data source, but generates fake data for demonstration purposes.
 
+
 ### How to use locally
 
 1. Clone the repository to a desired folder on your computer.
-2. CD into the project folder and run `npm start`.
-3. You are done! ✨
+2. CD into the project folder and run `npm i && npm start`.
+3. The system will be available on localhost, port 5173.
+4. You are done! ✨
