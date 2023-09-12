@@ -1,22 +1,64 @@
-# Trial BI
+# Medtech-trial-bi
 
-### Description
-
-This is a system for performing data analysis of clinical trial data. The capabilities of Trial BI include:
-- selection of a trial to get data from
-- support of 4 column data types: number, text, factor and date
-- filtering of data with various filter types, depending on a particular column data type
-- multi-level sorting
-- data aggregation by one or multiple data columns
-- display of descriptive statistics for any column
-- export of modified data and descriptive statistics to *.xlsx files
-
-This repository contains only the front-end of a system. In a current state it does not connect to any data source, but generates fake data for demonstration purposes.
+Medtech-trial-bi — это система для анализа данных клинических испытаний. Предназначена для работы с сырыми данными, собранных в ходе клинических испытаний с целью отбора нужного фрагмента данных для изучения первичной информации и дальнейшего анализа данных в специализированном ПО.
 
 
-### How to use locally
+### Возможности системы
 
-1. Clone the repository to a desired folder on your computer.
-2. CD into the project folder and run `npm i && npm start`.
-3. The system will be available on localhost, port 5173.
-4. You are done! ✨
+- выбор клинического испытания для получения данных;
+- поддержка работы с однотабличными и многотабличными реляционными базами данных;
+- поддержку 4 типов переменных: число, текст, дискретная переменная (фактор) и дата;
+- многоуровневую сортировку данных;
+- фильтрацию данных с различными типами фильтров в зависимости от типа данных в конкретном столбце (равно, не равно, больше, больше или равно, меньше, меньше или равно, диапазон, начинается с, содержит, заканчивается на, равно значениям из списка);
+- агрегацию данных по одному или нескольким столбцам данных;
+- расчет описательной статистики для любой переменной;
+- экспорт обработанных данных и описательной статистики в файлы *.xlsx.
+
+
+## Medtech-trial-bi-client
+
+Этот репозиторий содержит только фронт-энд системы. В текущем состоянии он не подключен к какому-либо источнику данных, отображаемые для демонстрационных целей данные генерируются случайным образом. Написан код класса для получения данных от бэкенда, есть возможность дописать код класса для получения данных из файлов, загружаемых локально.
+
+
+### Технологии
+- TypeScript
+- Vue 3
+- Pinia
+- Tailwind CSS
+- ExcelJS
+
+
+### Установка и запуск
+
+```bash
+npm install
+npm start
+```
+Скрипты стандартные для проекта на Vue:
+```bash
+npm run type-check # проверка корректности типов
+npm run build # сборка приложения, отправляется в папку dist
+```
+Для наиболее сложных классов (фильтрация данных и расчет описательной статистики) написаны тесты, находящиеся в папке `__tests__`. Запуск тестов:
+```bash
+npm run test
+```
+
+### Структура
+
+Приложение построено по принципу SPA, и имеет один  экран для работы с данными (файл `src/App.vue`). Основные компоненты приложения:
+- таблица данных: `src/components/QueryResultTatble.vue`
+- список переменных: `src/components/QueryList.vue`
+- список фильтров: `src/components/FilterList.vue`
+- колонка описательной статистики: `src/components/StatisticsTable.vue`
+- модальное окно агрегации данных: `src/components/GroupingOverlay.vue`
+
+
+### Предполагаемый путь пользователя
+
+1. Выбрать исследование в верхнем правом углу экрана.
+2. Нажать на кнопку «Новый запрос» и выбрать переменные для отображения.
+3. Применить к данным группировку, фильтрацию и сортировку, скрыть ненужные столбцы данных; при необходимости изменить исходный запрос или отменить примененные изменения.
+4. Изучить описательную статистику по интересующим пользователя переменным.
+5. Сохранить полученную таблицу и, при необходимости, таблицу с описательной статистикой, на компьютер пользователя в формате *.xlsx.
+
