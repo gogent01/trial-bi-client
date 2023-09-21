@@ -8,7 +8,7 @@
           <div class="flex items-center">
             <div class="flex-shrink-0 flex gap-3 items-center">
               <img class="h-8 w-auto text-white" :src="logo" alt="Trial BI" />
-              <p class="min-w-max text-2xl text-white font-semibold">Trial BI</p>
+              <!--              <p class="min-w-max text-2xl text-white font-semibold tracking-wide">Trial BI</p>-->
             </div>
           </div>
           <div class="h-10 flex gap-2 items-center">
@@ -30,7 +30,8 @@
               class="inline-flex items-center min-w-max rounded-lg border border-transparent bg-teal-900 px-4 py-2 font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
               @click="createQuery"
             >
-              <plus-icon class="-ml-2 mr-1 h-6 w-6"></plus-icon>Новый запрос
+              <plus-icon class="-ml-2 mr-1 h-6 w-6"></plus-icon>
+              {{ t('buttons.new_query') }}
             </button>
           </div>
         </div>
@@ -63,9 +64,11 @@
       <div class="w-full px-4 py-6 text-center bg-gray-50 rounded-xl">
         <tv-icon class="mx-auto h-16 w-16 text-gray-600" aria-hidden="true" />
         <h3 class="mt-1 text-lg font-semibold text-gray-900">
-          Приложение поддерживает работу только на широких экранах!
+          {{ t('wide_screen.notice') }}
         </h3>
-        <p class="mt-4 text-gray-600">Чтобы приступить к анализу данных, откройте эту страницу на компьютере.</p>
+        <p class="mt-4 text-gray-600">
+          {{ t('wide_screen.todo') }}
+        </p>
       </div>
     </div>
 
@@ -79,13 +82,15 @@
       >
         <chevron-double-right-icon v-if="queryHidden" class="h-6 w-6 cursor-pointer"></chevron-double-right-icon>
         <chevron-double-left-icon v-else class="h-6 w-6 cursor-pointer"></chevron-double-left-icon>
-        <p class="font-semibold" style="writing-mode: vertical-rl; transform: scale(-1)">Запрос и фильтры</p>
+        <p class="font-semibold" style="writing-mode: vertical-rl; transform: scale(-1)">
+          {{ t('tabs.query_and_filters') }}
+        </p>
       </div>
 
       <div v-if="!queryHidden" class="pl-4 py-4 basis-1/5 flex-shrink-0 flex-grow-0 flex flex-col 2xl:pr-4">
         <div class="h-1/2 flex flex-col overflow-hidden">
           <div class="ml-2 mb-2 text-slate-700 text-xl font-semibold">
-            <p class="text-xl font-semibold">Запрос</p>
+            <p class="text-xl font-semibold">{{ t('titles.query') }}</p>
           </div>
           <div
             class="h-full flex flex-col rounded-xl overflow-hidden"
@@ -99,7 +104,7 @@
                 @toggleColumnVisibility="toggleColumnVisibility"
               />
               <div v-else class="w-full p-3">
-                <p class="text-sm text-gray-700 text-center">Нет данных для отображения</p>
+                <p class="text-sm text-gray-700 text-center">{{ t('no_data') }}</p>
               </div>
             </div>
           </div>
@@ -107,7 +112,7 @@
 
         <div class="h-1/2 mt-4 flex flex-col">
           <div class="ml-2 mb-2 text-slate-700 text-xl font-semibold">
-            <p class="text-xl font-semibold">Фильтры</p>
+            <p class="text-xl font-semibold">{{ t('titles.filters') }}</p>
           </div>
           <div class="h-full rounded-xl overflow-hidden" :class="[filterTasks.length > 0 ? 'bg-white' : 'bg-gray-50']">
             <filter-navbar-top :is-filter-active="filterTasks.length > 0" @clearFilters="clearFilters" />
@@ -122,7 +127,7 @@
                 @remove="removeFilter"
               />
               <div v-else class="w-full p-3">
-                <p class="text-sm text-gray-700 text-center">Нет фильтров для отображения</p>
+                <p class="text-sm text-gray-700 text-center">{{ t('no_data') }}</p>
               </div>
             </div>
           </div>
@@ -135,7 +140,8 @@
             @click="toggleGroupingOverlayVisibility"
           >
             <rectangle-stack-icon class="flex-shrink-0 mr-2 h-5 w-5"></rectangle-stack-icon
-            ><span v-if="!isGrouped">Группировать данные</span><span v-else>Редактировать группы</span>
+            ><span v-if="!isGrouped">{{ t('buttons.group') }}</span
+            ><span v-else>{{ t('buttons.edit_groups') }}</span>
           </button>
         </div>
 
@@ -145,13 +151,13 @@
             class="inline-flex items-center justify-center rounded-lg border border-transparent bg-orange-600 px-4 py-3 font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
             @click="ungroup"
           >
-            <rectangle-group-icon class="flex-shrink-0 mr-2 h-5 w-5"></rectangle-group-icon>Разгруппировать
+            <rectangle-group-icon class="flex-shrink-0 mr-2 h-5 w-5"></rectangle-group-icon>{{ t('buttons.ungroup') }}
           </button>
         </div>
       </div>
 
       <div class="row-span-2 p-4 flex-1 flex flex-col">
-        <p class="ml-2 mb-2 text-slate-700 text-xl font-semibold">Результат запроса</p>
+        <p class="ml-2 mb-2 text-slate-700 text-xl font-semibold">{{ t('titles.query_results') }}</p>
         <div class="h-full rounded-xl bg-white overflow-hidden">
           <query-result-navbar-top
             :ncol="ncol"
@@ -175,15 +181,15 @@
             <div v-else class="w-full h-full flex items-center justify-center p-3 bg-gray-50">
               <div class="text-center">
                 <cube-transparent-icon class="mx-auto h-20 w-20 text-gray-600" aria-hidden="true" />
-                <h3 class="mt-3 mb-6 text-lg font-semibold text-gray-900">Нет данных для отображения</h3>
+                <h3 class="mt-3 mb-6 text-lg font-semibold text-gray-900">{{ t('no_data_main.notice') }}</h3>
                 <p class="inline text-gray-600">
-                  Чтобы начать анализ данных, выберите исследование в верхнем правом углу
+                  {{ t('no_data_main.todo.select_trial') }}
                 </p>
                 <p class="mt-1 inline-flex items-center text-gray-600 cursor-text">
-                  экрана и нажмите на кнопку
+                  {{ t('no_data_main.todo.press_button') }}
                   <span class="ml-2 inline-flex items-center py-1 pl-1 pr-2 rounded-md border border-gray-400">
                     <plus-icon class="inline mr-0.5 h-5 w-5" aria-hidden="true" />
-                    Новый запрос</span
+                    {{ t('buttons.new_query') }}</span
                   >
                 </p>
               </div>
@@ -201,7 +207,7 @@
 
       <div v-if="!statisticsHidden" class="pr-4 py-4 basis-1/5 flex-shrink-0 flex-grow-0 flex flex-col 2xl:pl-4">
         <div class="flex mb-2 ml-2 items-center justify-between text-slate-700">
-          <p class="text-xl font-semibold">Статистика</p>
+          <p class="text-xl font-semibold">{{ t('titles.statistics') }}</p>
         </div>
 
         <div
@@ -220,7 +226,7 @@
                 :variable="stats.variable"
                 :data="stats.data"
               />
-              <p v-else class="text-sm text-gray-700 text-center">Нет данных для отображения</p>
+              <p v-else class="text-sm text-gray-700 text-center">{{ t('no_data') }}</p>
             </div>
           </div>
         </div>
@@ -232,18 +238,18 @@
       >
         <chevron-double-left-icon v-if="statisticsHidden" class="h-6 w-6 cursor-pointer"></chevron-double-left-icon>
         <chevron-double-right-icon v-else class="h-6 w-6 cursor-pointer"></chevron-double-right-icon>
-        <p class="font-semibold" style="writing-mode: vertical-rl; transform: scale(-1)">Статистика</p>
+        <p class="font-semibold" style="writing-mode: vertical-rl; transform: scale(-1)">{{ t('tabs.statistics') }}</p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  // TODO: check on how everything manages with NA data
   // TODO: move data manipulation code to pinia
 
   import { ref, computed, watch, onMounted } from 'vue';
   import { sort } from 'fast-sort';
+  import { useI18n } from 'vue-i18n';
   import { TvIcon, CubeTransparentIcon, RectangleStackIcon, RectangleGroupIcon } from '@heroicons/vue/24/outline';
   import { PlusIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/20/solid';
   import logo from './assets/Trial-BI-logo.svg';
@@ -280,6 +286,7 @@
   import StatisticsTable from './components/StatisticsTable.vue';
   import { XlsxExport } from './classes/XlsxExport';
 
+  const { t } = useI18n();
   const areTrialsLoaded = ref<boolean>(false);
   const queryHidden = ref<boolean>(false);
   const statisticsHidden = ref<boolean>(false);
@@ -529,16 +536,16 @@
       const groupingAction = groupingColumn.grouping.action;
       const groupingParam = groupingColumn.grouping.param;
 
-      if (groupingAction === 'hide') return '(посл. знач.)';
-      if (groupingAction === 'count') return '(кол-во набл.)';
-      if (groupingAction === 'first') return '(перв. знач.)';
-      if (groupingAction === 'last') return '(посл. знач.)';
-      if (groupingAction === 'nth') return `(${groupingParam}-е знач.)`;
-      if (groupingAction === 'sum') return '(сумма)';
-      if (groupingAction === 'mean') return '(среднее)';
-      if (groupingAction === 'median') return '(медиана)';
-      if (groupingAction === 'all') return '(все. знач.)';
-      if (groupingAction === 'unique') return '(уник. знач.)';
+      if (groupingAction === 'hide') return t('grouping_actions.hide');
+      if (groupingAction === 'count') return t('grouping_actions.count');
+      if (groupingAction === 'first') return t('grouping_actions.first');
+      if (groupingAction === 'last') return t('grouping_actions.last');
+      if (groupingAction === 'nth') return t('grouping_actions.nth', { groupingParam });
+      if (groupingAction === 'sum') return t('grouping_actions.sum');
+      if (groupingAction === 'mean') return t('grouping_actions.mean');
+      if (groupingAction === 'median') return t('grouping_actions.median');
+      if (groupingAction === 'all') return t('grouping_actions.all');
+      if (groupingAction === 'unique') return t('grouping_actions.unique');
 
       return '';
     };
@@ -855,7 +862,7 @@
         return visibleRow;
       }, {});
     });
-    saveTable(schema, data, 'Данные', 'результаты_запроса');
+    saveTable(schema, data, t('export.data.sheet_name'), t('export.data.file_name'));
   }
 
   function saveStatsTable() {
@@ -863,28 +870,28 @@
       {
         origin: {
           key: 'stats',
-          name: 'Статистика',
+          name: t('export.stats.schema.origin_name'),
           priority: 0,
         },
         key: 'param',
-        name: 'Параметр',
+        name: t('export.stats.schema.param_name'),
         type: 'text',
         position: 0,
       },
       {
         origin: {
           key: 'stats',
-          name: 'Статистика',
+          name: t('export.stats.schema.origin_name'),
           priority: 0,
         },
         key: 'value',
-        name: 'Значение',
+        name: t('export.stats.schema.value_name'),
         type: 'text',
         position: 1,
       },
     ];
     const data = stats.value.data as TableData;
     const filename = stats.value.variable.toLowerCase().replace(/[^а-яa-z0-9_-]/, '_');
-    saveTable(schema, data, 'Статистика', filename);
+    saveTable(schema, data, t('export.data.sheet_name'), filename);
   }
 </script>
