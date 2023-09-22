@@ -253,6 +253,8 @@
   import { TvIcon, CubeTransparentIcon, RectangleStackIcon, RectangleGroupIcon } from '@heroicons/vue/24/outline';
   import { PlusIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/20/solid';
   import logo from './assets/Trial-BI-logo.svg';
+  import { CURRENT_LOCALE } from './config/variables';
+
   import type {
     Trial,
     ReactiveTableSchemaInfo,
@@ -629,7 +631,7 @@
         if (column.type === 'date') {
           compressedRow[column.key] = sort(dataValues as Date[])
             .asc()
-            .map((d) => (d ? d.toLocaleDateString('ru') : 'NA'))
+            .map((d) => (d ? d.toLocaleDateString(CURRENT_LOCALE) : 'NA'))
             .join(separator);
         } else {
           compressedRow[column.key] = sort(dataValues)
