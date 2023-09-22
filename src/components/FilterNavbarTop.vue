@@ -10,7 +10,7 @@
               @click="isFilterActive && emit('clearFilters')"
             >
               <trash-icon class="-ml-2 mr-1 h-5 w-5" aria-hidden="true" />
-              <span>Удалить все</span>
+              <span>{{ t('filters.remove_all') }}</span>
             </button>
           </div>
         </div>
@@ -31,7 +31,10 @@
 </template>
 
 <script setup lang="ts">
+  import { useI18n } from 'vue-i18n';
   import { TrashIcon } from '@heroicons/vue/24/outline';
+
+  const { t } = useI18n();
 
   interface Props {
     isFilterActive: boolean;
