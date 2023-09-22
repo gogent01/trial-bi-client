@@ -1,7 +1,7 @@
 <template>
   <ul role="list" class="w-full divide-y divide-gray-200">
     <li
-      v-for="column in schema.filter((column) => column.grouping.action !== 'group')"
+      v-for="column in schema.filter((c) => c.grouping.action !== 'group')"
       :key="column.origin.key + column.key"
       class="w-full flex gap-2 items-center p-2 bg-white"
     >
@@ -19,7 +19,7 @@
           class="block w-40 rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
           :placeholder="
             groupingActionOptions.find((option) => option.value === column.grouping.action)?.paramPlaceholder ||
-            'введите значение'
+            t('grouping.enter_value')
           "
           @input="updateGroupingParam($event, column)"
         />
@@ -29,6 +29,7 @@
 </template>
 
 <script setup lang="ts">
+  import { useI18n } from 'vue-i18n';
   import type {
     ColumnType,
     GroupingAction,
@@ -38,6 +39,8 @@
     SelectOption,
   } from '../data/types';
   import SingleSelect from './SingleSelect.vue';
+
+  const { t } = useI18n();
 
   interface Props {
     schema: GroupingReactiveTableSchema;
@@ -59,57 +62,57 @@
 
   const groupingActionOptions: GroupingActionOption[] = [
     {
-      text: 'скрыть',
+      text: t('grouping.actions.long.hide'),
       value: 'hide',
       applicability: ['id', 'text', 'factor', 'number', 'date'],
     },
     {
-      text: 'количество значений',
+      text: t('grouping.actions.long.count'),
       value: 'count',
       applicability: ['id', 'text', 'factor', 'number', 'date'],
     },
     {
-      text: 'первое значение',
-      value: 'first',
-      applicability: ['id', 'text', 'factor', 'number', 'date'],
-    },
-    {
-      text: 'последнее значение',
-      value: 'last',
-      applicability: ['id', 'text', 'factor', 'number', 'date'],
-    },
-    {
-      text: 'значение по счету',
-      value: 'nth',
-      applicability: ['id', 'text', 'factor', 'number', 'date'],
-      paramPlaceholder: 'порядковый номер',
-    },
-    {
-      text: 'все значения',
-      value: 'all',
-      applicability: ['id', 'text', 'factor', 'number', 'date'],
-      paramPlaceholder: 'разделитель',
-    },
-    {
-      text: 'все уникальные значения',
-      value: 'unique',
-      applicability: ['id', 'text', 'factor', 'number', 'date'],
-      paramPlaceholder: 'разделитель',
-    },
-    {
-      text: 'сумма',
-      value: 'sum',
-      applicability: ['number'],
-    },
-    {
-      text: 'среднее',
+      text: t('grouping.actions.long.mean'),
       value: 'mean',
       applicability: ['number'],
     },
     {
-      text: 'медиана',
+      text: t('grouping.actions.long.median'),
       value: 'median',
       applicability: ['number'],
+    },
+    {
+      text: t('grouping.actions.long.sum'),
+      value: 'sum',
+      applicability: ['number'],
+    },
+    {
+      text: t('grouping.actions.long.first'),
+      value: 'first',
+      applicability: ['id', 'text', 'factor', 'number', 'date'],
+    },
+    {
+      text: t('grouping.actions.long.last'),
+      value: 'last',
+      applicability: ['id', 'text', 'factor', 'number', 'date'],
+    },
+    {
+      text: t('grouping.actions.long.nth'),
+      value: 'nth',
+      applicability: ['id', 'text', 'factor', 'number', 'date'],
+      paramPlaceholder: t('grouping.actions.placeholders.index_number'),
+    },
+    {
+      text: t('grouping.actions.long.unique'),
+      value: 'unique',
+      applicability: ['id', 'text', 'factor', 'number', 'date'],
+      paramPlaceholder: t('grouping.actions.placeholders.separator'),
+    },
+    {
+      text: t('grouping.actions.long.all'),
+      value: 'all',
+      applicability: ['id', 'text', 'factor', 'number', 'date'],
+      paramPlaceholder: t('grouping.actions.placeholders.separator'),
     },
   ];
 
