@@ -6,7 +6,7 @@
           <div class="flex justify-between items-center">
             <p class="text-sm font-medium text-gray-900">{{ task.columnName }}</p>
             <p class="flex-shrink-0 text-xs text-gray-400 cursor-pointer hover:text-gray-600" @click="remove(taskIdx)">
-              <span><trash-icon class="inline mr-1 h-4 w-4"></trash-icon>Удалить</span>
+              <span><trash-icon class="inline mr-1 h-4 w-4"></trash-icon>{{ t('filters.remove') }}</span>
             </p>
           </div>
           <select
@@ -14,7 +14,7 @@
             class="block w-full rounded-md border-0 py-1 pl-3 pr-8 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-teal-600 text-sm sm:leading-6"
             @change="updateFilterType($event, taskIdx)"
           >
-            <option selected disabled>- выберите фильтр -</option>
+            <option selected disabled>{{ t('filters.options.select_filter') }}</option>
             <option v-for="option in filterOptions[task.columnType]" :key="option.name">{{ option.name }}</option>
           </select>
           <div v-if="task.type === 'any'">
@@ -26,31 +26,31 @@
           </div>
           <div v-else-if="task.type === 'range'">
             <div v-if="task.columnType === 'number'" class="flex items-center gap-2">
-              <label for="from" class="text-sm text-gray-900">от</label>
+              <label for="from" class="text-sm text-gray-900">{{ t('filters.range_from') }}</label>
               <input
                 type="text"
                 :value="task.rangeValues[0] || ''"
                 name="from"
                 class="flex px-2 py-1 w-20 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
-                placeholder="от"
+                :placeholder="t('filters.range_from')"
                 @input="sanitizeNumberInput"
                 @keyup.enter="($event.target as HTMLInputElement).blur()"
                 @blur="updateFilterRangeValues($event, taskIdx)"
               />
-              <label for="to" class="text-sm text-gray-900">до</label>
+              <label for="to" class="text-sm text-gray-900">{{ t('filters.range_to') }}</label>
               <input
                 type="text"
                 :value="task.rangeValues[1] || ''"
                 name="to"
                 class="flex px-2 py-1 w-20 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
-                placeholder="до"
+                :placeholder="t('filters.range_to')"
                 @input="sanitizeNumberInput"
                 @keyup.enter="($event.target as HTMLInputElement).blur()"
                 @blur="updateFilterRangeValues($event, taskIdx)"
               />
             </div>
             <div v-else-if="task.columnType === 'date'" class="flex items-center gap-2">
-              <label for="from" class="text-sm text-gray-900">от</label>
+              <label for="from" class="text-sm text-gray-900">{{ t('filters.range_from') }}</label>
               <input
                 :value="task.rangeValues[0] ? (task.rangeValues[0] as Date).toISOString().split('T')[0] : ''"
                 :class="[
@@ -61,7 +61,7 @@
                 @keyup.enter="($event.target as HTMLInputElement).blur()"
                 @blur="updateFilterRangeValues($event, taskIdx)"
               />
-              <label for="to" class="text-sm text-gray-900">до</label>
+              <label for="to" class="text-sm text-gray-900">{{ t('filters.range_to') }}</label>
               <input
                 :value="task.rangeValues[1] ? (task.rangeValues[1] as Date).toISOString().split('T')[0] : ''"
                 :class="[
@@ -91,7 +91,7 @@
                 type="text"
                 :value="task.value"
                 class="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
-                placeholder="введите значение"
+                :placeholder="t('filters.enter_value')"
                 @input="sanitizeNumberInput"
                 @keyup.enter="updateFilterValue($event, taskIdx)"
               />
@@ -101,7 +101,7 @@
                 type="text"
                 :value="task.value"
                 class="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
-                placeholder="введите значение"
+                :placeholder="t('filters.enter_value')"
                 @keyup.enter="updateFilterValue($event, taskIdx)"
               />
             </template>
@@ -114,10 +114,13 @@
 
 <script setup lang="ts">
   import { nextTick } from 'vue';
+  import { useI18n } from 'vue-i18n';
   import type { ColumnType } from '../data/types';
   import type { FilterType, FilterTask } from '../classes/FilterTask';
   import { TrashIcon } from '@heroicons/vue/24/outline';
   import MultipleSelect from './MultipleSelect.vue';
+
+  const { t } = useI18n();
 
   interface Props {
     tasks: FilterTask[];
@@ -140,40 +143,42 @@
   const filterOptions = {
     id: [],
     text: [
-      { name: 'точное соответствие', value: 'eq' },
-      { name: 'начинается с', value: 'sw' },
-      { name: 'содержит', value: 'has' },
-      { name: 'заканчивается на', value: 'ew' },
+      { name: t('filters.options.text.eq'), value: 'eq' },
+      { name: t('filters.options.text.sw'), value: 'sw' },
+      { name: t('filters.options.text.has'), value: 'has' },
+      { name: t('filters.options.text.ew'), value: 'ew' },
     ],
     number: [
-      { name: 'равно', value: 'eq' },
-      { name: 'больше', value: 'gt' },
-      { name: 'больше или равно', value: 'gte' },
-      { name: 'меньше', value: 'lt' },
-      { name: 'меньше или равно', value: 'lte' },
-      { name: 'диапазон', value: 'range' },
+      { name: t('filters.options.number.eq'), value: 'eq' },
+      { name: t('filters.options.number.gt'), value: 'gt' },
+      { name: t('filters.options.number.gte'), value: 'gte' },
+      { name: t('filters.options.number.lt'), value: 'lt' },
+      { name: t('filters.options.number.lte'), value: 'lte' },
+      { name: t('filters.options.number.range'), value: 'range' },
     ],
     date: [
-      { name: 'равно', value: 'eq' },
-      { name: 'больше', value: 'gt' },
-      { name: 'больше или равно', value: 'gte' },
-      { name: 'меньше', value: 'lt' },
-      { name: 'меньше или равно', value: 'lte' },
-      { name: 'диапазон', value: 'range' },
+      { name: t('filters.options.date.eq'), value: 'eq' },
+      { name: t('filters.options.date.gt'), value: 'gt' },
+      { name: t('filters.options.date.gte'), value: 'gte' },
+      { name: t('filters.options.date.lt'), value: 'lt' },
+      { name: t('filters.options.date.lte'), value: 'lte' },
+      { name: t('filters.options.date.range'), value: 'range' },
     ],
     factor: [
-      { name: 'значение из списка', value: 'any' },
-      { name: 'начинается с', value: 'sw' },
-      { name: 'содержит', value: 'has' },
-      { name: 'заканчивается на', value: 'ew' },
+      { name: t('filters.options.factor.any'), value: 'any' },
+      { name: t('filters.options.factor.sw'), value: 'sw' },
+      { name: t('filters.options.factor.has'), value: 'has' },
+      { name: t('filters.options.factor.ew'), value: 'ew' },
     ],
   };
 
   function getOption(columnType: ColumnType, filterType?: FilterType) {
-    if (!filterType) return '- выберите фильтр -';
+    if (!filterType) return t('filters.options.select_filter');
+
     const options = filterOptions[columnType].filter((option) => option.value === filterType);
     if (options.length > 0) return options[0].name;
-    return '- выберите фильтр -';
+
+    return t('filters.options.select_filter');
   }
 
   function updateFilterType(event: Event, filterTaskIndex: number) {
