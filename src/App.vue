@@ -538,16 +538,16 @@
       const groupingAction = groupingColumn.grouping.action;
       const groupingParam = groupingColumn.grouping.param;
 
-      if (groupingAction === 'hide') return t('grouping_actions.hide');
-      if (groupingAction === 'count') return t('grouping_actions.count');
-      if (groupingAction === 'first') return t('grouping_actions.first');
-      if (groupingAction === 'last') return t('grouping_actions.last');
-      if (groupingAction === 'nth') return t('grouping_actions.nth', { groupingParam });
-      if (groupingAction === 'sum') return t('grouping_actions.sum');
-      if (groupingAction === 'mean') return t('grouping_actions.mean');
-      if (groupingAction === 'median') return t('grouping_actions.median');
-      if (groupingAction === 'all') return t('grouping_actions.all');
-      if (groupingAction === 'unique') return t('grouping_actions.unique');
+      if (groupingAction === 'hide') return t('grouping.actions.short.hide');
+      if (groupingAction === 'count') return t('grouping.actions.short.count');
+      if (groupingAction === 'first') return t('grouping.actions.short.first');
+      if (groupingAction === 'last') return t('grouping.actions.short.last');
+      if (groupingAction === 'nth') return t('grouping.actions.short.nth', { groupingParam });
+      if (groupingAction === 'sum') return t('grouping.actions.short.sum');
+      if (groupingAction === 'mean') return t('grouping.actions.short.mean');
+      if (groupingAction === 'median') return t('grouping.actions.short.median');
+      if (groupingAction === 'all') return t('grouping.actions.short.all');
+      if (groupingAction === 'unique') return t('grouping.actions.short.unique');
 
       return '';
     };

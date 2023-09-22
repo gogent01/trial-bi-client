@@ -31,7 +31,7 @@
               <div class="h-full flex-grow-0 flex flex-col gap-6">
                 <div class="basis-1/3 flex flex-col overflow-hidden">
                   <div class="flex mb-2 ml-2 items-center justify-between text-slate-900">
-                    <p class="text-xl font-semibold">Выберите, по каким столбцам сгруппировать данные:</p>
+                    <p class="text-xl font-semibold">{{ t('grouping.select_grouping_columns') }}</p>
                   </div>
 
                   <div class="h-full rounded-xl bg-white overflow-auto">
@@ -41,14 +41,14 @@
                         :schema="groupingSchema"
                         @change="toggleGroupingColumn"
                       />
-                      <p v-else class="text-sm text-gray-800 text-center">Нет данных для отображения</p>
+                      <p v-else class="text-sm text-gray-800 text-center">{{ t('grouping.no_data') }}</p>
                     </div>
                   </div>
                 </div>
 
                 <div class="basis-2/3 flex flex-col overflow-hidden">
                   <div class="flex mb-2 ml-2 items-center justify-between text-slate-900">
-                    <p class="text-xl font-semibold">Определите, какие данные показать для остальных столбцов:</p>
+                    <p class="text-xl font-semibold">{{ t('grouping.select_grouping_actions') }}</p>
                   </div>
 
                   <div class="h-full rounded-xl bg-white overflow-auto">
@@ -58,7 +58,7 @@
                         :schema="groupingSchema"
                         @change="updateGroupingAction"
                       />
-                      <p v-else class="text-sm text-gray-800 text-center">Нет данных для отображения</p>
+                      <p v-else class="text-sm text-gray-800 text-center">{{ t('grouping.no_data') }}</p>
                     </div>
                   </div>
                 </div>
@@ -69,7 +69,7 @@
                     @click="cancel"
                   >
                     <x-mark-icon class="-ml-2 mr-1 h-5 w-5" aria-hidden="true" />
-                    <span>Отмена</span>
+                    <span>{{ t('grouping.cancel') }}</span>
                   </button>
                   <button
                     type="button"
@@ -78,7 +78,7 @@
                     @click="group"
                   >
                     <chevron-right-icon class="-ml-2 mr-1 h-5 w-5" aria-hidden="true" />
-                    Произвести группировку
+                    {{ t('grouping.perform_grouping') }}
                   </button>
                 </div>
               </div>
@@ -91,13 +91,16 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, watch, onMounted } from 'vue';
+  import { ref, computed, watch } from 'vue';
+  import { useI18n } from 'vue-i18n';
   import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue';
   import { XMarkIcon, ChevronRightIcon } from '@heroicons/vue/24/outline';
   import type { GroupingMixin, GroupingReactiveTableSchema, ReactiveTableSchema } from '../data/types';
 
   import GroupingColumnSelect from './GroupingColumnSelect.vue';
   import GroupingColumnActions from './GroupingColumnActions.vue';
+
+  const { t } = useI18n();
 
   const buttonCancel = ref(null);
   const isValid = computed<boolean>(() => {
