@@ -3,34 +3,31 @@
     <div v-for="group in groupedSchema" :key="group.origin.key" class="bg-white">
       <div class="w-full flex px-2 py-0.5 items-center justify-between rounded-xl bg-slate-200">
         <p class="text-lg font-semibold text-gray-900">{{ group.origin.name }}</p>
-        <p
+        <button
           v-if="group.columns.every((column) => column.selected)"
           class="mr-2 text-xs text-gray-700 cursor-pointer hover:text-gray-800"
           @click="deselectAll(group.origin.key)"
         >
           Убрать все
-        </p>
-        <p
+        </button>
+        <button
           v-else
           class="mr-2 text-xs text-gray-600 cursor-pointer hover:text-gray-800"
           @click="selectAll(group.origin.key)"
         >
           Выбрать все
-        </p>
+        </button>
       </div>
       <ul role="list" class="mt-2 w-full columns-2 xl:columns-3">
         <li
           v-for="column in group.columns"
           :key="column.key"
-          class="flex p-2 bg-white hover:bg-gray-50 cursor-pointer"
+          class="flex p-2 bg-white rounded-md hover:bg-gray-50 cursor-pointer"
           @click.self="emitChange({ originKey: group.origin.key, columnKey: column.key })"
         >
           <div class="flex flex-1 gap-2 items-center justify-between">
             <div class="space-y-2 flex-1">
-              <div
-                :class="['flex gap-2 items-center']"
-                @click.self="emitChange({ originKey: group.origin.key, columnKey: column.key })"
-              >
+              <div :class="['flex gap-2 items-center']">
                 <input
                   type="checkbox"
                   :id="group.origin.key + column.key"
@@ -39,9 +36,11 @@
                   class="h-4 w-4 rounded border-gray-300 text-teal-600 cursor-pointer focus:ring-teal-600"
                   @change="emitChange({ originKey: group.origin.key, columnKey: column.key })"
                 />
-                <label :for="group.origin.key + column.key" class="text-sm text-gray-900 cursor-pointer select-none">{{
-                  column.name
-                }}</label>
+                <label
+                  :for="group.origin.key + column.key"
+                  class="w-full text-sm text-gray-900 cursor-pointer select-none"
+                  >{{ column.name }}</label
+                >
               </div>
             </div>
           </div>
