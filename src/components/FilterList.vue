@@ -5,9 +5,12 @@
         <div class="space-y-2 flex-1">
           <div class="flex justify-between items-center">
             <p class="text-sm font-medium text-gray-900">{{ task.columnName }}</p>
-            <p class="flex-shrink-0 text-xs text-gray-400 cursor-pointer hover:text-gray-600" @click="remove(taskIdx)">
+            <button
+              class="flex-shrink-0 text-xs text-gray-400 cursor-pointer hover:text-gray-600"
+              @click="remove(taskIdx)"
+            >
               <span><trash-icon class="inline mr-1 h-4 w-4"></trash-icon>{{ t('filters.remove') }}</span>
-            </p>
+            </button>
           </div>
           <select
             :value="getOption(task.columnType, task.type)"
