@@ -27,6 +27,15 @@ const messages = {
     todo: 'Чтобы приступить к анализу данных, откройте эту страницу на компьютере.',
   },
   no_data: 'Нет данных для отображения',
+  query: {
+    query: 'Запрос',
+    available_data: 'Доступные данные',
+    no_data: 'Нет данных для отображения',
+    select_all: 'Выбрать все',
+    remove_all: 'Убрать все',
+    cancel: 'Отменить',
+    submit: 'Отправить запрос',
+  },
   filters: {
     remove: 'Удалить',
     remove_all: 'Удалить все',
@@ -62,20 +71,6 @@ const messages = {
         sw: 'начинается с',
         has: 'содержит',
         ew: 'заканчивается на',
-      },
-    },
-  },
-  export: {
-    data: {
-      file_name: 'Результат запроса',
-      sheet_name: 'Данные',
-    },
-    stats: {
-      sheet_name: 'Статистика',
-      schema: {
-        origin_name: 'Статистика',
-        param_name: 'Параметр',
-        value_name: 'Значение',
       },
     },
   },
@@ -131,6 +126,20 @@ const messages = {
     mean: 'Среднее',
     sd: 'Станд. отклонение',
     na: 'Нет данных',
+  },
+  export: {
+    data: {
+      file_name: 'Результат запроса',
+      sheet_name: 'Данные',
+    },
+    stats: {
+      sheet_name: 'Статистика',
+      schema: {
+        origin_name: 'Статистика',
+        param_name: 'Параметр',
+        value_name: 'Значение',
+      },
+    },
   },
 };
 
