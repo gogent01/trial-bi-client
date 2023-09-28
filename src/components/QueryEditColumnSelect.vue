@@ -8,14 +8,14 @@
           class="mr-2 text-xs text-gray-700 cursor-pointer hover:text-gray-800"
           @click="deselectAll(group.origin.key)"
         >
-          Убрать все
+          {{ t('query.remove_all') }}
         </button>
         <button
           v-else
           class="mr-2 text-xs text-gray-600 cursor-pointer hover:text-gray-800"
           @click="selectAll(group.origin.key)"
         >
-          Выбрать все
+          {{ t('query.select_all') }}
         </button>
       </div>
       <ul role="list" class="mt-2 w-full columns-2 xl:columns-3">
@@ -71,7 +71,10 @@
 
 <script setup lang="ts">
   import { computed } from 'vue';
+  import { useI18n } from 'vue-i18n';
   import type { ReactiveTableColumnInfo, ReactiveTableSchemaInfo } from '../data/types';
+
+  const { t } = useI18n();
 
   interface Props {
     schema: ReactiveTableSchemaInfo;

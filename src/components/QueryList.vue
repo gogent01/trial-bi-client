@@ -27,14 +27,7 @@
 
 <script setup lang="ts">
   import type { ReactiveTableSchema } from '../data/types';
-  import {
-    CheckIcon,
-    EyeSlashIcon,
-    ChevronUpIcon,
-    ChevronDownIcon,
-    FunnelIcon,
-    ChartBarIcon,
-  } from '@heroicons/vue/24/outline';
+  import { CheckIcon, EyeSlashIcon } from '@heroicons/vue/24/outline';
 
   interface Props {
     schema: ReactiveTableSchema;

@@ -31,24 +31,24 @@
               <div class="flex-1 flex gap-6 overflow-hidden">
                 <div class="basis-1/4 flex-shrink-0 flex-grow-0 flex flex-col">
                   <div class="flex mb-2 ml-2 items-center justify-between text-slate-900">
-                    <p class="text-xl font-semibold">Запрос</p>
+                    <p class="text-xl font-semibold">{{ t('query.query') }}</p>
                   </div>
 
                   <div class="h-full rounded-xl bg-white overflow-auto">
                     <query-edit-column-list v-if="selectedSchema.length > 0" :schema="selectedSchema" />
-                    <p v-else class="p-4 text-sm text-gray-800 text-center">Нет данных для отображения</p>
+                    <p v-else class="p-4 text-sm text-gray-800 text-center">{{ t('query.no_data') }}</p>
                   </div>
                 </div>
 
                 <div class="basis-3/4 flex flex-col">
                   <div class="flex mb-2 ml-2 items-center justify-between text-slate-900">
-                    <p class="text-xl font-semibold">Доступные данные</p>
+                    <p class="text-xl font-semibold">{{ t('query.available_data') }}</p>
                   </div>
 
                   <div class="h-full rounded-xl bg-white overflow-auto">
                     <div class="w-full p-4 relative flex justify-center">
                       <query-edit-column-select v-if="schema.length > 0" :schema="schema" @change="emitChange" />
-                      <p v-else class="text-sm text-gray-800 text-center">Нет данных для отображения</p>
+                      <p v-else class="text-sm text-gray-800 text-center">{{ t('query.no_data') }}</p>
                     </div>
                   </div>
                 </div>
@@ -60,7 +60,7 @@
                   @click="cancel"
                 >
                   <x-mark-icon class="-ml-2 mr-1 h-5 w-5" aria-hidden="true" />
-                  <span>Отмена</span>
+                  <span>{{ t('query.cancel') }}</span>
                 </button>
                 <button
                   type="button"
@@ -74,7 +74,7 @@
                 >
                   <span v-if="!isRequestSent" class="mx-auto inline-flex items-center">
                     <chevron-right-icon class="-ml-2 mr-1 h-5 w-5" aria-hidden="true" />
-                    Отправить запрос</span
+                    {{ t('query.submit') }}</span
                   >
                   <span
                     v-else
@@ -92,12 +92,15 @@
 
 <script setup lang="ts">
   import { ref, computed, watch } from 'vue';
+  import { useI18n } from 'vue-i18n';
   import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue';
   import { XMarkIcon, ChevronRightIcon } from '@heroicons/vue/24/outline';
   import type { ReactiveTableSchemaInfo } from '../data/types';
 
   import QueryEditColumnList from './QueryEditColumnList.vue';
   import QueryEditColumnSelect from './QueryEditColumnSelect.vue';
+
+  const { t } = useI18n();
 
   const isRequestSent = ref(false);
   const buttonCancel = ref(null);
