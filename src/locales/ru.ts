@@ -143,6 +143,7 @@ const messages = {
     mean: 'Среднее',
     sd: 'Станд. отклонение',
     na: 'Нет данных',
+    export: 'Сохранить',
   },
   export: {
     data: {
