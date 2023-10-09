@@ -67,7 +67,9 @@
             style="min-width: 2rem; max-width: 12rem"
           >
             {{
-              row[column.key] instanceof Date ? (row[column.key]! as Date).toLocaleDateString('ru') : row[column.key]
+              row[column.key] instanceof Date
+                ? (row[column.key]! as Date).toLocaleDateString(CURRENT_LOCALE)
+                : row[column.key]
             }}
           </td>
         </tr>
@@ -79,7 +81,7 @@
             :class="[ncol > 0 ? 'border-r border-gray-200' : '']"
             class="px-3 py-1 text-sm text-gray-600 text-center whitespace-nowrap"
           >
-            Нет данных для отображения
+            {{ t('query_result.no_data') }}
           </td>
         </tr>
       </tbody>
@@ -88,10 +90,14 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed } from 'vue';
+  import { computed } from 'vue';
+  import { useI18n } from 'vue-i18n';
   import { FunnelIcon, ChartBarIcon, ChevronUpIcon, ChevronDownIcon } from '@heroicons/vue/24/outline';
   import { FunnelIcon as FunnelIconActive, ChartBarIcon as ChartBarIconActive } from '@heroicons/vue/24/solid';
   import type { ReactiveTableSchema, TableData } from '../data/types';
+  import { CURRENT_LOCALE } from '../config/variables';
+
+  const { t } = useI18n();
 
   interface Props {
     table: TableData;

@@ -50,9 +50,13 @@
 
 <script setup lang="ts">
   import { computed } from 'vue';
+  import { useI18n } from 'vue-i18n';
   import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue';
   import { CheckIcon, ChevronDownIcon } from '@heroicons/vue/20/solid';
   import type { Trial } from '../data/types';
+  import { CURRENT_LOCALE } from '../config/variables';
+
+  const { t } = useI18n();
 
   interface Props {
     trials: Trial[];
@@ -76,14 +80,17 @@
     return [
       {
         value: 'none',
-        text: '- выберите исследование -',
+        text: t('trial.select_trial'),
         idx: -1,
         unavailable: true,
       },
     ].concat(
       props.trials.map((trial, idx) => ({
         value: trial.key,
-        text: `${trial.name} (от ${trial.updated_at.toLocaleDateString('ru-RU')})`,
+        text: t('trial.trial_info', {
+          name: trial.name,
+          updated_at: trial.updated_at.toLocaleDateString(CURRENT_LOCALE),
+        }),
         idx,
         unavailable: false,
       }))

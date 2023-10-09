@@ -12,7 +12,7 @@
               @click="isQueryActive && emit('editQuery')"
             >
               <pencil-square-icon class="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
-              <span>Редактировать</span>
+              <span>{{ t('query.edit') }}</span>
             </button>
           </div>
         </div>
@@ -22,8 +22,10 @@
 </template>
 
 <script setup lang="ts">
+  import { useI18n } from 'vue-i18n';
   import { PencilSquareIcon } from '@heroicons/vue/24/outline';
 
+  const { t } = useI18n();
   interface Props {
     isQueryActive: boolean;
   }

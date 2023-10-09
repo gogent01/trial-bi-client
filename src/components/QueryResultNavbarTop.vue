@@ -3,7 +3,7 @@
     <div class="mx-auto">
       <div class="flex justify-between h-16 py-3 px-4">
         <div class="flex items-center h-full">
-          <p v-if="ncol > 0" class="text-slate-700">По вашему запросу {{ toLocaleRowCount(nrow) }}</p>
+          <p v-if="ncol > 0" class="text-slate-700">{{ toLocaleRowCount(nrow) }}</p>
         </div>
         <div class="flex items-center gap-2 h-full">
           <div v-if="isSortActive" class="flex-shrink-0 h-full">
@@ -14,7 +14,7 @@
               @click="isSortActive && emit('clearSort')"
             >
               <trash-icon class="-ml-2 mr-1 h-5 w-5" aria-hidden="true" />
-              <span>Сбросить сортировку</span>
+              <span>{{ t('sorting.clear') }}</span>
             </button>
           </div>
 
@@ -26,7 +26,7 @@
               @click="ncol > 0 && nrow > 0 && emit('save')"
             >
               <arrow-down-tray-icon class="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
-              <span>Сохранить</span>
+              <span>{{ t('query_result.export') }}</span>
             </button>
           </div>
         </div>
@@ -36,8 +36,11 @@
 </template>
 
 <script setup lang="ts">
+  import { useI18n } from 'vue-i18n';
   import { ArrowDownTrayIcon } from '@heroicons/vue/20/solid';
   import { TrashIcon } from '@heroicons/vue/24/outline';
+
+  const { t } = useI18n();
 
   interface Props {
     ncol: number;
@@ -64,6 +67,6 @@
         : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)
         ? ['sin', 'gen']
         : ['plu', 'gen'];
-    return `${foundCases[cases[0]][cases[1]]} ${n} ${recordCases[cases[0]][cases[1]]}`;
+    return t('query_result.records_found', { n });
   }
 </script>

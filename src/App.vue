@@ -31,7 +31,7 @@
               @click="createQuery"
             >
               <plus-icon class="-ml-2 mr-1 h-6 w-6"></plus-icon>
-              {{ t('buttons.new_query') }}
+              {{ t('query.create') }}
             </button>
           </div>
         </div>
@@ -189,7 +189,7 @@
                   {{ t('no_data_main.todo.press_button') }}
                   <span class="ml-2 inline-flex items-center py-1 pl-1 pr-2 rounded-md border border-gray-400">
                     <plus-icon class="inline mr-0.5 h-5 w-5" aria-hidden="true" />
-                    {{ t('buttons.new_query') }}</span
+                    {{ t('query.create') }}</span
                   >
                 </p>
               </div>

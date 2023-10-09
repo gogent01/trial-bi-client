@@ -3,7 +3,9 @@
     <div class="mx-auto">
       <div class="flex justify-between h-16 py-3 px-4">
         <div class="flex items-center h-full">
-          <p class="text-sm text-slate-700">Показаны записи {{ rowNumberStart }} – {{ rowNumberEnd }} из {{ nrow }}</p>
+          <p class="text-sm text-slate-700">
+            {{ t('query_result.record_count_on_page', { rowNumberStart, rowNumberEnd, nrow }) }}
+          </p>
         </div>
         <div class="flex items-center gap-4 h-full">
           <div class="flex items-center h-full text-slate-600">
@@ -16,8 +18,8 @@
             </button>
 
             <div class="-mx-px px-2 h-full flex items-center gap-2 border border-slate-300 bg-white cursor-default">
-              <p>Страница</p>
-              <label for="page" class="sr-only">Страница</label>
+              <p>{{ t('query_result.page') }}</p>
+              <label for="page" class="sr-only">{{ t('query_result.page') }}</label>
               <input
                 v-model="displayedPage"
                 name="page"
@@ -29,7 +31,7 @@
                 @keyup.enter="emitUpdate"
                 @blur="restore"
               />
-              <p>из {{ maxPage }}</p>
+              <p>{{ t('query_result.out_of') }} {{ maxPage }}</p>
             </div>
 
             <button
@@ -48,7 +50,10 @@
 
 <script setup lang="ts">
   import { ref, computed, watchEffect } from 'vue';
+  import { useI18n } from 'vue-i18n';
   import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid';
+
+  const { t } = useI18n();
 
   interface Props {
     nrow: number;
