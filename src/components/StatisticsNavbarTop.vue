@@ -2,10 +2,7 @@
   <nav class="bg-white border-b">
     <div class="mx-auto">
       <div class="flex justify-between h-16 p-3">
-        <div class="relative flex items-center gap-1 h-full text-slate-600">
-          <!--          <information-circle-icon v-if="variable" class="h-6 w-6" aria-hidden="true" />-->
-          <!--          <p v-if="variable" class="truncate">{{ variable }}</p>-->
-        </div>
+        <div class="relative flex items-center gap-1 h-full text-slate-600"></div>
         <div class="flex items-center gap-4 h-full">
           <div class="flex-shrink-0 h-full">
             <button
@@ -15,7 +12,7 @@
               @click="variable && hasData && emit('save')"
             >
               <arrow-down-tray-icon class="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
-              <span>Сохранить</span>
+              <span>{{ t('stats.export') }}</span>
             </button>
           </div>
         </div>
@@ -25,8 +22,10 @@
 </template>
 
 <script setup lang="ts">
-  import { InformationCircleIcon } from '@heroicons/vue/24/outline';
+  import { useI18n } from 'vue-i18n';
   import { ArrowDownTrayIcon } from '@heroicons/vue/20/solid';
+
+  const { t } = useI18n();
 
   interface Props {
     variable: string;

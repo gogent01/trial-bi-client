@@ -41,11 +41,14 @@
 
 <script setup lang="ts">
   import { computed } from 'vue';
+  import { useI18n } from 'vue-i18n';
   import type { StatsRow } from '../classes/ColumnStats';
 
+  const { t } = useI18n();
+
   const colnames = {
-    param: 'Параметр',
-    value: 'Значение',
+    param: t('stats.param'),
+    value: t('stats.value'),
   };
 
   interface Props {
