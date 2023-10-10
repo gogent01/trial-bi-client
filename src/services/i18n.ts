@@ -1,9 +1,10 @@
-import { createI18n, type PluralizationRule } from 'vue-i18n';
-import ruMessages from '../locales/ru';
+import { createI18n, type PluralizationRule, type VueMessageType } from 'vue-i18n';
+import ruMessages from '../locales/ru-RU';
+import enMessages from '../locales/en-US';
 import { CURRENT_LOCALE } from '../config/variables';
 
 type MessageSchema = typeof ruMessages;
-const i18n = createI18n<[MessageSchema], 'ru-RU'>({
+const i18n = createI18n<[MessageSchema], 'ru-RU' | 'en-US'>({
   legacy: false,
   locale: CURRENT_LOCALE,
   pluralizationRules: {
@@ -11,6 +12,7 @@ const i18n = createI18n<[MessageSchema], 'ru-RU'>({
   },
   messages: {
     'ru-RU': ruMessages,
+    'en-US': enMessages,
   },
 });
 
