@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker/locale/ru';
+import { faker } from '@faker-js/faker/locale/en';
 import { Model } from '../../Model';
 import type { TableRow, TableData } from '../../types';
 import { cancerSchema } from '../../breast/cancers/schema';
@@ -15,7 +15,7 @@ export function buildCancers(patients: TableData): Model {
       id++;
     }
   }
-  return new Model('cancers', 'Онкозаболевания', 1, schema, data);
+  return new Model('cancers', 'Cancers', 1, schema, data);
 }
 
 function createCancer(id: number, patientId: number): TableRow {
@@ -25,11 +25,11 @@ function createCancer(id: number, patientId: number): TableRow {
     id,
     patient_id: patientId,
     histologic_subtype: faker.helpers.arrayElement([
-      'Неспецифический/неспецифицированный/протоковый',
-      'Дольковый',
-      'Метапластический',
-      'Апокринная дифференцировка',
-      'Другое',
+      'Unspecific / ductal',
+      'Lobular',
+      'Metaplastic',
+      'Apocrine differentiation',
+      'Other',
       undefined,
     ]),
     detailed_localization: Math.random() > 0.4 ? faker.lorem.sentences(2) : undefined,

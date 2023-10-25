@@ -85,6 +85,6 @@ export abstract class DemoDatabase implements Database {
       }
     });
 
-    return new Model('all', 'Все', 0, joinedSchema, joinedData);
+    return new Model('all', 'All', 0, joinedSchema, joinedData);
   }
 }

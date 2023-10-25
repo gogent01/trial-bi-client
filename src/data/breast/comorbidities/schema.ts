@@ -3,29 +3,29 @@ import type { ColumnType, TableSchema } from '../../types';
 export const comorbiditySchema: TableSchema = [
   {
     key: 'id',
-    name: 'Код',
+    name: 'ID',
     type: 'id' as ColumnType,
     primaryKey: 'comorbidities',
   },
   {
     key: 'patient_id',
-    name: 'Код пациента',
+    name: 'Patient ID',
     type: 'id' as ColumnType,
     belongsTo: 'patients',
   },
   {
     key: 'category',
-    name: 'Вид заболевания',
+    name: 'Comorbidity type',
     type: 'factor' as ColumnType,
-    levels: ['Онкологическое заболевание', 'Аутоиммунное заболевание', 'Другое'],
+    levels: ['Cancer', 'Autoimmune disease', 'Other'],
   },
   {
     key: 'comment',
-    name: 'Комментарий',
+    name: 'Commentary',
     type: 'text' as ColumnType,
   },
 ].map((column, idx) => ({
-  origin: { key: 'comorbidities', name: 'Сопутствующие заболевания', priority: 1 },
+  origin: { key: 'comorbidities', name: 'Comorbidities', priority: 1 },
   position: idx,
   ...column,
 }));

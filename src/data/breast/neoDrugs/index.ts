@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker/locale/ru';
+import { faker } from '@faker-js/faker/locale/en';
 import { Model } from '../../Model';
 import type { TableRow, TableData } from '../../types';
 import { neoDrugSchema } from '../../breast/neoDrugs/schema';
@@ -15,18 +15,18 @@ export function buildNeoDrugs(neoTherapies: TableData): Model {
       id++;
     }
   }
-  return new Model('neo_drugs', 'Препараты неоадъювантной терапии', 3, schema, data);
+  return new Model('neo_drugs', 'Neoadjuvant chemotherapy drugs', 3, schema, data);
 }
 
 function createNeoDrug(id: number, neoTherapyId: number): TableRow {
   const drugName: string = faker.helpers.arrayElement([
-    'Схема: TCHP',
-    'Доцетаксел',
-    'Паклитаксел',
-    'Трастузумаб',
-    'Карбоплатин',
+    'TCHP',
+    'Docetaxel',
+    'Paclitaxel',
+    'Trastuzumab',
+    'Carboplatin',
   ]);
-  const units: string = faker.helpers.arrayElement(['мг', 'мг/кг', 'ЕД']);
+  const units: string = faker.helpers.arrayElement(['mg', 'mg/kg', 'ME']);
 
   return {
     id,

@@ -3,50 +3,44 @@ import type { ColumnType, TableSchema } from '../../types';
 export const neoTherapySchema: TableSchema = [
   {
     key: 'id',
-    name: 'Код',
+    name: 'ID',
     type: 'id' as ColumnType,
     primaryKey: 'neo_therapies',
   },
   {
     key: 'cancer_id',
-    name: 'Код онкозаболевания',
+    name: 'Cancer ID',
     type: 'id' as ColumnType,
     belongsTo: 'cancers',
   },
   {
     key: 'start_date',
-    name: 'Дата начала',
+    name: 'Start date',
     type: 'date' as ColumnType,
   },
   {
     key: 'end_date',
-    name: 'Дата окончания',
+    name: 'End date',
     type: 'date' as ColumnType,
   },
   {
     key: 'height',
-    name: 'Рост, см',
+    name: 'Height, cm',
     type: 'number' as ColumnType,
   },
   {
     key: 'weight',
-    name: 'Вес, кг',
+    name: 'Weight, kg',
     type: 'number' as ColumnType,
   },
   {
     key: 'end_reason',
-    name: 'Причина окончания терапии',
+    name: 'Reason for therapy termination',
     type: 'factor' as ColumnType,
-    levels: [
-      'Плановое окончание терапии',
-      'Отказ пациента от терапии',
-      'Нежелательные явления',
-      'Прогрессирование',
-      'Смерть',
-    ],
+    levels: ['Planned termination', 'Patient refused therapy', 'Adverse events', 'Disease progression', 'Death'],
   },
 ].map((column, idx) => ({
-  origin: { key: 'neo_therapies', name: 'Неоадъювантная терапия', priority: 2 },
+  origin: { key: 'neo_therapies', name: 'Neoadjuvant chemotherapy', priority: 2 },
   position: idx,
   ...column,
 }));

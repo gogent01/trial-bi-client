@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker/locale/ru';
+import { faker } from '@faker-js/faker/locale/en';
 import { Model } from '../../Model';
 import type { TableRow, TableData } from '../../types';
 import { cancerSchema } from '../../melanoma/cancers/schema';
@@ -15,7 +15,7 @@ export function buildCancers(patients: TableData): Model {
       id++;
     }
   }
-  return new Model('cancers', 'Онкозаболевания', 1, schema, data);
+  return new Model('cancers', 'Cancers', 1, schema, data);
 }
 
 function createCancer(id: number, patientId: number): TableRow {
@@ -25,12 +25,12 @@ function createCancer(id: number, patientId: number): TableRow {
     id,
     patient_id: patientId,
     localization: faker.helpers.arrayElement([
-      'Меланома кожи',
-      'Меланома слизистых',
-      'Увеальная меланома',
-      'Меланома без выявленного первичного очага',
-      'Меланома конъюнктивы',
-      'Меланома кожи века',
+      'Skin melanoma',
+      'Mucosal melanoma',
+      'Uveal melanoma',
+      'Occult primary melanoma',
+      'Conjunctival melanoma',
+      'Eyelid melanoma',
     ]),
     localization_comment: Math.random() > 0.4 ? faker.lorem.sentences(2) : undefined,
     date_of_symptoms,

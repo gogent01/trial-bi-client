@@ -1,3 +1,4 @@
+import i18n from '../services/i18n';
 import type { DemoDatabase } from './DemoDatabase';
 import type { Trial, APITrial, DataQuery, TableSchemaInfo } from './types';
 import { Model } from './Model';
@@ -5,6 +6,8 @@ import { BreastDatabase } from './breast/BreastDatabase';
 import { MelanomaDatabase } from './melanoma/MelanomaDatabase';
 import { QueryPlanner } from './QueryPlanner';
 import { axiosInstance } from '../services/axios';
+
+const { t } = i18n.global;
 
 export type TrialPublic = Omit<Trial, 'database'>;
 
@@ -23,18 +26,18 @@ export class FakeRouter extends Router {
       {
         id: 0,
         key: 'breast',
-        name: 'Trial: рак молочной железы',
+        name: t('demo_trials.breast'),
         database: new BreastDatabase(279),
         created_at: new Date('2022-01-10'),
-        updated_at: new Date('2023-01-18'),
+        updated_at: new Date('2023-11-21'),
       },
       {
         id: 1,
         key: 'melanoma',
-        name: 'Trial: меланома',
+        name: t('demo_trials.melanoma'),
         database: new MelanomaDatabase(350),
         created_at: new Date('2022-02-01'),
-        updated_at: new Date('2022-12-05'),
+        updated_at: new Date('2023-12-05'),
       },
     ];
   }

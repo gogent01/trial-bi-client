@@ -159,6 +159,10 @@ const messages = {
       },
     },
   },
+  demo_trials: {
+    breast: 'Исследование RWE: рак молочной железы',
+    melanoma: 'Исследование: меланома',
+  },
 };
 
 export default messages;

@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker/locale/ru';
+import { faker } from '@faker-js/faker/locale/en';
 import { Model } from '../../Model';
 import type { TableRow, TableData } from '../../types';
 import { lifeStatusSchema } from '../../melanoma/status/schema';
@@ -11,26 +11,26 @@ export function buildLifeStatuses(patients: TableData): Model {
     data.push(createLifeStatus(id, patients[i].id as number));
     id++;
   }
-  return new Model('life_statuses', 'Жизненный статус', 1, schema, data);
+  return new Model('life_status', 'Life status', 1, schema, data);
 }
 
 function createLifeStatus(id: number, patientId: number): TableRow {
   const status = faker.helpers.arrayElement([
-    'Лечение проводится',
-    'Лечение завершено планово',
-    'Лечение отменено',
-    'Отзыв согласия на наблюдение',
-    'Зарегистрирована смерть',
+    'Treatment in progress',
+    'Treatment completed',
+    'Treatment cancelled',
+    'Observation consent withdrawn',
+    'Death registered',
   ]);
-  const deathDate = status === 'Зарегистрирована смерть' ? faker.date.recent(40) : undefined;
+  const deathDate = status === 'Death registered' ? faker.date.recent(40) : undefined;
   const deathCause =
-    status === 'Зарегистрирована смерть'
+    status === 'Death registered'
       ? faker.helpers.arrayElement([
-          'Прогрессирование основного заболевания',
-          'Другая опухоль',
-          'Осложнение противоопухолевого лечения',
-          'Другое заболевание',
-          'Неизвестно',
+          'Primary disease progression',
+          'Other cancer',
+          'Adverse event',
+          'Other disease',
+          'Unknown',
         ])
       : undefined;
 

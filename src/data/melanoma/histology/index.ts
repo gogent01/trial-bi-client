@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker/locale/ru';
+import { faker } from '@faker-js/faker/locale/en';
 import { Model } from '../../Model';
 import type { TableRow, TableData } from '../../types';
 import { histologicCharacteristicSchema } from '../../melanoma/histology/schema';
@@ -11,12 +11,17 @@ export function buildhistologicCharacteristics(cancers: TableData): Model {
     data.push(createHistologicCharacteristic(id, cancers[i].id as number));
     id++;
   }
-  return new Model('histologic_characteristics', 'Гистологическая характеристика', 2, schema, data);
+  return new Model('histologic_characteristics', 'Histologic characteristics', 2, schema, data);
 }
 
 function createHistologicCharacteristic(id: number, cancerId: number): TableRow {
-  const form = faker.helpers.arrayElement(['Узловая', 'Поверхностно распространающаяся', 'Лентиго', 'Другое']);
-  const pigmentation = faker.helpers.arrayElement(['Да', 'Нет', 'Нет данных']);
+  const form = faker.helpers.arrayElement([
+    'Nodular melanoma',
+    'Superficial spreading melanoma',
+    'Lentiginous melanoma',
+    'Other',
+  ]);
+  const pigmentation = faker.helpers.arrayElement(['Yes', 'No', 'No data']);
   const clark = faker.helpers.arrayElement(['I', 'II', 'III', 'IV', 'V']);
 
   return {

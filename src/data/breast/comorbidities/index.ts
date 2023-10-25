@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker/locale/ru';
+import { faker } from '@faker-js/faker/locale/en';
 import { Model } from '../../Model';
 import type { TableRow, TableData } from '../../types';
 import { comorbiditySchema } from '../../breast/comorbidities/schema';
@@ -15,29 +15,23 @@ export function buildComorbidities(patients: TableData): Model {
       id++;
     }
   }
-  return new Model('comorbidities', 'Сопутствующие заболевания', 1, schema, data);
+  return new Model('comorbidities', 'Comorbidities', 1, schema, data);
 }
 
 function createComorbidity(id: number, patientId: number): TableRow {
-  const category = faker.helpers.arrayElement(['Онкологическое заболевание', 'Аутоиммунное заболевание', 'Другое']);
+  const category = faker.helpers.arrayElement(['Cancer', 'Autoimmune disease', 'Other']);
   let comment = '';
-  if (category === 'Онкологическое заболевание') {
-    comment = faker.helpers.arrayElement(['Меланома', 'Рак желудка', 'Рак толстой кишки', 'Рак легкого']);
-  } else if (category === 'Аутоиммунное заболевание') {
+  if (category === 'Cancer') {
+    comment = faker.helpers.arrayElement(['Melanoma', 'Gastric cancer', 'Colon cancer', 'Lung cancer']);
+  } else if (category === 'Autoimmune disease') {
     comment = faker.helpers.arrayElement([
-      'Болезнь Крона',
-      'Псориаз',
-      'Системная красная волчанка',
-      'Системная склеродерма',
+      "Crohn's disease",
+      'Psoriasis',
+      'Systemic lupus erythematosus',
+      'System scleroderma',
     ]);
   } else {
-    comment = faker.helpers.arrayElement([
-      'Бронхиальная астма',
-      'ХОБЛ',
-      'ИБС',
-      'Первичная артериальная гипертензия',
-      'Хроническая болезнь почек',
-    ]);
+    comment = faker.helpers.arrayElement(['Bronchial asthma', 'COPD', 'IHD', 'Primary arterial hypertension', 'CKD']);
   }
 
   return {

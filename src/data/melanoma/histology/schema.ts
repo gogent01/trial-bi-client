@@ -3,41 +3,41 @@ import type { ColumnType, TableSchema } from '../../types';
 export const histologicCharacteristicSchema: TableSchema = [
   {
     key: 'id',
-    name: 'Код',
+    name: 'ID',
     type: 'id' as ColumnType,
     primaryKey: 'histologic_characteristics',
   },
   {
     key: 'cancer_id',
-    name: 'Код онкозаболевания',
+    name: 'Cancer ID',
     type: 'id' as ColumnType,
     belongsTo: 'cancers',
   },
   {
     key: 'form',
-    name: 'Форма роста',
+    name: 'Growth form',
     type: 'factor' as ColumnType,
-    levels: ['Узловая', 'Поверхностно распространающаяся', 'Лентиго', 'Другое'],
+    levels: ['Nodular melanoma', 'Superficial spreading melanoma', 'Lentiginous melanoma', 'Other'],
   },
   {
     key: 'pigmentation',
-    name: 'Наличие пигмента',
+    name: 'Pigmentation',
     type: 'factor' as ColumnType,
-    levels: ['Да', 'Нет', 'Нет данных'],
+    levels: ['Yes', 'No', 'No data'],
   },
   {
     key: 'clark',
-    name: 'Уровень инвазии по Кларку',
+    name: 'Clark invasion level',
     type: 'factor' as ColumnType,
     levels: ['I', 'II', 'III', 'IV', 'V'],
   },
   {
     key: 'height',
-    name: 'Толщина опухоли, мм',
+    name: 'Tumor width, mm',
     type: 'number' as ColumnType,
   },
 ].map((column, idx) => ({
-  origin: { key: 'histologic_characteristics', name: 'Гистологическая характеристика', priority: 2 },
+  origin: { key: 'histologic_characteristics', name: 'Histologic characteristics', priority: 2 },
   position: idx,
   ...column,
 }));

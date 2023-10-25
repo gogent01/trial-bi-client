@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker/locale/ru';
+import { faker } from '@faker-js/faker/locale/en';
 import { Model } from '../../Model';
 import type { TableRow, TableData } from '../../types';
 import { neoTherapySchema } from '../../breast/neoTherapy/schema';
@@ -15,7 +15,7 @@ export function buildNeoTherapies(cancers: TableData): Model {
       id++;
     }
   }
-  return new Model('neo_therapies', 'Неоадъювантная терапия', 2, schema, data);
+  return new Model('neo_therapies', 'Neoadjuvant chemotherapy', 2, schema, data);
 }
 
 function createNeoTherapy(id: number, cancerId: number): TableRow {
@@ -25,11 +25,11 @@ function createNeoTherapy(id: number, cancerId: number): TableRow {
   const weight = parseFloat(faker.finance.amount(40, 140, 2));
 
   const endReason = faker.helpers.arrayElement([
-    'Плановое окончание терапии',
-    'Отказ пациента от терапии',
-    'Нежелательные явления',
-    'Прогрессирование',
-    'Смерть',
+    'Planned termination',
+    'Patient refused therapy',
+    'Adverse events',
+    'Disease progression',
+    'Death',
   ]);
 
   return {

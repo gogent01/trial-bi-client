@@ -3,35 +3,35 @@ import type { ColumnType, TableSchema } from '../../types';
 export const surgerySchema: TableSchema = [
   {
     key: 'id',
-    name: 'Код',
+    name: 'ID',
     type: 'id' as ColumnType,
     primaryKey: 'surgeries',
   },
   {
     key: 'cancer_id',
-    name: 'Код онкозаболевания',
+    name: 'Cancer ID',
     type: 'id' as ColumnType,
     belongsTo: 'cancers',
   },
   {
     key: 'aim',
-    name: 'Цель хирургического лечения',
+    name: 'Aim of surgery',
     type: 'factor' as ColumnType,
-    levels: ['Иссечение первичной опухоли', 'Метастазэктомия', 'Удаление рецидива'],
+    levels: ['Resection of primary tumor', 'Metastasectomy', 'Resection of recurrent tumor'],
   },
   {
     key: 'date',
-    name: 'Дата хирургического лечения',
+    name: 'Surgery date',
     type: 'date' as ColumnType,
   },
   {
     key: 'result',
-    name: 'Исход хирургического лечения',
+    name: 'Surgery result',
     type: 'factor' as ColumnType,
-    levels: ['Радикальное удаление', 'Циторедукция'],
+    levels: ['Radical resection', 'Cytoreduction'],
   },
 ].map((column, idx) => ({
-  origin: { key: 'surgeries', name: 'Хирургическое лечение', priority: 2 },
+  origin: { key: 'surgeries', name: 'Surgical treatment', priority: 2 },
   position: idx,
   ...column,
 }));
