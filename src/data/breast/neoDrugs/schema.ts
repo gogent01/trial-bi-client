@@ -3,45 +3,45 @@ import type { ColumnType, TableSchema } from '../../types';
 export const neoDrugSchema: TableSchema = [
   {
     key: 'id',
-    name: 'Код',
+    name: 'ID',
     type: 'id' as ColumnType,
     primaryKey: 'neo_therapies',
   },
   {
     key: 'neo_therapy_id',
-    name: 'Код неоадъювантной терапии',
+    name: 'Therapy ID',
     type: 'id' as ColumnType,
     belongsTo: 'neo_therapies',
   },
   {
     key: 'drug_name',
-    name: 'Название препарата',
+    name: 'Drug name',
     type: 'factor' as ColumnType,
-    levels: ['Схема: TCHP', 'Доцетаксел', 'Паклитаксел', 'Трастузумаб', 'Карбоплатин'],
+    levels: ['TCHP', 'Docetaxel', 'Paclitaxel', 'Trastuzumab', 'Carboplatin'],
   },
   {
     key: 'dose',
-    name: 'Доза',
+    name: 'Dose',
     type: 'number' as ColumnType,
   },
   {
     key: 'units',
-    name: 'Единицы измерения',
+    name: 'Units',
     type: 'factor' as ColumnType,
-    levels: ['мг', 'мг/кг', 'ЕД'],
+    levels: ['mg', 'mg/kg', 'ME'],
   },
   {
     key: 'courses',
-    name: 'Число курсов',
+    name: 'Courses',
     type: 'number' as ColumnType,
   },
   {
     key: 'commentary',
-    name: 'Комментарий',
+    name: 'Commentary',
     type: 'text' as ColumnType,
   },
 ].map((column, idx) => ({
-  origin: { key: 'neo_drugs', name: 'Препараты неоадъювантной терапии', priority: 3 },
+  origin: { key: 'neo_drugs', name: 'Neoadjuvant chemotherapy drugs', priority: 3 },
   position: idx,
   ...column,
 }));

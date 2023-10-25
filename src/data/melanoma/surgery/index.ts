@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker/locale/ru';
+import { faker } from '@faker-js/faker/locale/en';
 import { Model } from '../../Model';
 import type { TableRow, TableData } from '../../types';
 import { surgerySchema } from '../../melanoma/surgery/schema';
@@ -15,12 +15,16 @@ export function buildSurgeries(cancers: TableData): Model {
       id++;
     }
   }
-  return new Model('surgeries', 'Хирургическое лечение', 2, schema, data);
+  return new Model('surgeries', 'Surgical treatment', 2, schema, data);
 }
 
 function createSurgery(id: number, cancerId: number): TableRow {
-  const aim = faker.helpers.arrayElement(['Иссечение первичной опухоли', 'Метастазэктомия', 'Удаление рецидива']);
-  const result = faker.helpers.arrayElement(['Радикальное удаление', 'Циторедукция', undefined]);
+  const aim = faker.helpers.arrayElement([
+    'Resection of primary tumor',
+    'Metastasectomy',
+    'Resection of recurrent tumor',
+  ]);
+  const result = faker.helpers.arrayElement(['Radical resection', 'Cytoreduction', undefined]);
 
   return {
     id,

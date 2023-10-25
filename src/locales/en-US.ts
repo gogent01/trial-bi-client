@@ -46,7 +46,7 @@ const messages = {
     record_count_on_page: 'Showing records {rowNumberStart} – {rowNumberEnd} of {nrow}',
     page: 'Page',
     out_of: 'of',
-    export: 'Save',
+    export: 'Export',
     no_data: 'No data to display',
   },
   sorting: {
@@ -142,7 +142,7 @@ const messages = {
     mean: 'Mean',
     sd: 'Standard deviation',
     na: 'No data',
-    export: 'Save',
+    export: 'Export',
   },
   export: {
     data: {
@@ -157,6 +157,10 @@ const messages = {
         value_name: 'Value',
       },
     },
+  },
+  demo_trials: {
+    breast: 'RWE MCT: Breast Cancer',
+    melanoma: 'MCT: Melanoma',
   },
 };
 
