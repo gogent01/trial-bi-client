@@ -69,16 +69,19 @@
                       ? 'bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2'
                       : 'bg-teal-700'
                   "
-                  class="relative w-44 inline-flex items-center h-full rounded-md border border-transparent text-sm font-medium text-white shadow-sm"
+                  class="relative px-4 inline-flex items-center h-full rounded-md border border-transparent text-sm font-medium shadow-sm"
                   @click="sendQuery"
                 >
-                  <span v-if="!isRequestSent" class="mx-auto inline-flex items-center">
+                  <span
+                    :class="isRequestSent ? 'text-transparent' : 'text-white'"
+                    class="mx-auto inline-flex items-center"
+                  >
                     <chevron-right-icon class="-ml-2 mr-1 h-5 w-5" aria-hidden="true" />
                     {{ t('query.submit') }}</span
                   >
                   <span
-                    v-else
-                    class="mx-auto h-7 w-7 rounded-full border-4 border-l-white border-t-white border-r-white border-b-teal-700 animate-spin"
+                    v-if="isRequestSent"
+                    class="absolute top-1/2 left-1/2 h-7 w-7 rounded-full border-4 border-l-white border-t-white border-r-white border-b-teal-700 animate-spin -translate-x-1/2 -translate-y-1/2"
                   ></span>
                 </button>
               </div>
