@@ -12,3 +12,13 @@
         -moz-appearance: textfield !important;
     }
 }
+
+:root {
+    --control-width: 2.5rem;
+}
+
+@media screen and (min-width: 1024px) {
+    :root {
+        --control-width: 2rem;
+    }
+}

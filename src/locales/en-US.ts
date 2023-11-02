@@ -2,7 +2,7 @@ const messages = {
   buttons: {
     group: 'Group data',
     edit_groups: 'Edit groups',
-    ungroup: 'Ungroup data',
+    ungroup: 'Ungroup',
   },
   tabs: {
     query_and_filters: 'Queries and filters',
@@ -17,8 +17,10 @@ const messages = {
   no_data_main: {
     notice: 'No data to display',
     todo: {
-      select_trial: 'To start data analysis, select a trial in the upper right corner',
-      press_button: 'of the screen and press the button',
+      select_trial: 'To start data analysis, select a trial',
+      upper_right_corner: 'in the upper right corner',
+      screen: 'of the screen',
+      press_button: 'and press the button',
     },
   },
   wide_screen: {

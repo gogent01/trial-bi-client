@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p class="font-semibold whitespace-pre-wrap text-gray-900">{{ variable }}</p>
+    <p class="font-semibold whitespace-pre-wrap text-sm text-gray-900 lg:text-base">{{ variable }}</p>
     <div class="mt-2 w-full align-middle rounded-lg border border-gray-300 overflow-hidden">
       <table class="table w-full border-separate border-spacing-0">
         <thead>
@@ -11,7 +11,7 @@
               scope="col"
               :class="[
                 colnameIdx < ncol - 1 ? 'border-r border-gray-300' : '',
-                'border-b border-gray-300 px-3 py-2 text-left text-sm font-semibold whitespace-pre-wrap text-gray-900',
+                'border-b border-gray-300 px-2 py-2 text-left text-xs font-semibold whitespace-pre-wrap text-gray-900 lg:px-3 lg:text-sm',
               ]"
             >
               {{ colname }}
@@ -26,7 +26,7 @@
               :class="[
                 dataIdx < nrow - 1 ? 'border-b border-gray-300' : '',
                 colnameIdx < ncol - 1 ? 'border-r border-gray-300' : '',
-                'px-3 py-1 text-sm text-gray-600 whitespace-pre-wrap',
+                'px-2 py-1 text-xs text-gray-600 whitespace-pre-wrap lg:px-3 lg:text-sm',
               ]"
               style="min-width: 2rem"
             >

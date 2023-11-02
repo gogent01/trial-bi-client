@@ -1,8 +1,8 @@
 <template>
   <div class="w-full space-y-8">
     <div v-for="group in groupedSchema" :key="group.origin.key" class="bg-white">
-      <div class="w-full flex px-2 py-0.5 items-center justify-between rounded-xl bg-slate-200">
-        <p class="text-lg font-semibold text-gray-900">{{ group.origin.name }}</p>
+      <div class="w-full flex px-2 py-1 items-center justify-between rounded-xl bg-slate-200 lg:py-0.5">
+        <p class="text-base font-semibold text-gray-900 lg:text-lg">{{ group.origin.name }}</p>
         <button
           v-if="group.columns.every((column) => column.selected)"
           class="mr-2 text-xs text-gray-700 cursor-pointer hover:text-gray-800"

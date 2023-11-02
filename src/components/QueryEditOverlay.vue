@@ -29,7 +29,7 @@
               style="height: 80vh"
             >
               <div class="flex-1 flex gap-6 overflow-hidden">
-                <div class="basis-1/4 flex-shrink-0 flex-grow-0 flex flex-col">
+                <div class="basis-1/3 flex-shrink-0 flex-grow-0 flex flex-col lg:basis-1/4">
                   <div class="flex mb-2 ml-2 items-center justify-between text-slate-900">
                     <p class="text-xl font-semibold">{{ t('query.query') }}</p>
                   </div>
@@ -40,7 +40,7 @@
                   </div>
                 </div>
 
-                <div class="basis-3/4 flex flex-col">
+                <div class="basis-2/3 flex flex-col lg:basis-3/4">
                   <div class="flex mb-2 ml-2 items-center justify-between text-slate-900">
                     <p class="text-xl font-semibold">{{ t('query.available_data') }}</p>
                   </div>

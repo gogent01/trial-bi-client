@@ -31,7 +31,7 @@
               <div class="h-full flex-grow-0 flex flex-col gap-6">
                 <div class="basis-1/3 flex flex-col overflow-hidden">
                   <div class="flex mb-2 ml-2 items-center justify-between text-slate-900">
-                    <p class="text-xl font-semibold">{{ t('grouping.select_grouping_columns') }}</p>
+                    <p class="text-lg font-semibold lg:text-xl">{{ t('grouping.select_grouping_columns') }}</p>
                   </div>
 
                   <div class="h-full rounded-xl bg-white overflow-auto">
@@ -48,7 +48,7 @@
 
                 <div class="basis-2/3 flex flex-col overflow-hidden">
                   <div class="flex mb-2 ml-2 items-center justify-between text-slate-900">
-                    <p class="text-xl font-semibold">{{ t('grouping.select_grouping_actions') }}</p>
+                    <p class="text-lg font-semibold lg:text-xl">{{ t('grouping.select_grouping_actions') }}</p>
                   </div>
 
                   <div class="h-full rounded-xl bg-white overflow-auto">
