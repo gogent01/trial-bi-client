@@ -47,6 +47,7 @@ export class StateStorage {
   }
 
   clear(): void {
+    this.activeIdx = -1;
     this.storage = [];
   }
 

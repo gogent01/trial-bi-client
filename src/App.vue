@@ -278,6 +278,7 @@
   // TODO: move data manipulation code to pinia
   // TODO: fix trial switching
   // TODO: consistent colors
+  // TODO: long code to components
 
   import { ref, computed, watch, onMounted } from 'vue';
   import { sort } from 'fast-sort';
@@ -299,7 +300,7 @@
     GroupingReactiveTableColumn,
     GroupingReactiveTableSchema,
   } from './data/types';
-  import { APIRouter, FakeRouter } from './data/Router';
+  import { APIRouter, DemoRouter } from './data/Router';
   import { StateStorage } from './classes/StateStorage';
   import { FilterTask } from './classes/FilterTask';
   import type { FilterType } from './classes/FilterTask';
@@ -348,7 +349,7 @@
     isGroupingOverlayVisible.value = !isGroupingOverlayVisible.value;
   }
 
-  const apiRouter = new FakeRouter();
+  const apiRouter = new DemoRouter();
   const trials = ref<Trial[]>([]);
 
   onMounted(async () => {

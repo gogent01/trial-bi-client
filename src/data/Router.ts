@@ -17,7 +17,7 @@ abstract class Router {
   abstract getDataFromQuery(query: DataQuery): Promise<Model>;
 }
 
-export class FakeRouter extends Router {
+export class DemoRouter extends Router {
   trials: Trial[];
 
   constructor() {
