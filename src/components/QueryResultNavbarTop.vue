@@ -1,9 +1,9 @@
 <template>
   <nav class="bg-white border-b">
     <div class="mx-auto">
-      <div class="flex justify-between h-16 py-3 px-4">
+      <div class="flex justify-between gap-3 h-16 py-3 px-4">
         <div class="flex items-center h-full">
-          <p v-if="ncol > 0" class="text-slate-700">{{ toLocaleRowCount(nrow) }}</p>
+          <p v-if="ncol > 0" class="text-xs text-slate-700 lg:text-sm">{{ toLocaleRowCount(nrow) }}</p>
         </div>
         <div class="flex items-center gap-2 h-full">
           <div v-if="isSortActive" class="flex-shrink-0 h-full">

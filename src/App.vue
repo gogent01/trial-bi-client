@@ -8,7 +8,6 @@
           <div class="flex items-center">
             <div class="flex-shrink-0 flex gap-3 items-center">
               <img class="h-8 w-auto text-white" :src="logo" alt="Trial BI" />
-              <!--              <p class="min-w-max text-2xl text-white font-semibold tracking-wide">Trial BI</p>-->
             </div>
           </div>
           <div class="h-10 flex gap-2 items-center">
@@ -22,12 +21,12 @@
               :selected-trial-idx="selectedTrialIdx"
               :disabled="!areTrialsLoaded"
               :class="[areTrialsLoaded ? '' : 'opacity-50 cursor-default']"
-              class="hidden lg:block"
+              class="hidden md:block"
               @update="updateSelectedTrialIdx"
             />
             <button
               :class="[selectedTrialIdx > -1 ? 'hover:bg-teal-800' : 'opacity-50 cursor-default']"
-              class="inline-flex items-center min-w-max rounded-lg border border-transparent bg-teal-900 px-4 py-2 font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+              class="hidden md:inline-flex items-center min-w-max rounded-lg border border-transparent bg-teal-900 px-4 py-2 font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
               @click="createQuery"
             >
               <plus-icon class="-ml-2 mr-1 h-6 w-6"></plus-icon>
@@ -44,21 +43,21 @@
       @change="toggleCompleteSchemaField"
       @sendQuery="getDataFromQuery"
       @cancel="cancelQueryEdit"
-      class="hidden lg:block"
+      class="hidden md:block"
     />
 
     <grouping-overlay
       ref="groupingOverlay"
       :is-visible="isGroupingOverlayVisible"
       :schema="reactiveSchema"
-      class="hidden lg:block"
+      class="hidden md:block"
       @group="performGrouping"
       @cancel="cancelGrouping"
     />
 
-    <!-- 3 column wrapper -->
+    <!-- Mobile placeholder -->
     <div
-      class="w-full h-full flex items-center justify-center p-3 bg-slate-300 lg:hidden"
+      class="w-full h-full flex items-center justify-center p-3 bg-slate-300 md:hidden"
       style="height: calc(100vh - 4rem)"
     >
       <div class="w-full px-4 py-6 text-center bg-gray-50 rounded-xl">
@@ -72,12 +71,14 @@
       </div>
     </div>
 
+    <!-- 3 column + 2 control strips wrapper -->
     <div
-      class="hidden mx-auto w-full flex-grow bg-slate-300 lg:flex lg:flex-row"
+      class="hidden mx-auto w-full flex-grow bg-slate-300 md:flex md:flex-row"
       style="max-height: calc(100vh - 4rem)"
     >
       <div
-        class="pt-2 w-8 mx-auto bg-slate-400 flex flex-col gap-1 items-center text-slate-900 cursor-pointer hover:text-slate-700"
+        class="pt-2 mx-auto bg-slate-400 flex flex-col gap-1 items-center text-slate-900 cursor-pointer hover:text-slate-700"
+        :style="{ width: 'var(--control-width)' }"
         @click="toggleQueryVisibility"
       >
         <chevron-double-right-icon v-if="queryHidden" class="h-6 w-6 cursor-pointer"></chevron-double-right-icon>
@@ -87,153 +88,182 @@
         </p>
       </div>
 
-      <div v-if="!queryHidden" class="pl-4 py-4 basis-1/5 flex-shrink-0 flex-grow-0 flex flex-col 2xl:pr-4">
-        <div class="h-1/2 flex flex-col overflow-hidden">
-          <div class="ml-2 mb-2 text-slate-700 text-xl font-semibold">
-            <p class="text-xl font-semibold">{{ t('titles.query') }}</p>
-          </div>
-          <div
-            class="h-full flex flex-col rounded-xl overflow-hidden"
-            :class="[reactiveSchema.length > 0 ? 'bg-white' : 'bg-gray-50']"
-          >
-            <query-navbar-top :is-query-active="ncol > 0" @edit-query="editQuery" />
-            <div class="flex-1 flex justify-center rounded-b-xl overflow-auto">
-              <query-list
-                v-if="reactiveSchema.length > 0"
-                :schema="reactiveSchema"
-                @toggleColumnVisibility="toggleColumnVisibility"
-              />
-              <div v-else class="w-full p-3">
-                <p class="text-sm text-gray-700 text-center">{{ t('no_data') }}</p>
+      <div class="flex flex-row bg-slate-300" :style="{ width: 'calc(100% - 2 * var(--control-width))' }">
+        <div
+          v-if="!queryHidden"
+          class="pl-4 py-4 basis-1/4 flex-shrink-0 flex-grow-0 flex flex-col lg:basis-1/5 2xl:pr-4"
+        >
+          <div class="h-1/2 flex flex-col overflow-hidden">
+            <div class="ml-2 mb-2 text-slate-700 text-xl font-semibold">
+              <p class="text-xl font-semibold">{{ t('titles.query') }}</p>
+            </div>
+            <div
+              class="h-full flex flex-col rounded-xl overflow-hidden"
+              :class="[reactiveSchema.length > 0 ? 'bg-white' : 'bg-gray-50']"
+            >
+              <query-navbar-top :is-query-active="ncol > 0" @edit-query="editQuery" />
+              <div class="flex-1 flex justify-center rounded-b-xl overflow-auto">
+                <query-list
+                  v-if="reactiveSchema.length > 0"
+                  :schema="reactiveSchema"
+                  @toggleColumnVisibility="toggleColumnVisibility"
+                />
+                <div v-else class="w-full p-3">
+                  <p class="text-sm text-gray-700 text-center">{{ t('no_data') }}</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="h-1/2 mt-4 flex flex-col">
-          <div class="ml-2 mb-2 text-slate-700 text-xl font-semibold">
-            <p class="text-xl font-semibold">{{ t('titles.filters') }}</p>
-          </div>
-          <div class="h-full rounded-xl overflow-hidden" :class="[filterTasks.length > 0 ? 'bg-white' : 'bg-gray-50']">
-            <filter-navbar-top :is-filter-active="filterTasks.length > 0" @clearFilters="clearFilters" />
-            <div class="flex justify-center overflow-auto" style="height: calc(100% - 4rem)">
-              <filter-list
-                v-if="filterTasks.length > 0"
-                :tasks="filterTasks"
-                @updateType="updateFilterType"
-                @updateValue="updateValue"
-                @updateRangeValues="updateRangeValues"
-                @updateMultipleValues="updateMultipleValues"
-                @remove="removeFilter"
-              />
-              <div v-else class="w-full p-3">
-                <p class="text-sm text-gray-700 text-center">{{ t('no_data') }}</p>
+          <div class="h-1/2 mt-4 flex flex-col">
+            <div class="ml-2 mb-2 text-slate-700 text-xl font-semibold">
+              <p class="text-xl font-semibold">{{ t('titles.filters') }}</p>
+            </div>
+            <div
+              class="h-full rounded-xl overflow-hidden"
+              :class="[filterTasks.length > 0 ? 'bg-white' : 'bg-gray-50']"
+            >
+              <filter-navbar-top :is-filter-active="filterTasks.length > 0" @clearFilters="clearFilters" />
+              <div class="flex justify-center overflow-auto" style="height: calc(100% - 4rem)">
+                <filter-list
+                  v-if="filterTasks.length > 0"
+                  :tasks="filterTasks"
+                  @updateType="updateFilterType"
+                  @updateValue="updateValue"
+                  @updateRangeValues="updateRangeValues"
+                  @updateMultipleValues="updateMultipleValues"
+                  @remove="removeFilter"
+                />
+                <div v-else class="w-full p-3">
+                  <p class="text-sm text-gray-700 text-center">{{ t('no_data') }}</p>
+                </div>
               </div>
             </div>
           </div>
+
+          <div class="w-full mt-4 flex flex-col">
+            <button
+              :class="[nrow > 0 ? 'hover:bg-teal-700' : 'opacity-50 cursor-default']"
+              class="inline-flex items-center justify-center rounded-lg border border-transparent bg-teal-600 px-4 py-3 text-sm text-white font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 xl:text-base"
+              @click="toggleGroupingOverlayVisibility"
+            >
+              <rectangle-stack-icon class="flex-shrink-0 mr-2 h-5 w-5"></rectangle-stack-icon
+              ><span v-if="!isGrouped">{{ t('buttons.group') }}</span
+              ><span v-else>{{ t('buttons.edit_groups') }}</span>
+            </button>
+          </div>
+
+          <div v-if="isGrouped" class="w-full mt-2 flex flex-col">
+            <button
+              :class="[nrow > 0 ? 'hover:bg-orange-700' : 'opacity-50 cursor-default']"
+              class="inline-flex items-center justify-center rounded-lg border border-transparent bg-orange-600 px-4 py-3 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 xl:text-base"
+              @click="ungroup"
+            >
+              <rectangle-group-icon class="flex-shrink-0 mr-2 h-5 w-5"></rectangle-group-icon>{{ t('buttons.ungroup') }}
+            </button>
+          </div>
         </div>
 
-        <div class="w-full mt-4 flex flex-col">
-          <button
-            :class="[nrow > 0 ? 'hover:bg-teal-700' : 'opacity-50 cursor-default']"
-            class="inline-flex items-center justify-center rounded-lg border border-transparent bg-teal-600 px-4 py-3 font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-            @click="toggleGroupingOverlayVisibility"
-          >
-            <rectangle-stack-icon class="flex-shrink-0 mr-2 h-5 w-5"></rectangle-stack-icon
-            ><span v-if="!isGrouped">{{ t('buttons.group') }}</span
-            ><span v-else>{{ t('buttons.edit_groups') }}</span>
-          </button>
-        </div>
+        <div class="row-span-2 p-4 flex-1 flex flex-col">
+          <p class="ml-2 mb-2 text-slate-700 text-xl font-semibold">{{ t('titles.query_results') }}</p>
+          <div class="h-full rounded-xl bg-white overflow-hidden">
+            <query-result-navbar-top
+              :ncol="ncol"
+              :nrow="nrow"
+              :is-sort-active="isSortActive"
+              @clearSort="clearSort"
+              @save="saveQueryResultTable"
+            />
+            <div id="queryResultTable" class="relative w-full overflow-auto" style="height: calc(100% - 8rem)">
+              <div v-if="ncol > 0" class="absolute min-w-max">
+                <query-result-table
+                  :reactive-schema="reactiveSchema"
+                  :table="filteredSortedAndPaginatedTable"
+                  :current-page="currentPage"
+                  :limit="limit"
+                  @sort="toggleSort"
+                  @filter="toggleFilter"
+                  @stats="toggleStats"
+                />
+              </div>
+              <div v-else class="w-full h-full flex items-center justify-center p-3 bg-gray-50">
+                <div class="text-center">
+                  <cube-transparent-icon class="mx-auto h-20 w-20 text-gray-600" aria-hidden="true" />
+                  <h3 class="mt-3 mb-6 text-lg font-semibold text-gray-900">{{ t('no_data_main.notice') }}</h3>
 
-        <div v-if="isGrouped" class="w-full mt-2 flex flex-col">
-          <button
-            :class="[nrow > 0 ? 'hover:bg-orange-700' : 'opacity-50 cursor-default']"
-            class="inline-flex items-center justify-center rounded-lg border border-transparent bg-orange-600 px-4 py-3 font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-            @click="ungroup"
-          >
-            <rectangle-group-icon class="flex-shrink-0 mr-2 h-5 w-5"></rectangle-group-icon>{{ t('buttons.ungroup') }}
-          </button>
-        </div>
-      </div>
+                  <div class="block lg:hidden">
+                    <p class="text-gray-600">{{ t('no_data_main.todo.select_trial') }}</p>
+                    <p class="mt-1 text-gray-600">
+                      {{ t('no_data_main.todo.upper_right_corner') }} {{ t('no_data_main.todo.screen') }}
+                    </p>
+                    <p class="mt-0 inline-flex items-center text-gray-600 cursor-text">
+                      {{ t('no_data_main.todo.press_button') }}
+                      <span class="ml-2 inline-flex items-center py-1 pl-1 pr-2 rounded-md border border-gray-400">
+                        <plus-icon class="inline mr-0.5 h-5 w-5" aria-hidden="true" />
+                        {{ t('query.create') }}</span
+                      >
+                    </p>
+                  </div>
 
-      <div class="row-span-2 p-4 flex-1 flex flex-col">
-        <p class="ml-2 mb-2 text-slate-700 text-xl font-semibold">{{ t('titles.query_results') }}</p>
-        <div class="h-full rounded-xl bg-white overflow-hidden">
-          <query-result-navbar-top
-            :ncol="ncol"
-            :nrow="nrow"
-            :is-sort-active="isSortActive"
-            @clearSort="clearSort"
-            @save="saveQueryResultTable"
-          />
-          <div id="queryResultTable" class="relative w-full overflow-auto" style="height: calc(100% - 8rem)">
-            <div v-if="ncol > 0" class="absolute min-w-max">
-              <query-result-table
-                :reactive-schema="reactiveSchema"
-                :table="filteredSortedAndPaginatedTable"
-                :current-page="currentPage"
-                :limit="limit"
-                @sort="toggleSort"
-                @filter="toggleFilter"
-                @stats="toggleStats"
-              />
-            </div>
-            <div v-else class="w-full h-full flex items-center justify-center p-3 bg-gray-50">
-              <div class="text-center">
-                <cube-transparent-icon class="mx-auto h-20 w-20 text-gray-600" aria-hidden="true" />
-                <h3 class="mt-3 mb-6 text-lg font-semibold text-gray-900">{{ t('no_data_main.notice') }}</h3>
-                <p class="inline text-gray-600">
-                  {{ t('no_data_main.todo.select_trial') }}
-                </p>
-                <p class="mt-1 inline-flex items-center text-gray-600 cursor-text">
-                  {{ t('no_data_main.todo.press_button') }}
-                  <span class="ml-2 inline-flex items-center py-1 pl-1 pr-2 rounded-md border border-gray-400">
-                    <plus-icon class="inline mr-0.5 h-5 w-5" aria-hidden="true" />
-                    {{ t('query.create') }}</span
-                  >
-                </p>
+                  <div class="hidden lg:block">
+                    <p class="inline text-gray-600">
+                      {{ t('no_data_main.todo.select_trial') }} {{ t('no_data_main.todo.upper_right_corner') }}
+                    </p>
+                    <p class="mt-1 inline-flex items-center text-gray-600 cursor-text">
+                      {{ t('no_data_main.todo.screen') }} {{ t('no_data_main.todo.press_button') }}
+                      <span class="ml-2 inline-flex items-center py-1 pl-1 pr-2 rounded-md border border-gray-400">
+                        <plus-icon class="inline mr-0.5 h-5 w-5" aria-hidden="true" />
+                        {{ t('query.create') }}</span
+                      >
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
+            <query-result-navbar-bottom
+              :nrow="nrow"
+              :limit="limit"
+              :current-page="currentPage"
+              :max-page="maxPage"
+              @update="setPage"
+            />
           </div>
-          <query-result-navbar-bottom
-            :nrow="nrow"
-            :limit="limit"
-            :current-page="currentPage"
-            :max-page="maxPage"
-            @update="setPage"
-          />
-        </div>
-      </div>
-
-      <div v-if="!statisticsHidden" class="pr-4 py-4 basis-1/5 flex-shrink-0 flex-grow-0 flex flex-col 2xl:pl-4">
-        <div class="flex mb-2 ml-2 items-center justify-between text-slate-700">
-          <p class="text-xl font-semibold">{{ t('titles.statistics') }}</p>
         </div>
 
         <div
-          class="h-full rounded-xl overflow-hidden"
-          :class="[stats.variable && filteredTable.length > 0 ? 'bg-white' : 'bg-gray-50']"
+          v-if="!statisticsHidden"
+          class="pr-4 py-4 basis-1/4 flex-shrink-0 flex-grow-0 flex flex-col lg:basis-1/5 2xl:pl-4"
         >
-          <statistics-navbar-top
-            :variable="stats.variable"
-            :has-data="filteredTable.length > 0"
-            @save="saveStatsTable"
-          />
-          <div class="relative flex justify-center p-3 overflow-auto" style="height: calc(100% - 8rem)">
-            <div class="w-full">
-              <statistics-table
-                v-if="stats.variable && filteredTable.length > 0"
-                :variable="stats.variable"
-                :data="stats.data"
-              />
-              <p v-else class="text-sm text-gray-700 text-center">{{ t('no_data') }}</p>
+          <div class="flex mb-2 ml-2 items-center justify-between text-slate-700">
+            <p class="text-xl font-semibold">{{ t('titles.statistics') }}</p>
+          </div>
+
+          <div
+            class="h-full rounded-xl overflow-hidden"
+            :class="[stats.variable && filteredTable.length > 0 ? 'bg-white' : 'bg-gray-50']"
+          >
+            <statistics-navbar-top
+              :variable="stats.variable"
+              :has-data="filteredTable.length > 0"
+              @save="saveStatsTable"
+            />
+            <div class="relative flex justify-center p-3 overflow-auto" style="height: calc(100% - 8rem)">
+              <div class="w-full">
+                <statistics-table
+                  v-if="stats.variable && filteredTable.length > 0"
+                  :variable="stats.variable"
+                  :data="stats.data"
+                />
+                <p v-else class="text-sm text-gray-700 text-center">{{ t('no_data') }}</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <div
-        class="pt-2 w-8 mx-auto bg-slate-400 flex flex-col gap-1 items-center text-slate-900 cursor-pointer hover:text-slate-700"
+        class="pt-2 mx-auto bg-slate-400 flex flex-col gap-1 items-center text-slate-900 cursor-pointer hover:text-slate-700"
+        :style="{ width: 'var(--control-width)' }"
         @click="toggleStatisticsVisibility"
       >
         <chevron-double-left-icon v-if="statisticsHidden" class="h-6 w-6 cursor-pointer"></chevron-double-left-icon>
@@ -246,6 +276,8 @@
 
 <script setup lang="ts">
   // TODO: move data manipulation code to pinia
+  // TODO: fix trial switching
+  // TODO: consistent colors
 
   import { ref, computed, watch, onMounted } from 'vue';
   import { sort } from 'fast-sort';

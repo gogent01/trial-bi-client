@@ -3,7 +3,7 @@
     <div class="mx-auto">
       <div class="flex justify-between h-16 py-3 px-4">
         <div class="flex items-center h-full">
-          <p class="text-sm text-slate-700">
+          <p class="hidden text-sm text-slate-700 lg:block">
             {{ t('query_result.record_count_on_page', { rowNumberStart, rowNumberEnd, nrow }) }}
           </p>
         </div>
@@ -17,7 +17,9 @@
               <chevron-left-icon class="h-7 w-7" aria-hidden="true" />
             </button>
 
-            <div class="-mx-px px-2 h-full flex items-center gap-2 border border-slate-300 bg-white cursor-default">
+            <div
+              class="-mx-px px-2 h-full flex items-center gap-1.5 border border-slate-300 bg-white text-sm cursor-default lg:gap-2 lg:text-base"
+            >
               <p>{{ t('query_result.page') }}</p>
               <label for="page" class="sr-only">{{ t('query_result.page') }}</label>
               <input
@@ -25,7 +27,7 @@
                 name="page"
                 id="page"
                 type="text"
-                class="block p-2 w-7 h-7 border border-transparent rounded-md bg-slate-200 text-center focus:border-teal-500 focus:ring-teal-500"
+                class="block p-2 w-7 h-7 border border-transparent rounded-md bg-slate-200 text-center text-sm focus:border-teal-500 focus:ring-teal-500 lg:text-base"
                 placeholder="1"
                 @input="sanitizeNumberInput"
                 @keyup.enter="emitUpdate"

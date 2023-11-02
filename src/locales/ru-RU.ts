@@ -1,8 +1,8 @@
 const messages = {
   buttons: {
-    group: 'Группировать данные',
-    edit_groups: 'Редактировать группы',
-    ungroup: 'Разгруппировать данные',
+    group: 'Группировать',
+    edit_groups: 'Изменить группы',
+    ungroup: 'Разгруппировать',
   },
   tabs: {
     query_and_filters: 'Запросы и фильтры',
@@ -17,8 +17,10 @@ const messages = {
   no_data_main: {
     notice: 'Нет данных для отображения',
     todo: {
-      select_trial: 'Чтобы начать анализ данных, выберите исследование в верхнем правом углу',
-      press_button: 'экрана и нажмите на кнопку',
+      select_trial: 'Сначала выберите исследование',
+      upper_right_corner: 'в верхнем правом углу',
+      screen: 'экрана',
+      press_button: 'и нажмите',
     },
   },
   wide_screen: {
