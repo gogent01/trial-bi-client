@@ -1,64 +1,62 @@
 # Trial BI
 
-Trial BI — это система для анализа данных клинических исследований. Предназначена для работы с сырыми данными, собранных в ходе клинических исследований с целью отбора фрагментов данных для получения первичной информации и сохранения этих фрагментов для дальнейшего анализа данных в специализированном ПО.
+Trial BI is a system designed for analyzing data from clinical trials. It is intended to work with raw data collected during clinical trials to select data fragments for obtaining preliminary insights and exporting these fragments for further data analysis in specialized software.
 
+### System Features
 
-### Возможности системы
+- Selection of clinical trials to retrieve data.
+- Working with multi-table relational databases and single-table sources, such as *.xlsx files.
+- Support for 4 types of variables: number, date, text, and factor.
+- Sorting of data by multiple columns.
+- Data filtering with multiple filter types depending on the data in a specific column ("equals," "not equals," "greater than," "greater than or equals," "less than," "less than or equals," "range," "starts with," "contains," "ends with," "values from the list").
+- Data aggregation by one or multiple columns.
+- Calculation of descriptive statistics for any data type.
+- Export of data and descriptive statistics to *.xlsx files.
 
-- выбор клинического испытания для получения данных;
-- поддержка работы с реляционными базами данных;
-- поддержка 4 типов переменных: число, дата, текст и фактор;
-- многоуровневая сортировка данных;
-- фильтрация данных с несколькими типами фильтров в зависимости от данных в конкретном столбце ("равно", "не равно", "больше", "больше или равно", "меньше", "меньше или равно", "диапазон", "начинается с", "содержит", "оканчивается на", "значения из списка");
-- группировка данных по одному или нескольким столбцам;
-- расчет описательной статистики для любых типов данных;
-- экспорт данных и описательной статистики в файлы *.xlsx.
+## Trial BI Client
 
+This repository contains only the front-end of the system. In its current state, it connects to an internal demonstration source of randomly generated data. The code for retrieving data from the backend is also implemented, and there is an option to modify code for retrieving data from locally uploaded files.
 
-## Trial BI client
-
-Этот репозиторий содержит только фронт-энд системы. В текущем состоянии он не подключен к какому-либо источнику данных, отображаемые для демонстрационных целей данные генерируются случайным образом. Написан код класса для получения данных от бэкенда, есть возможность дописать код класса для получения данных из файлов, загружаемых локально.
-
-
-### Технологии
+### Technologies
 - TypeScript
 - Vue 3 + Pinia
 - Tailwind CSS
 - ExcelJS
 
-
-### Установка и запуск
+### Installation and Launch
 
 ```bash
 npm install
 npm start
 ```
-Скрипты стандартные для проекта на Vue:
+
+Standard scripts for a Vue project:
+
 ```bash
-npm run type-check # проверка корректности типов
-npm run build # сборка приложения, отправляется в папку dist
+npm run type-check # type correctness checks
+npm run build # build the application to './dist' folder
 ```
-Для наиболее сложных классов (фильтрация данных и расчет описательной статистики) написаны тесты, находящиеся в папке `__tests__`. Запуск тестов:
+
+Tests have been written for the complex classes (data filtering and descriptive statistics calculation). They are located in the `__tests__` folder. To run tests use the following command:
+
 ```bash
 npm run test
 ```
 
-### Структура
+### Structure
 
-Приложение построено по принципу SPA, и имеет один экран для работы с данными (файл `src/App.vue`). Основные компоненты приложения:
-- модальное окно выбора данных: `src/components/QueryEditOverlay.vue`
-- таблица с данными: `src/components/QueryResultTable.vue`
-- список столбцов: `src/components/QueryList.vue`
-- список фильтров: `src/components/FilterList.vue`
-- таблица с описательной статистикой: `src/components/StatisticsTable.vue`
-- модальное окно агрегации данных: `src/components/GroupingOverlay.vue`
+The application is built as a Single Page Application (SPA) and has one screen for working with data (`src/App.vue`). Key components of the application include:
+- Data selection modal: `src/components/QueryEditOverlay.vue`
+- Data aggregation modal: `src/components/GroupingOverlay.vue`
+- Data table: `src/components/QueryResultTable.vue`
+- Column list: `src/components/QueryList.vue`
+- Filter list: `src/components/FilterList.vue`
+- Descriptive statistics table: `src/components/StatisticsTable.vue`
 
+### User Journey
 
-### Предполагаемый путь пользователя
-
-1. Выбрать исследование в верхнем правом углу экрана и нажать на кнопку «Новый запрос».
-2. Выбрать столбцы с данными для отображения.
-3. Применить к данным фильтрацию, сортировку и группировку; при необходимости изменить исходный запрос, отменить изменения или составить новый запрос данных.
-4. Получить описательную статистику по интересующим пользователя столбцам.
-5. Сохранить модифицированную таблицу с данными и таблицы с описательной статистикой на компьютер пользователя в формате *.xlsx.
-
+1. Choose a trial in the upper right corner of the screen and click the "New Query" button.
+2. Select columns with data for display.
+3. Apply filtering, sorting, and aggregation to the data; if necessary, modify the original query, undo changes, or create a new data query.
+4. See descriptive statistics for columns of interest.
+5. Export the modified data table and descriptive statistics tables in *.xlsx format.
