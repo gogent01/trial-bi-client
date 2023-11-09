@@ -279,6 +279,7 @@
   // TODO: fix trial switching
   // TODO: consistent colors
   // TODO: long code to components
+  // TODO: filter any - sort values
 
   import { ref, computed, watch, onMounted } from 'vue';
   import { sort } from 'fast-sort';
