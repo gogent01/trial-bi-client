@@ -16,7 +16,7 @@ function createPatient(id: number): TableRow {
     'State Multi-Specialty Surgical Center': 'MSC',
   };
   const center = faker.helpers.arrayElement(Object.keys(centers));
-  const sex = faker.helpers.arrayElement(['Male', 'Female']);
+  const sex = Math.random() > 0.95 ? 'Male' : 'Female';
   const history = centers[center] + '-' + faker.random.alphaNumeric(5, { casing: 'upper' });
   const code = 'RWE-BREAST-' + faker.random.numeric(4, { allowLeadingZeros: true });
   const dateOfBirth = Math.random() > 0.3 ? faker.date.birthdate({ min: 18, max: 85, mode: 'age' }) : undefined;
