@@ -37,7 +37,7 @@ export const neoTherapySchema: TableSchema = [
     key: 'end_reason',
     name: 'Reason for therapy termination',
     type: 'factor' as ColumnType,
-    levels: ['Planned termination', 'Patient refused therapy', 'Adverse events', 'Disease progression', 'Death'],
+    levels: ['Therapy completed', 'Patient refused therapy', 'Adverse events', 'Disease progression', 'Death'],
   },
 ].map((column, idx) => ({
   origin: { key: 'neo_therapies', name: 'Neoadjuvant chemotherapy', priority: 2 },

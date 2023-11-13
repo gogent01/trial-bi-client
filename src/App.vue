@@ -276,10 +276,11 @@
 
 <script setup lang="ts">
   // TODO: move data manipulation code to pinia
-  // TODO: fix trial switching
   // TODO: consistent colors
   // TODO: long code to components
-  // TODO: filter any - sort values
+  // TODO: edit groups - restore current state
+  // TODO: highlight grouping columns
+  // TODO: weight-adjusted demo data randomization
 
   import { ref, computed, watch, onMounted } from 'vue';
   import { sort } from 'fast-sort';

@@ -24,7 +24,7 @@ function createSurgery(id: number, cancerId: number): TableRow {
     'Metastasectomy',
     'Resection of recurrent tumor',
   ]);
-  const result = faker.helpers.arrayElement(['Radical resection', 'Cytoreduction', undefined]);
+  const result = Math.random() < 0.8 ? faker.helpers.arrayElement(['Radical resection', 'Cytoreduction']) : undefined;
 
   return {
     id,
