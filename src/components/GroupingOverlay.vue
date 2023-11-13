@@ -25,7 +25,7 @@
             leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <DialogPanel
-              class="relative w-full flex flex-col p-6 transform overflow-hidden rounded-lg bg-slate-300 text-left shadow-xl transition-all xl:w-4/5"
+              class="relative w-full flex flex-col p-6 transform overflow-hidden rounded-xl bg-slate-300 text-left shadow-xl transition-all xl:w-4/5"
               style="height: 80vh"
             >
               <div class="h-full flex-grow-0 flex flex-col gap-6">
