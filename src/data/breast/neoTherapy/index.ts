@@ -24,13 +24,10 @@ function createNeoTherapy(id: number, cancerId: number): TableRow {
   const height = parseFloat(faker.finance.amount(140, 200, 1));
   const weight = parseFloat(faker.finance.amount(40, 140, 2));
 
-  const endReason = faker.helpers.arrayElement([
-    'Planned termination',
-    'Patient refused therapy',
-    'Adverse events',
-    'Disease progression',
-    'Death',
-  ]);
+  const endReason =
+    Math.random() < 0.75
+      ? 'Therapy completed'
+      : faker.helpers.arrayElement(['Patient refused therapy', 'Adverse events', 'Disease progression', 'Death']);
 
   return {
     id,

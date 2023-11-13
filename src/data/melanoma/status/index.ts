@@ -15,13 +15,15 @@ export function buildLifeStatuses(patients: TableData): Model {
 }
 
 function createLifeStatus(id: number, patientId: number): TableRow {
-  const status = faker.helpers.arrayElement([
-    'Treatment in progress',
-    'Treatment completed',
-    'Treatment cancelled',
-    'Observation consent withdrawn',
-    'Death registered',
-  ]);
+  const status =
+    Math.random() < 0.75
+      ? 'Treatment in progress'
+      : faker.helpers.arrayElement([
+          'Treatment completed',
+          'Treatment cancelled',
+          'Observation consent withdrawn',
+          'Death registered',
+        ]);
   const deathDate = status === 'Death registered' ? faker.date.recent(40) : undefined;
   const deathCause =
     status === 'Death registered'

@@ -20,13 +20,15 @@ function createPatient(id: number): TableRow {
   const sex = faker.helpers.arrayElement(['Male', 'Female']);
   const history = centers[center] + '-' + faker.random.alphaNumeric(5, { casing: 'upper' });
   const dateOfBirth = faker.date.birthdate({ min: 18, max: 85, mode: 'age' });
-  const status = faker.helpers.arrayElement([
-    'Treatment in progress',
-    'Treatment completed',
-    'Treatment cancelled',
-    'Observation consent withdrawn',
-    'Death registered',
-  ]);
+  const status =
+    Math.random() < 0.75
+      ? 'Treatment in progress'
+      : faker.helpers.arrayElement([
+          'Treatment completed',
+          'Treatment cancelled',
+          'Observation consent withdrawn',
+          'Death registered',
+        ]);
   return {
     id,
     center,

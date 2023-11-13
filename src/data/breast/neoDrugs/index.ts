@@ -19,13 +19,10 @@ export function buildNeoDrugs(neoTherapies: TableData): Model {
 }
 
 function createNeoDrug(id: number, neoTherapyId: number): TableRow {
-  const drugName: string = faker.helpers.arrayElement([
-    'TCHP',
-    'Docetaxel',
-    'Paclitaxel',
-    'Trastuzumab',
-    'Carboplatin',
-  ]);
+  const drugName: string =
+    Math.random() < 0.75
+      ? 'TCHP'
+      : faker.helpers.arrayElement(['Docetaxel', 'Paclitaxel', 'Trastuzumab', 'Carboplatin']);
   const units: string = faker.helpers.arrayElement(['mg', 'mg/kg', 'ME']);
 
   return {
