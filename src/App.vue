@@ -328,6 +328,13 @@
   const queryHidden = ref<boolean>(false);
   const statisticsHidden = ref<boolean>(false);
 
+  function updatePageMeta(currentView: string): void {
+    document.title = currentView ? currentView + ' | Trial BI' : 'Trial BI';
+    const description = document.querySelector('meta[name="description"]');
+    description!.setAttribute('content', t('meta.description'));
+  }
+  updatePageMeta(t('meta.title'));
+
   function toggleQueryVisibility() {
     queryHidden.value = !queryHidden.value;
   }
@@ -366,6 +373,7 @@
       storage.clear();
       updateTableState();
       selectedTrialIdx.value = idx;
+      updatePageMeta(trials.value[idx].name);
     }
   }
 
