@@ -189,7 +189,7 @@
               <div v-else class="w-full h-full flex items-center justify-center p-3 bg-gray-50">
                 <div class="text-center">
                   <cube-transparent-icon class="mx-auto h-20 w-20 text-gray-600" aria-hidden="true" />
-                  <h3 class="mt-3 mb-6 text-lg font-semibold text-gray-900">{{ t('no_data_main.notice') }}</h3>
+                  <h3 class="my-3 text-lg font-semibold text-gray-900">{{ t('no_data_main.notice') }}</h3>
 
                   <div class="block lg:hidden">
                     <p class="text-gray-600">{{ t('no_data_main.todo.select_trial') }}</p>
@@ -207,7 +207,8 @@
 
                   <div class="hidden lg:block">
                     <p class="inline text-gray-600">
-                      {{ t('no_data_main.todo.select_trial') }} {{ t('no_data_main.todo.upper_right_corner') }}
+                      {{ t('no_data_main.todo.select_trial') }}
+                      {{ t('no_data_main.todo.upper_right_corner') }} {{ ' ' }}
                     </p>
                     <p class="mt-1 inline-flex items-center text-gray-600 cursor-text">
                       {{ t('no_data_main.todo.screen') }} {{ t('no_data_main.todo.press_button') }}
