@@ -1,10 +1,8 @@
 <template>
   <ul role="list" class="w-full divide-y divide-gray-200">
     <li
-      v-for="column in props.schema.sort(
-        (columnA, columnB) => columnA.origin.priority - columnB.origin.priority || columnA.position - columnB.position
-      )"
-      :key="column.key"
+      v-for="column in sortedSchema"
+      :key="column.origin.key + column.key"
       class="flex px-3 py-2 bg-white hover:bg-gray-50 cursor-pointer"
     >
       <div class="flex flex-1 gap-2 items-center justify-between">
@@ -19,10 +17,17 @@
 </template>
 
 <script setup lang="ts">
+  import { computed } from 'vue';
   import type { ReactiveTableSchemaInfo } from '../data/types';
 
   interface Props {
     schema: ReactiveTableSchemaInfo;
   }
   const props = defineProps<Props>();
+
+  const sortedSchema = computed(() =>
+    [...props.schema].sort(
+      (columnA, columnB) => columnA.origin.priority - columnB.origin.priority || columnA.position - columnB.position
+    )
+  );
 </script>

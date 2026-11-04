@@ -10,8 +10,7 @@ export class XlsxExport {
     const workbook = new XLSX.Workbook();
     const worksheet = workbook.addWorksheet(sheetName);
 
-    const colkeys = Object.keys(data[0]);
-    const colwidths = colkeys.map((key) =>
+    const colwidths = schema.map(({ key }) =>
       data.reduce((width, row) => {
         const charLength =
           row[key] instanceof Date

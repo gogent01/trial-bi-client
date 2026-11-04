@@ -44,13 +44,14 @@ export class QueryPlanner {
     }
 
     const modelOrder = superplan.flatMap((plan) => plan.modelKeys);
+    const trialKey = this.query[0].trialKey;
 
     const orderedQuery: DataQuery = [];
     modelOrder.forEach((modelKey) => {
       if (this.query.map((row) => row.modelKey).includes(modelKey)) {
         orderedQuery.push(...this.query.filter((row) => row.modelKey === modelKey));
       } else {
-        orderedQuery.push({ trialKey: 'breast', modelKey, columnKey: 'id' });
+        orderedQuery.push({ trialKey, modelKey, columnKey: 'id' });
       }
     });
 

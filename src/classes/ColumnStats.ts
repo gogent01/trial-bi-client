@@ -44,7 +44,7 @@ export class ColumnStats {
   }
 
   private buildEmptyStats(): StatsRow[] {
-    return [{ param: 'Число наблюдений', value: '0' }];
+    return [{ param: t('stats.count'), value: '0' }];
   }
 
   private buildNumberStats(columnValues: number[]): StatsRow[] {
