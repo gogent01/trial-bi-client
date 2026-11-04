@@ -29,7 +29,7 @@
   interface Props {
     isQueryActive: boolean;
   }
-  const props = defineProps<Props>();
+  defineProps<Props>();
 
   interface Emits {
     (e: 'editQuery'): void;

@@ -31,7 +31,7 @@
     variable: string;
     hasData: boolean;
   }
-  const props = defineProps<Props>();
+  defineProps<Props>();
 
   interface Emits {
     (e: 'save'): void;

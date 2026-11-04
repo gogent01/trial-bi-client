@@ -45,7 +45,7 @@
   interface Props {
     schema: GroupingReactiveTableSchema;
   }
-  const props = defineProps<Props>();
+  defineProps<Props>();
 
   interface Emits {
     (e: 'change', originKey: string, columnKey: string, groupingAction: GroupingMixin): void;

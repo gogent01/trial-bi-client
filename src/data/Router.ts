@@ -1,5 +1,4 @@
 import i18n from '../services/i18n';
-import type { DemoDatabase } from './DemoDatabase';
 import type { Trial, APITrial, DataQuery, TableSchemaInfo } from './types';
 import { Model } from './Model';
 import { BreastDatabase } from './breast/BreastDatabase';
@@ -11,7 +10,7 @@ const { t } = i18n.global;
 
 export type TrialPublic = Omit<Trial, 'database'>;
 
-abstract class Router {
+export abstract class Router {
   abstract getTrials(): Promise<Trial[]>;
   abstract getCompleteSchema(trialKey: string): Promise<TableSchemaInfo>;
   abstract getDataFromQuery(query: DataQuery): Promise<Model>;
@@ -68,50 +67,52 @@ export class DemoRouter extends Router {
 
 export class APIRouter extends Router {
   async getTrials(): Promise<Trial[]> {
-    const response = await axiosInstance.get('/api/1.0/trials').catch((error) => console.log(error));
-
-    if (!response) return [];
-
-    const apiTrials: APITrial[] = response.data;
-    return apiTrials.map(
-      (trial: APITrial): Trial => ({
-        id: trial.id,
-        key: trial.key,
-        name: trial.name,
-        created_at: new Date(trial.created_at),
-        updated_at: new Date(trial.updated_at),
-      })
-    );
+    try {
+      const response = await axiosInstance.get<APITrial[]>('/api/1.0/trials');
+      return response.data.map(
+        (trial: APITrial): Trial => ({
+          id: trial.id,
+          key: trial.key,
+          name: trial.name,
+          created_at: new Date(trial.created_at),
+          updated_at: new Date(trial.updated_at),
+        })
+      );
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
   }
+
   async getCompleteSchema(trialKey: string): Promise<TableSchemaInfo> {
-    return axiosInstance
-      .get('/api/1.0/schema', { params: { trial: trialKey } })
-      .then((response) => {
-        return response.data;
-      })
-      .catch((error) => console.log(error));
+    try {
+      const response = await axiosInstance.get<TableSchemaInfo>('/api/1.0/schema', { params: { trial: trialKey } });
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
   }
 
   async getDataFromQuery(query: DataQuery): Promise<Model> {
-    return axiosInstance
-      .post('/api/1.0/data', query)
-      .then((response) => {
-        const model = response.data;
+    try {
+      const response = await axiosInstance.post<Model>('/api/1.0/data', query);
+      const { key, name, priority, schema, data } = response.data;
 
-        const dateColumnsKeys = (model as Model).schema
-          .filter((column) => column.type === 'date')
-          .map((column) => column.key);
+      // Dates arrive as ISO strings in JSON
+      const dateColumnsKeys = schema.filter((column) => column.type === 'date').map((column) => column.key);
+      const parsedData = data.map((row) => {
+        const fixedRow = { ...row };
+        for (const columnKey of dateColumnsKeys) {
+          if (fixedRow[columnKey]) fixedRow[columnKey] = new Date(row[columnKey] as string);
+        }
+        return fixedRow;
+      });
 
-        model.data = (model as Model).data.map((row) => {
-          const fixedRow = { ...row };
-          for (const key of dateColumnsKeys) {
-            if (fixedRow[key]) fixedRow[key] = new Date(row[key] as string);
-          }
-          return fixedRow;
-        });
-
-        return model;
-      })
-      .catch((error) => console.log(error));
+      return new Model(key, name, priority, schema, parsedData);
+    } catch (error) {
+      console.error(error);
+      return Model.empty();
+    }
   }
 }

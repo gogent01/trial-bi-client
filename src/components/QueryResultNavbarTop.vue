@@ -47,7 +47,7 @@
     nrow: number;
     isSortActive: boolean;
   }
-  const props = defineProps<Props>();
+  defineProps<Props>();
 
   interface Emits {
     (e: 'clearSort'): void;
@@ -56,17 +56,6 @@
   const emit = defineEmits<Emits>();
 
   function toLocaleRowCount(n: number) {
-    const foundCases = {
-      sin: { nom: 'была найдена', gen: 'было найдено' },
-      plu: { nom: 'были найдены', gen: 'было найдено' },
-    };
-    const recordCases = { sin: { nom: 'запись', gen: 'записи' }, plu: { nom: 'записи', gen: 'записей' } };
-    const cases: ['sin' | 'plu', 'nom' | 'gen'] =
-      n % 10 === 1 && n % 100 !== 11
-        ? ['sin', 'nom']
-        : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)
-        ? ['sin', 'gen']
-        : ['plu', 'gen'];
     return t('query_result.records_found', { n });
   }
 </script>
