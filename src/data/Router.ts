@@ -43,36 +43,26 @@ export class DemoRouter extends Router {
   }
 
   async getTrials(): Promise<TrialPublic[]> {
-    return new Promise((resolve) => {
-      resolve(this.trials.map((trial) => ({ ...trial, database: undefined })));
-    });
+    return this.trials.map((trial) => ({ ...trial, database: undefined }));
   }
 
   async getCompleteSchema(trialKey: string): Promise<TableSchemaInfo> {
-    return new Promise((resolve) => {
-      const trial = this.trials.find((trial) => trial.key === trialKey);
-      if (!trial) return [];
-
-      resolve(trial.database!.getCompleteSchema());
-    });
+    const trial = this.trials.find((trial) => trial.key === trialKey);
+    return trial?.database?.getCompleteSchema() ?? [];
   }
 
   async getDataFromQuery(query: DataQuery): Promise<Model> {
-    return new Promise((resolve) => {
-      if (query.length === 0) resolve(Model.empty());
+    if (query.length === 0) return Model.empty();
 
-      const trialKey = query[0].trialKey;
-      const trial = this.trials.find((trial) => trial.key === trialKey);
-      if (!trial) resolve(Model.empty());
+    const trialKey = query[0].trialKey;
+    const trial = this.trials.find((trial) => trial.key === trialKey);
+    if (!trial?.database) return Model.empty();
 
-      const database = trial!.database;
-      const homogenousQuery = query.filter((dataQuery) => dataQuery.trialKey === trial!.key);
+    const homogenousQuery = query.filter((dataQuery) => dataQuery.trialKey === trial.key);
+    const planner = new QueryPlanner(trial.database, homogenousQuery);
+    const orderedQuery = planner.orderQuery();
 
-      const planner = new QueryPlanner(database!, homogenousQuery);
-      const orderedQuery = planner.orderQuery();
-
-      resolve(database!.getDataFromQuery(orderedQuery));
-    });
+    return trial.database.getDataFromQuery(orderedQuery);
   }
 }
 

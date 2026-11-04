@@ -856,17 +856,17 @@
   }
 
   const statsForColumnAtIndex = ref(-1);
-  const columnStats = new ColumnStats();
 
+  // Return a new instance each time: since Vue 3.4 a computed returning the same object doesn't trigger re-renders.
   const stats = computed(() => {
     if (statsForColumnAtIndex.value < 0) {
-      return columnStats.empty();
+      return new ColumnStats().empty();
     }
 
     const columnMetadata = reactiveSchema.value[statsForColumnAtIndex.value];
     const columnValues = filteredTable.value.map((row) => row[columnMetadata.key]);
 
-    return columnStats.calculate(columnMetadata, columnValues);
+    return new ColumnStats().calculate(columnMetadata, columnValues);
   });
 
   function toggleStats(columnKey: string) {
@@ -886,7 +886,7 @@
   }
 
   function clearStats() {
-    if (statsForColumnAtIndex.value > 0) {
+    if (statsForColumnAtIndex.value >= 0) {
       reactiveSchema.value[statsForColumnAtIndex.value].hasStats = false;
       statsForColumnAtIndex.value = -1;
     }
@@ -937,7 +937,7 @@
       },
     ];
     const data = stats.value.data as TableData;
-    const filename = stats.value.variable.toLowerCase().replace(/[^а-яa-z0-9_-]/, '_');
+    const filename = stats.value.variable.toLowerCase().replace(/[^а-яa-z0-9_-]/g, '_');
     saveTable(schema, data, t('export.data.sheet_name'), filename);
   }
 </script>

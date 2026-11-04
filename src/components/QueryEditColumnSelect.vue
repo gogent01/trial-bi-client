@@ -98,7 +98,7 @@
 
   const groupedSchema = computed<GroupedSchema>(() => {
     const includedOrigins: Set<string> = new Set();
-    return props.schema
+    return [...props.schema]
       .sort(
         (columnA, columnB) =>
           columnA.origin.priority - columnB.origin.priority ||
