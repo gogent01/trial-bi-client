@@ -660,6 +660,14 @@
     clearStats();
     storage.back();
     updateTableState();
+
+    sortTasks.value = reactiveSchema.value
+      .filter((column) => column.hasSort !== 'NONE')
+      .sort((columnA, columnB) => (columnA.sortPriority ?? 0) - (columnB.sortPriority ?? 0))
+      .map((column) => new SortTask(column.key, column.hasSort as 'ASC' | 'DESC'));
+    statsForColumnAtIndex.value = reactiveSchema.value.findIndex((column) => column.hasStats);
+    currentPage.value = 1;
+
     groupingOverlay.value!.clearGrouping();
     isGrouped.value = false;
   }
