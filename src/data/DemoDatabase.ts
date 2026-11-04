@@ -1,5 +1,5 @@
 import { Model } from './Model';
-import type { Database, TableColumn, TableData, TableSchemaInfo, DataQuery } from './types';
+import type { Database, TableColumn, TableData, TableRow, TableSchemaInfo, DataQuery } from './types';
 
 export abstract class DemoDatabase implements Database {
   models: Model[];
@@ -70,20 +70,30 @@ export abstract class DemoDatabase implements Database {
     const joinedSchema = [...safeLeftModel.schema, ...safeRightModel.schema];
     const joinedData = [] as TableData;
 
-    safeLeftModel.data.forEach((leftRow) => {
-      const primaryKey = safeLeftModel.schema[primaryKeyIdx].key;
-      const foreignKey = safeRightModel.schema[foreignKeyIdx].key;
-      const indexesOfAllForeignRows = safeRightModel.data.reduce((indexes: number[], rightRow, idx) => {
-        if (leftRow[primaryKey] === rightRow[foreignKey]) indexes.push(idx);
-        return indexes;
-      }, []);
+    const primaryKey = safeLeftModel.schema[primaryKeyIdx].key;
+    const foreignKey = safeRightModel.schema[foreignKeyIdx].key;
 
-      while (indexesOfAllForeignRows.length > 0) {
-        const foreignIdx = indexesOfAllForeignRows.shift() as number;
-        const rightRow = safeRightModel.data[foreignIdx];
+    // Right rows grouped by their foreign key, in their original order
+    const rightRowsByKey = new Map<TableRow[string], TableData>();
+    for (const rightRow of safeRightModel.data) {
+      const rows = rightRowsByKey.get(rightRow[foreignKey]);
+      if (rows) rows.push(rightRow);
+      else rightRowsByKey.set(rightRow[foreignKey], [rightRow]);
+    }
+
+    // A left row without matching right rows is kept, with empty right columns
+    const emptyRightRow: TableRow = Object.fromEntries(safeRightModel.schema.map((column) => [column.key, undefined]));
+
+    for (const leftRow of safeLeftModel.data) {
+      const matchingRows = rightRowsByKey.get(leftRow[primaryKey]);
+      if (!matchingRows || leftRow[primaryKey] === undefined) {
+        joinedData.push({ ...leftRow, ...emptyRightRow });
+        continue;
+      }
+      for (const rightRow of matchingRows) {
         joinedData.push({ ...leftRow, ...rightRow });
       }
-    });
+    }
 
     return new Model('all', 'All', 0, joinedSchema, joinedData);
   }
