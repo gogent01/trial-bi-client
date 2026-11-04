@@ -1,5 +1,7 @@
 # Trial BI
 
+[![CI](https://github.com/gogent01/trial-bi-client/actions/workflows/ci.yml/badge.svg)](https://github.com/gogent01/trial-bi-client/actions/workflows/ci.yml)
+
 Trial BI is a system designed for analyzing data from clinical trials. It is intended to work with raw data collected during clinical trials to select data fragments for obtaining preliminary insights and exporting these fragments for further data analysis in specialized software.
 
 ### System Features
@@ -52,6 +54,10 @@ Tests have been written for the complex classes (data filtering and descriptive 
 ```bash
 pnpm test
 ```
+
+### Continuous Integration
+
+Every push to `main` and every pull request runs type checks, linting (`pnpm lint:check`, which fails on any warning), tests (`pnpm test:ci`) and a production build in GitHub Actions (`.github/workflows/ci.yml`). Dependabot (`.github/dependabot.yml`) opens a monthly pull request with grouped minor and patch updates; major upgrades are done manually, while security updates arrive regardless.
 
 ### Structure
 

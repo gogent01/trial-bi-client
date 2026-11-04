@@ -1,0 +1,26 @@
+version: 2
+updates:
+  # npm ecosystem also covers pnpm (Dependabot supports pnpm 7–10)
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    # Minor and patch updates arrive together in one pull request
+    groups:
+      minor-and-patch:
+        patterns: ['*']
+        update-types: [minor, patch]
+    # Major upgrades are done deliberately. This rule only affects scheduled version updates:
+    # security updates are still opened, even when they need a new major version.
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
+
+  # Keep the actions used in CI up to date
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      github-actions:
+        patterns: ['*']

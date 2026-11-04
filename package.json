@@ -5,10 +5,12 @@
   "scripts": {
     "start": "vite --host",
     "test": "jest --watch --detectOpenHandles --verbose",
+    "test:ci": "jest --ci",
     "build": "run-p type-check build-only",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "lint:check": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --max-warnings 0 --ignore-path .gitignore"
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.11",
