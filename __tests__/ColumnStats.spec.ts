@@ -4,7 +4,6 @@ import { ColumnStats } from '../src/classes/ColumnStats';
 import type { Model } from '../src/data/Model';
 import type { TableColumn } from '../src/data/types';
 
-// Expected labels and date formats below are English; pin the locale so results don't depend on the machine.
 vi.mock('../src/config/variables', () => ({ CURRENT_LOCALE: 'en-US' }));
 
 function getColumnMetadata(model: Model, columnKey: string): TableColumn | undefined {
@@ -127,7 +126,6 @@ describe('Checks for correct calculations of basic statistics', () => {
     const columnValues = getColumnValues(model, columnKey);
     const expectedValue = [
       { param: 'Minimum', value: '28.0' },
-      // Quartiles use linear interpolation (R's default, type 7), which simple-statistics adopted after 7.8.x
       { param: 'First quartile', value: '34.0' },
       { param: 'Median', value: '46.0' },
       { param: 'Third quartile', value: '50.0' },

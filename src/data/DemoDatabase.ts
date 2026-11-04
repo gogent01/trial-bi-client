@@ -73,7 +73,6 @@ export abstract class DemoDatabase implements Database {
     const primaryKey = safeLeftModel.schema[primaryKeyIdx].key;
     const foreignKey = safeRightModel.schema[foreignKeyIdx].key;
 
-    // Right rows grouped by their foreign key, in their original order
     const rightRowsByKey = new Map<TableRow[string], TableData>();
     for (const rightRow of safeRightModel.data) {
       const rows = rightRowsByKey.get(rightRow[foreignKey]);
@@ -81,7 +80,6 @@ export abstract class DemoDatabase implements Database {
       else rightRowsByKey.set(rightRow[foreignKey], [rightRow]);
     }
 
-    // A left row without matching right rows is kept, with empty right columns
     const emptyRightRow: TableRow = Object.fromEntries(safeRightModel.schema.map((column) => [column.key, undefined]));
 
     for (const leftRow of safeLeftModel.data) {

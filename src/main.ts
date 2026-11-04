@@ -6,7 +6,6 @@ import App from './App.vue';
 
 import './assets/style.css';
 
-// Match the page language to the UI language (index.html defaults to English)
 document.documentElement.lang = CURRENT_LOCALE;
 
 const app = createApp(App);

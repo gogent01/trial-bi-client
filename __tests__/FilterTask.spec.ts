@@ -129,6 +129,21 @@ describe('FilterTask filtering logic: "number" columns', () => {
     const filteredRows: TableData = rows.filter((row: TableRow) => filterTask.apply(row));
     expect(filteredRows.length).toBe(3);
   });
+
+  it.each`
+    from         | to           | filteredRowsCount
+    ${-10}       | ${0}         | ${0}
+    ${0}         | ${35}        | ${2}
+    ${undefined} | ${35}        | ${2}
+    ${50}        | ${undefined} | ${4}
+  `('treats 0 as a bound and a missing bound as no limit: [$from, $to)', ({ from, to, filteredRowsCount }) => {
+    const column = getColumnMetadata(model, 'age') as TableColumn;
+    const filterTask = new FilterTask(column.key, column.name, column.type, column.levels);
+    filterTask.setType('range');
+    filterTask.setRangeValues([from, to]);
+
+    expect(model.data.filter((row: TableRow) => filterTask.apply(row)).length).toBe(filteredRowsCount);
+  });
 });
 
 describe('FilterTask filtering logic: "date" columns', () => {

@@ -35,7 +35,7 @@
               <label for="from" class="text-sm text-gray-900">{{ t('filters.range_from') }}</label>
               <input
                 type="text"
-                :value="task.rangeValues[0] || ''"
+                :value="task.rangeValues[0] ?? ''"
                 name="from"
                 class="flex px-2 py-1 w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
                 :placeholder="t('filters.range_from')"
@@ -46,7 +46,7 @@
               <label for="to" class="text-sm text-gray-900">{{ t('filters.range_to') }}</label>
               <input
                 type="text"
-                :value="task.rangeValues[1] || ''"
+                :value="task.rangeValues[1] ?? ''"
                 name="to"
                 class="flex px-2 py-1 w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
                 :placeholder="t('filters.range_to')"
@@ -71,7 +71,7 @@
               <input
                 :value="task.rangeValues[1] ? (task.rangeValues[1] as Date).toISOString().split('T')[0] : ''"
                 :class="[
-                  task.rangeValues[0] ? 'text-gray-900' : 'placeholder:text-gray-400',
+                  task.rangeValues[1] ? 'text-gray-900' : 'placeholder:text-gray-400',
                   'flex p-1 rounded-md border-0  shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6',
                 ]"
                 type="date"
@@ -227,8 +227,9 @@
     let typedFromValue: number | Date | undefined;
     let typedToValue: number | Date | undefined;
     if (columnType === 'number') {
-      typedFromValue = inputFrom.value !== '' ? parseFloat(inputFrom.value) : undefined;
-      typedToValue = inputTo.value !== '' ? parseFloat(inputTo.value) : undefined;
+      const parse = (value: string) => (value === '' || isNaN(parseFloat(value)) ? undefined : parseFloat(value));
+      typedFromValue = parse(inputFrom.value);
+      typedToValue = parse(inputTo.value);
     } else if (columnType === 'date') {
       typedFromValue = inputFrom.value !== '' ? new Date(inputFrom.value) : undefined;
       typedToValue = inputTo.value !== '' ? new Date(inputTo.value) : undefined;

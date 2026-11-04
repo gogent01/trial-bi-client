@@ -35,7 +35,6 @@ export function compressRowGroup(rowGroup: TableRow[], groupingSchema: GroupingR
     } else if (action === 'last' || action === 'hide' || action === 'none' || action === 'group') {
       compressedRow[column.key] = dataValues[dataValues.length - 1];
     } else if (action === 'nth') {
-      // Positions count from 1, as shown to the user
       const position = parseInt(column.grouping.param || '1', 10);
       compressedRow[column.key] = position >= 1 && position <= dataValues.length ? dataValues[position - 1] : undefined;
     } else if (action === 'all') {

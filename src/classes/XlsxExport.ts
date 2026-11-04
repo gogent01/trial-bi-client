@@ -6,7 +6,6 @@ export class XlsxExport {
   async generateXLSX(schema: TableSchema, data: TableData, sheetName: string, fileName: string) {
     if (data.length === 0) return;
 
-    // ExcelJS is large, so it is loaded only when the user exports
     const XLSX = await import('exceljs');
     const workbook = new XLSX.Workbook();
     const worksheet = workbook.addWorksheet(sheetName);
