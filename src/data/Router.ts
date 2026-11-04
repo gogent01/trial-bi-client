@@ -22,20 +22,21 @@ export class DemoRouter extends Router {
 
   constructor() {
     super();
+    const today = new Date();
     this.trials = [
       {
         id: 0,
         key: 'breast',
         name: t('demo_trials.breast'),
         created_at: new Date('2022-01-10'),
-        updated_at: new Date('2023-11-21'),
+        updated_at: today,
       },
       {
         id: 1,
         key: 'melanoma',
         name: t('demo_trials.melanoma'),
         created_at: new Date('2022-02-01'),
-        updated_at: new Date('2023-12-05'),
+        updated_at: today,
       },
     ];
     this.databaseLoaders = {
