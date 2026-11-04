@@ -27,21 +27,18 @@
           </div>
         </div>
       </li>
+      <!-- Invisible fillers pad lists with fewer than 3 columns, so in the 2-column layout they stack like longer lists -->
       <li
-        v-for="placeholder in Array.from({
-          length: schema.length % 3 === 0 ? 0 : 3 - schema.length,
-        }).fill(0)"
-        :key="placeholder as number"
+        v-for="filler in Math.max(0, 3 - schema.length)"
+        :key="'filler-' + filler"
         class="invisible flex p-2 bg-white hover:bg-gray-50 cursor-pointer"
+        aria-hidden="true"
       >
         <div class="flex flex-1 gap-2 items-center justify-between">
           <div class="space-y-2 flex-1">
             <div class="flex gap-2 items-center">
-              <input
-                type="checkbox"
-                class="h-4 w-4 rounded border-gray-300 text-teal-600 cursor-pointer focus:ring-teal-600"
-              />
-              <label class="text-sm text-gray-900 cursor-pointer select-none">{{ placeholder }}</label>
+              <span class="h-4 w-4"></span>
+              <span class="text-sm text-gray-900 select-none">&nbsp;</span>
             </div>
           </div>
         </div>
