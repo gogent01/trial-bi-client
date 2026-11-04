@@ -29,8 +29,12 @@ const messages = {
     },
   },
   wide_screen: {
-    notice: 'The application only supports operation on wide screens!',
-    todo: 'To start data analysis, open this page on a computer.',
+    description:
+      'Explore clinical trial data: select columns from related tables, filter, sort and group them, see descriptive statistics, and export results for further analysis.',
+    image_alt: 'Trial BI on a tablet: query results with filters, sorting and descriptive statistics',
+    notice: 'Designed for wide screens',
+    todo: 'Open this page on a computer or a tablet to try the demo.',
+    source_code: 'View source on GitHub',
   },
   no_data: 'No data to display',
   trial: {
@@ -166,7 +170,7 @@ const messages = {
     },
   },
   demo_trials: {
-    breast: 'RWE MCT: Breast Cancer',
+    breast: 'MCT: Breast Cancer',
     melanoma: 'MCT: Melanoma',
   },
 };

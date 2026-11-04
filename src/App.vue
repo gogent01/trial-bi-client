@@ -57,17 +57,34 @@
 
     <!-- Mobile placeholder -->
     <div
-      class="w-full h-full flex items-center justify-center p-3 bg-slate-300 md:hidden"
-      style="height: calc(100vh - 4rem)"
+      class="w-full flex flex-col items-center justify-center gap-4 p-3 bg-slate-300 md:hidden"
+      style="min-height: calc(100vh - 4rem)"
     >
-      <div class="w-full px-4 py-6 text-center bg-gray-50 rounded-xl">
-        <tv-icon class="mx-auto h-16 w-16 text-gray-600" aria-hidden="true" />
-        <h3 class="mt-1 text-lg font-semibold text-gray-900">
-          {{ t('wide_screen.notice') }}
-        </h3>
-        <p class="mt-4 text-gray-600">
-          {{ t('wide_screen.todo') }}
-        </p>
+      <img
+        src="/og-image.png"
+        :alt="t('wide_screen.image_alt')"
+        width="1200"
+        height="630"
+        loading="lazy"
+        class="w-full max-w-md h-auto"
+      />
+      <div class="w-full max-w-md px-4 py-6 pb-7 text-center bg-gray-50 rounded-xl">
+        <h2 class="text-xl font-semibold text-gray-900">Trial BI</h2>
+        <p class="mt-1 text-gray-700">{{ t('wide_screen.description') }}</p>
+
+        <computer-desktop-icon class="mx-auto mt-8 h-10 w-10 text-gray-600" aria-hidden="true" />
+        <h3 class="text-lg font-semibold text-gray-900">{{ t('wide_screen.notice') }}</h3>
+        <p class="text-gray-600">{{ t('wide_screen.todo') }}</p>
+
+        <a
+          href="https://github.com/gogent01/trial-bi-client"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mt-6 inline-flex items-center gap-2 rounded-lg bg-teal-600 px-4 py-2 font-medium text-white shadow-sm hover:bg-teal-700"
+        >
+          {{ t('wide_screen.source_code') }}
+          <arrow-top-right-on-square-icon class="h-5 w-5" aria-hidden="true" />
+        </a>
       </div>
     </div>
 
@@ -285,8 +302,18 @@
   import { ref, computed, watch, onMounted } from 'vue';
   import { sort } from 'fast-sort';
   import { useI18n } from 'vue-i18n';
-  import { TvIcon, CubeTransparentIcon, RectangleStackIcon, RectangleGroupIcon } from '@heroicons/vue/24/outline';
-  import { PlusIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/20/solid';
+  import {
+    ComputerDesktopIcon,
+    CubeTransparentIcon,
+    RectangleStackIcon,
+    RectangleGroupIcon,
+  } from '@heroicons/vue/24/outline';
+  import {
+    ArrowTopRightOnSquareIcon,
+    PlusIcon,
+    ChevronDoubleLeftIcon,
+    ChevronDoubleRightIcon,
+  } from '@heroicons/vue/20/solid';
   import logo from './assets/Trial-BI-logo.svg';
 
   import type {
