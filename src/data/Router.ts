@@ -2,11 +2,12 @@ import i18n from '../services/i18n';
 import type { Trial, APITrial, Database, DataQuery, TableSchemaInfo } from './types';
 import { Model } from './Model';
 import { QueryPlanner } from './QueryPlanner';
-import { axiosInstance } from '../services/axios';
 
 const { t } = i18n.global;
 
 export type TrialPublic = Omit<Trial, 'database'>;
+
+const getHttpClient = () => import('../services/axios').then((module) => module.axiosInstance);
 
 export abstract class Router {
   abstract getTrials(): Promise<Trial[]>;
@@ -96,7 +97,8 @@ export class DemoRouter extends Router {
 export class APIRouter extends Router {
   async getTrials(): Promise<Trial[]> {
     try {
-      const response = await axiosInstance.get<APITrial[]>('/api/1.0/trials');
+      const http = await getHttpClient();
+      const response = await http.get<APITrial[]>('/api/1.0/trials');
       return response.data.map((trial: APITrial): Trial => ({
         id: trial.id,
         key: trial.key,
@@ -112,7 +114,8 @@ export class APIRouter extends Router {
 
   async getCompleteSchema(trialKey: string): Promise<TableSchemaInfo> {
     try {
-      const response = await axiosInstance.get<TableSchemaInfo>('/api/1.0/schema', { params: { trial: trialKey } });
+      const http = await getHttpClient();
+      const response = await http.get<TableSchemaInfo>('/api/1.0/schema', { params: { trial: trialKey } });
       return response.data;
     } catch (error) {
       console.error(error);
@@ -122,7 +125,8 @@ export class APIRouter extends Router {
 
   async getDataFromQuery(query: DataQuery): Promise<Model> {
     try {
-      const response = await axiosInstance.post<Model>('/api/1.0/data', query);
+      const http = await getHttpClient();
+      const response = await http.post<Model>('/api/1.0/data', query);
       const { key, name, priority, schema, data } = response.data;
 
       // Dates arrive as ISO strings in JSON
