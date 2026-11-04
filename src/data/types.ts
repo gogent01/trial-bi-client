@@ -59,18 +59,7 @@ export type DataQueryRow = {
 export type DataQuery = DataQueryRow[];
 
 export type GroupingAction =
-  | 'none'
-  | 'group'
-  | 'hide'
-  | 'count'
-  | 'first'
-  | 'last'
-  | 'nth'
-  | 'sum'
-  | 'mean'
-  | 'median'
-  | 'all'
-  | 'unique';
+  'none' | 'group' | 'hide' | 'count' | 'first' | 'last' | 'nth' | 'sum' | 'mean' | 'median' | 'all' | 'unique';
 export type GroupingMixin = {
   grouping: {
     action: GroupingAction;
