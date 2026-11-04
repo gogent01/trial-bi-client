@@ -8,10 +8,10 @@ import type { TableData, TableColumn, TableRow } from '../src/data/types';
 describe('FilterTask filtering logic: "text" columns', () => {
   it.each`
     filterType | filterValue            | filteredRowsCount
-    ${'eq'}    | ${'Василиса Макарова'} | ${1}
-    ${'sw'}    | ${'Вас'}               | ${1}
-    ${'ew'}    | ${'ьев'}               | ${1}
-    ${'has'}   | ${'кар'}               | ${1}
+    ${'eq'}    | ${'Vanessa Mackenzie'} | ${1}
+    ${'sw'}    | ${'Van'}               | ${1}
+    ${'ew'}    | ${'yer'}               | ${1}
+    ${'has'}   | ${'ack'}               | ${1}
   `(`correctly filters rows with filter type $filterType`, ({ filterType, filterValue, filteredRowsCount }) => {
     const columnKey = 'fullname';
 
@@ -44,7 +44,7 @@ describe('FilterTask filtering logic: "text" columns', () => {
     }
     const filterTask = new FilterTask(column.key, column.name, column.type, column.levels);
     filterTask.setType(filterType as FilterType);
-    filterTask.setValue('Василиса Макарова');
+    filterTask.setValue('Vanessa Mackenzie');
 
     const filteredRows: TableData = rows.filter((row: TableRow) => filterTask.apply(row));
 
@@ -62,7 +62,7 @@ describe('FilterTask filtering logic: "text" columns', () => {
 
     const filterTask = new FilterTask(column.key, column.name, column.type, column.levels);
     filterTask.setType('range');
-    filterTask.setRangeValues(['Василиса Макарова', 'Тамара Павлова']);
+    filterTask.setRangeValues(['Vanessa Mackenzie', 'Tamara Palmer']);
 
     const filteredRows: TableData = rows.filter((row: TableRow) => filterTask.apply(row));
 
@@ -80,7 +80,7 @@ describe('FilterTask filtering logic: "text" columns', () => {
 
     const filterTask = new FilterTask(column.key, column.name, column.type, column.levels);
     filterTask.setType('any');
-    filterTask.setMultipleValues(['Василиса Макарова', 'Тамара Павлова']);
+    filterTask.setMultipleValues(['Vanessa Mackenzie', 'Tamara Palmer']);
 
     const filteredRows: TableData = rows.filter((row: TableRow) => filterTask.apply(row));
 
@@ -179,10 +179,10 @@ describe('FilterTask filtering logic: "date" columns', () => {
 
 describe('FilterTask filtering logic: "factor" columns', () => {
   it.each`
-    filterType | filterValue | filteredRowsCount
-    ${'sw'}    | ${'ГК'}     | ${6}
-    ${'ew'}    | ${'62'}     | ${3}
-    ${'has'}   | ${'ОБ'}     | ${6}
+    filterType | filterValue   | filteredRowsCount
+    ${'sw'}    | ${'City'}     | ${6}
+    ${'ew'}    | ${'62'}       | ${3}
+    ${'has'}   | ${'Hospital'} | ${6}
   `(`correctly filters rows with filter type $filterType`, ({ filterType, filterValue, filteredRowsCount }) => {
     const columnKey = 'center';
 
@@ -212,7 +212,7 @@ describe('FilterTask filtering logic: "factor" columns', () => {
     }
     const filterTask = new FilterTask(column.key, column.name, column.type, column.levels);
     filterTask.setType('any');
-    filterTask.setMultipleValues(['МКНЦ им. А.С. Логинова', 'ГКОБ 62']);
+    filterTask.setMultipleValues(['State Multi-Specialty Surgical Center', 'City Hospital 62']);
 
     const filteredRows: TableData = rows.filter((row: TableRow) => filterTask.apply(row));
 

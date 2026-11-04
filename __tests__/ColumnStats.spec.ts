@@ -1,8 +1,11 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it, jest } from '@jest/globals';
 import { testPatientModel as model } from './objects.utils';
 import { ColumnStats } from '../src/classes/ColumnStats';
 import type { Model } from '../src/data/Model';
 import type { TableColumn } from '../src/data/types';
+
+// Expected labels and date formats below are English; pin the locale so results don't depend on the machine.
+jest.mock('../src/config/variables', () => ({ CURRENT_LOCALE: 'en-US' }));
 
 function getColumnMetadata(model: Model, columnKey: string): TableColumn | undefined {
   return model.schema.find((column) => column.key === columnKey);
@@ -20,7 +23,7 @@ describe('Checks for a correct work of stats functions', () => {
     const columnValues = getColumnValues(model, columnKey);
     const actualValue = stats.calculate(columnMetadata, columnValues);
 
-    expect(stats.variable).toEqual('Возраст');
+    expect(stats.variable).toEqual('Age');
     expect(actualValue.data.length).toBe(10);
   });
 
@@ -31,7 +34,7 @@ describe('Checks for a correct work of stats functions', () => {
     const columnValues = getColumnValues(model, columnKey);
     const actualValue = stats.calculate(columnMetadata, columnValues);
 
-    expect(stats.variable).toBe('ФИО');
+    expect(stats.variable).toBe('Full name');
     expect(actualValue.data.length).toBe(2);
   });
 
@@ -42,7 +45,7 @@ describe('Checks for a correct work of stats functions', () => {
     const columnValues = getColumnValues(model, columnKey);
     const actualValue = stats.calculate(columnMetadata, columnValues);
 
-    expect(stats.variable).toEqual('Центр проведения исследования');
+    expect(stats.variable).toEqual('Study center');
     expect(actualValue.data.length).toBe(6);
   });
 
@@ -53,7 +56,7 @@ describe('Checks for a correct work of stats functions', () => {
     const columnValues = getColumnValues(model, columnKey);
     const actualValue = stats.calculate(columnMetadata, columnValues);
 
-    expect(stats.variable).toEqual('Дата рождения');
+    expect(stats.variable).toEqual('Date of birth');
     expect(actualValue.data.length).toBe(4);
   });
 });
@@ -65,8 +68,8 @@ describe('Checks if all values and NA are correctly counted', () => {
     const columnMetadata = getColumnMetadata(model, columnKey) as TableColumn;
     const columnValues = getColumnValues(model, columnKey);
     const expectedValue = [
-      { param: 'Число наблюдений', value: '10' },
-      { param: 'Заполненных значений', value: '8' },
+      { param: 'Count', value: '10' },
+      { param: 'Non-empty values', value: '8' },
     ];
     const actualValue = stats.calculate(columnMetadata, columnValues);
 
@@ -79,8 +82,8 @@ describe('Checks if all values and NA are correctly counted', () => {
     const columnMetadata = getColumnMetadata(model, columnKey) as TableColumn;
     const columnValues = getColumnValues(model, columnKey);
     const expectedValue = [
-      { param: 'Число наблюдений', value: '10' },
-      { param: 'Заполненных значений', value: '8' },
+      { param: 'Count', value: '10' },
+      { param: 'Non-empty values', value: '8' },
     ];
     const actualValue = stats.calculate(columnMetadata, columnValues);
 
@@ -93,8 +96,8 @@ describe('Checks if all values and NA are correctly counted', () => {
     const columnMetadata = getColumnMetadata(model, columnKey) as TableColumn;
     const columnValues = getColumnValues(model, columnKey);
     const expectedValue = [
-      { param: 'Число наблюдений', value: '10' },
-      { param: 'Заполненных значений', value: '7' },
+      { param: 'Count', value: '10' },
+      { param: 'Non-empty values', value: '7' },
     ];
     const actualValue = stats.calculate(columnMetadata, columnValues);
 
@@ -107,8 +110,8 @@ describe('Checks if all values and NA are correctly counted', () => {
     const columnMetadata = getColumnMetadata(model, columnKey) as TableColumn;
     const columnValues = getColumnValues(model, columnKey);
     const expectedValue = [
-      { param: 'Число наблюдений', value: '10' },
-      { param: 'Заполненных значений', value: '8' },
+      { param: 'Count', value: '10' },
+      { param: 'Non-empty values', value: '8' },
     ];
     const actualValue = stats.calculate(columnMetadata, columnValues);
 
@@ -123,14 +126,15 @@ describe('Checks for correct calculations of basic statistics', () => {
     const columnMetadata = getColumnMetadata(model, columnKey) as TableColumn;
     const columnValues = getColumnValues(model, columnKey);
     const expectedValue = [
-      { param: 'Минимум', value: '28.0' },
-      { param: 'Первый квартиль', value: '33.0' },
-      { param: 'Медиана', value: '46.0' },
-      { param: 'Третий квартиль', value: '50.0' },
-      { param: 'Максимум', value: '69.0' },
-      { param: 'Межкварт. интервал', value: '17.0' },
-      { param: 'Среднее', value: '44.375' },
-      { param: 'Станд. отклонение', value: '12.459' },
+      { param: 'Minimum', value: '28.0' },
+      // Quartiles use linear interpolation (R's default, type 7), which simple-statistics adopted after 7.8.x
+      { param: 'First quartile', value: '34.0' },
+      { param: 'Median', value: '46.0' },
+      { param: 'Third quartile', value: '50.0' },
+      { param: 'Maximum', value: '69.0' },
+      { param: 'Interquartile range', value: '16.0' },
+      { param: 'Mean', value: '44.375' },
+      { param: 'Standard deviation', value: '12.459' },
     ];
     const actualValue = stats.calculate(columnMetadata, columnValues);
 
@@ -143,12 +147,12 @@ describe('Checks for correct calculations of basic statistics', () => {
     const columnMetadata = getColumnMetadata(model, columnKey) as TableColumn;
     const columnValues = getColumnValues(model, columnKey);
     const expectedValue = [
-      { param: 'Число наблюдений', value: '10' },
-      { param: 'Заполненных значений', value: '7' },
-      { param: 'МКНЦ им. А.С. Логинова', value: '1' },
-      { param: 'ГКОБ 1', value: '3' },
-      { param: 'ГКОБ 62', value: '3' },
-      { param: 'Нет данных', value: '0' },
+      { param: 'Count', value: '10' },
+      { param: 'Non-empty values', value: '7' },
+      { param: 'State Multi-Specialty Surgical Center', value: '1' },
+      { param: 'City Hospital 1', value: '3' },
+      { param: 'City Hospital 62', value: '3' },
+      { param: 'No data', value: '3' },
     ];
     const actualValue = stats.calculate(columnMetadata, columnValues);
 
@@ -161,10 +165,10 @@ describe('Checks for correct calculations of basic statistics', () => {
     const columnMetadata = getColumnMetadata(model, columnKey) as TableColumn;
     const columnValues = getColumnValues(model, columnKey);
     const result = stats.calculate(columnMetadata, columnValues);
-    const max = result.data.find((item) => item.param === 'Максимум')?.value;
-    const min = result.data.find((item) => item.param === 'Минимум')?.value;
+    const max = result.data.find((item) => item.param === 'Maximum')?.value;
+    const min = result.data.find((item) => item.param === 'Minimum')?.value;
 
-    expect(max).toBe('03.04.1995');
-    expect(min).toBe('12.05.1954');
+    expect(max).toBe('4/3/1995');
+    expect(min).toBe('5/12/1954');
   });
 });
