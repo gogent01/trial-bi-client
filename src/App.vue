@@ -289,7 +289,6 @@
   import { TvIcon, CubeTransparentIcon, RectangleStackIcon, RectangleGroupIcon } from '@heroicons/vue/24/outline';
   import { PlusIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/20/solid';
   import logo from './assets/Trial-BI-logo.svg';
-  import { CURRENT_LOCALE } from './config/variables';
 
   import type {
     Trial,
@@ -323,6 +322,7 @@
   import StatisticsNavbarTop from './components/StatisticsNavbarTop.vue';
   import StatisticsTable from './components/StatisticsTable.vue';
   import { XlsxExport } from './classes/XlsxExport';
+  import { compressRowGroup } from './classes/Grouping';
 
   const { t } = useI18n();
   const areTrialsLoaded = ref<boolean>(false);
@@ -653,85 +653,6 @@
     toggleGroupingOverlayVisibility();
   }
 
-  function compressRowGroup(rowGroup: TableRow[], groupingSchema: GroupingReactiveTableSchema): TableRow {
-    const compressedRow: TableRow = {};
-    groupingSchema.forEach((column) => {
-      const dataValues = rowGroup.map((row) => row[column.key]);
-      if (column.grouping.action === 'count') {
-        compressedRow[column.key] = dataValues.length;
-      } else if (column.grouping.action === 'first') {
-        compressedRow[column.key] = dataValues[0];
-      } else if (
-        column.grouping.action === 'last' ||
-        column.grouping.action === 'hide' ||
-        column.grouping.action === 'none' ||
-        column.grouping.action === 'group'
-      ) {
-        compressedRow[column.key] = dataValues[dataValues.length - 1];
-      } else if (column.grouping.action === 'nth') {
-        const n = parseInt(column.grouping.param || '0', 10);
-        compressedRow[column.key] = n < dataValues.length ? dataValues[n] : undefined;
-      } else if (column.grouping.action === 'all') {
-        const separator = column.grouping.param || '; ';
-        if (column.type === 'date') {
-          compressedRow[column.key] = sort(dataValues as Date[])
-            .asc()
-            .map((d) => (d ? d.toLocaleDateString(CURRENT_LOCALE) : 'NA'))
-            .join(separator);
-        } else {
-          compressedRow[column.key] = sort(dataValues)
-            .asc()
-            .map((v) => (v ? v : 'NA'))
-            .join(separator);
-        }
-      } else if (column.grouping.action === 'unique') {
-        const separator = column.grouping.param || '; ';
-        compressedRow[column.key] = sort(Array.from(new Set(dataValues)))
-          .asc()
-          .map((v) => (v ? v : 'NA'))
-          .join(separator);
-      } else if (column.grouping.action === 'sum') {
-        const validValues = (dataValues as number[]).filter((value) => value !== undefined && value !== null);
-        if (column.type === 'number' && validValues.length > 0) {
-          const sum = validValues.reduce((sum, value) => sum + value);
-          compressedRow[column.key] = prettyNumber(sum);
-        } else {
-          compressedRow[column.key] = undefined;
-        }
-      } else if (column.grouping.action === 'mean') {
-        const validValues = (dataValues as number[]).filter((value) => value !== undefined && value !== null);
-        if (column.type === 'number' && validValues.length > 0) {
-          const sum = validValues.reduce((sum, value) => sum + value);
-          const mean = sum / validValues.length;
-          compressedRow[column.key] = prettyNumber(mean);
-        } else {
-          compressedRow[column.key] = undefined;
-        }
-      } else if (column.grouping.action === 'median') {
-        const validValues = (dataValues as number[]).filter((value) => value !== undefined && value !== null);
-        if (column.type === 'number' && validValues.length > 0) {
-          const ordered = sort(validValues).asc();
-          const middleIdx = (ordered.length - (ordered.length % 2)) / 2;
-          if (ordered.length % 2 === 1) {
-            const median = ordered[middleIdx];
-            compressedRow[column.key] = prettyNumber(median);
-          } else {
-            const median = (ordered[middleIdx] + ordered[middleIdx + 1]) / 2;
-            compressedRow[column.key] = prettyNumber(median);
-          }
-        } else {
-          compressedRow[column.key] = undefined;
-        }
-      }
-    });
-
-    return compressedRow;
-  }
-
-  function prettyNumber(n: number): number {
-    return parseFloat(n.toFixed(3));
-  }
-
   function cancelGrouping(): void {
     toggleGroupingOverlayVisibility();
     groupingOverlay.value!.restoreGroupingBackup();
@@ -938,6 +859,6 @@
     ];
     const data = stats.value.data as TableData;
     const filename = stats.value.variable.toLowerCase().replace(/[^а-яa-z0-9_-]/g, '_');
-    saveTable(schema, data, t('export.data.sheet_name'), filename);
+    saveTable(schema, data, t('export.stats.sheet_name'), filename);
   }
 </script>

@@ -130,7 +130,7 @@ const messages = {
         unique: 'unique values',
       },
       placeholders: {
-        index_number: 'index number',
+        index_number: 'position',
         separator: 'separator',
       },
     },
