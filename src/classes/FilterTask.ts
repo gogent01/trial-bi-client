@@ -47,7 +47,7 @@ export class FilterTask {
     this.multipleValues = values;
   }
 
-  isEmpty(): Boolean {
+  isEmpty(): boolean {
     if (this.type === 'range') {
       return this.rangeValues[0] === undefined && this.rangeValues[1] === undefined;
     } else if (this.type === 'any') {

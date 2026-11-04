@@ -20,7 +20,7 @@ export function buildComorbidities(patients: TableData): Model {
 
 function createComorbidity(id: number, patientId: number): TableRow {
   const category = faker.helpers.arrayElement(['Cancer', 'Autoimmune disease', 'Other']);
-  let comment = '';
+  let comment: string;
   if (category === 'Cancer') {
     comment = faker.helpers.arrayElement(['Melanoma', 'Gastric cancer', 'Colon cancer', 'Lung cancer']);
   } else if (category === 'Autoimmune disease') {

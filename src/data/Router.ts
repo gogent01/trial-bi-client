@@ -102,15 +102,13 @@ export class APIRouter extends Router {
   async getTrials(): Promise<Trial[]> {
     try {
       const response = await axiosInstance.get<APITrial[]>('/api/1.0/trials');
-      return response.data.map(
-        (trial: APITrial): Trial => ({
-          id: trial.id,
-          key: trial.key,
-          name: trial.name,
-          created_at: new Date(trial.created_at),
-          updated_at: new Date(trial.updated_at),
-        })
-      );
+      return response.data.map((trial: APITrial): Trial => ({
+        id: trial.id,
+        key: trial.key,
+        name: trial.name,
+        created_at: new Date(trial.created_at),
+        updated_at: new Date(trial.updated_at),
+      }));
     } catch (error) {
       console.error(error);
       return [];
