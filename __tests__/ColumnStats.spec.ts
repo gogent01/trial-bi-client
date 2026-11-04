@@ -1,11 +1,11 @@
-import { describe, expect, it, jest } from '@jest/globals';
+import { describe, expect, it, vi } from 'vitest';
 import { testPatientModel as model } from './objects.utils';
 import { ColumnStats } from '../src/classes/ColumnStats';
 import type { Model } from '../src/data/Model';
 import type { TableColumn } from '../src/data/types';
 
 // Expected labels and date formats below are English; pin the locale so results don't depend on the machine.
-jest.mock('../src/config/variables', () => ({ CURRENT_LOCALE: 'en-US' }));
+vi.mock('../src/config/variables', () => ({ CURRENT_LOCALE: 'en-US' }));
 
 function getColumnMetadata(model: Model, columnKey: string): TableColumn | undefined {
   return model.schema.find((column) => column.key === columnKey);

@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker/locale/en';
+import { fakerEN as faker } from '@faker-js/faker';
 import { Model } from '../../Model';
 import type { TableRow, TableData } from '../../types';
 import { neoTherapySchema } from '../../breast/neoTherapy/schema';
@@ -19,10 +19,10 @@ export function buildNeoTherapies(cancers: TableData): Model {
 }
 
 function createNeoTherapy(id: number, cancerId: number): TableRow {
-  const startDate = faker.date.recent(60, '2023-01-20T00:00:00.000Z');
-  const endDate = faker.date.recent(30, '2023-03-01T00:00:00.000Z');
-  const height = parseFloat(faker.finance.amount(140, 200, 1));
-  const weight = parseFloat(faker.finance.amount(40, 140, 2));
+  const startDate = faker.date.recent({ days: 60, refDate: '2023-01-20T00:00:00.000Z' });
+  const endDate = faker.date.recent({ days: 30, refDate: '2023-03-01T00:00:00.000Z' });
+  const height = parseFloat(faker.finance.amount({ min: 140, max: 200, dec: 1 }));
+  const weight = parseFloat(faker.finance.amount({ min: 40, max: 140, dec: 2 }));
 
   const endReason =
     Math.random() < 0.75

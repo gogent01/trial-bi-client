@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker/locale/en';
+import { fakerEN as faker } from '@faker-js/faker';
 import { Model } from '../../Model';
 import type { TableRow, TableData } from '../../types';
 import { neoDrugSchema } from '../../breast/neoDrugs/schema';
@@ -29,9 +29,9 @@ function createNeoDrug(id: number, neoTherapyId: number): TableRow {
     id,
     neo_therapy_id: neoTherapyId,
     drug_name: drugName,
-    dose: faker.datatype.number({ min: 0.01, max: 2, precision: 0.01 }),
+    dose: faker.number.float({ min: 0.01, max: 2, fractionDigits: 2 }),
     units,
-    courses: faker.datatype.number({ min: 4, max: 7 }),
+    courses: faker.number.int({ min: 4, max: 7 }),
     commentary: Math.random() > 0.7 ? faker.lorem.sentences(1) : '',
   };
 }

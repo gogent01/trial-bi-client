@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker/locale/en';
+import { fakerEN as faker } from '@faker-js/faker';
 import { Model } from '../../Model';
 import type { TableRow, TableData } from '../../types';
 import { histologicCharacteristicSchema } from '../../melanoma/histology/schema';
@@ -30,6 +30,6 @@ function createHistologicCharacteristic(id: number, cancerId: number): TableRow 
     form,
     pigmentation,
     clark,
-    height: faker.datatype.number({ min: 0, max: 12 }),
+    height: faker.number.int({ min: 0, max: 12 }),
   };
 }

@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker/locale/en';
+import { fakerEN as faker } from '@faker-js/faker';
 import { Model } from '../../Model';
 import type { TableRow, TableData } from '../../types';
 import { surgerySchema } from '../../melanoma/surgery/schema';
@@ -30,7 +30,7 @@ function createSurgery(id: number, cancerId: number): TableRow {
     id,
     cancer_id: cancerId,
     aim,
-    date: faker.date.recent(120),
+    date: faker.date.recent({ days: 120 }),
     result,
   };
 }

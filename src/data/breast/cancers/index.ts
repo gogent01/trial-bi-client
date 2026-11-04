@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker/locale/en';
+import { fakerEN as faker } from '@faker-js/faker';
 import { Model } from '../../Model';
 import type { TableRow, TableData } from '../../types';
 import { cancerSchema } from '../../breast/cancers/schema';
@@ -20,7 +20,7 @@ export function buildCancers(patients: TableData): Model {
 
 function createCancer(id: number, patientId: number): TableRow {
   const date_of_symptoms = faker.date.birthdate({ min: 0, max: 5, mode: 'age' });
-  const date_of_diagnosis = faker.date.between(date_of_symptoms, new Date());
+  const date_of_diagnosis = faker.date.between({ from: date_of_symptoms, to: new Date() });
   return {
     id,
     patient_id: patientId,

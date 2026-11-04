@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker/locale/en';
+import { fakerEN as faker } from '@faker-js/faker';
 import { Model } from '../../Model';
 import type { TableRow } from '../../types';
 import { patientSchema } from '../../melanoma/patients/schema';
@@ -16,9 +16,9 @@ function createPatient(id: number): TableRow {
     'State Multi-Specialty Surgical Center': 'MSC',
   };
   const center = faker.helpers.arrayElement(Object.keys(centers));
-  const code = 'MCT-MELANOMA-' + faker.random.numeric(4, { allowLeadingZeros: true });
+  const code = 'MCT-MELANOMA-' + faker.string.numeric({ length: 4, allowLeadingZeros: true });
   const sex = faker.helpers.arrayElement(['Male', 'Female']);
-  const history = centers[center] + '-' + faker.random.alphaNumeric(5, { casing: 'upper' });
+  const history = centers[center] + '-' + faker.string.alphanumeric({ length: 5, casing: 'upper' });
   const dateOfBirth = faker.date.birthdate({ min: 18, max: 85, mode: 'age' });
   const status =
     Math.random() < 0.75

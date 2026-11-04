@@ -1,7 +1,7 @@
-import { describe, it, expect, jest } from '@jest/globals';
+import { describe, expect, it, vi } from 'vitest';
 import i18n from '../src/services/i18n';
 
-jest.mock('../src/config/variables', () => ({ CURRENT_LOCALE: 'ru-RU' }));
+vi.mock('../src/config/variables', () => ({ CURRENT_LOCALE: 'ru-RU' }));
 
 describe('Russian pluralization of the record count', () => {
   it.each`
