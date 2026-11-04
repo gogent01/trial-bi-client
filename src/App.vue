@@ -71,7 +71,6 @@
       </div>
     </div>
 
-    <!-- 3 column + 2 control strips wrapper -->
     <div
       class="hidden mx-auto w-full flex-grow bg-slate-300 md:flex md:flex-row"
       style="max-height: calc(100vh - 4rem)"
@@ -359,7 +358,6 @@
     isGroupingOverlayVisible.value = !isGroupingOverlayVisible.value;
   }
 
-  // Demo data generated in the browser by default; set VITE_DATA_SOURCE=api to use the backend REST API
   const router: Router = import.meta.env.VITE_DATA_SOURCE === 'api' ? new APIRouter() : new DemoRouter();
   const trials = ref<Trial[]>([]);
 
@@ -779,7 +777,6 @@
 
   const statsForColumnAtIndex = ref(-1);
 
-  // Return a new instance each time: since Vue 3.4 a computed returning the same object doesn't trigger re-renders.
   const stats = computed(() => {
     if (statsForColumnAtIndex.value < 0) {
       return new ColumnStats().empty();

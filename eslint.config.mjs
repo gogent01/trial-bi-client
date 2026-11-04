@@ -20,11 +20,9 @@ export default defineConfigWithVueTs(
       globals: globals.node,
     },
     rules: {
-      // require() is how CommonJS files import
       '@typescript-eslint/no-require-imports': 'off',
     },
   },
 
-  // Runs Prettier as a lint rule (warnings) and turns off rules that conflict with it
   prettierRecommended
 );

@@ -2,6 +2,12 @@ import type { ColumnType, TableRow } from '../data/types';
 
 export type FilterType = 'eq' | 'gt' | 'gte' | 'lt' | 'lte' | 'sw' | 'has' | 'ew' | 'range' | 'any';
 
+function isInRange(cellValue: number | Date, [from, to]: [unknown, unknown]): boolean {
+  const lower = from as number | Date | undefined;
+  const upper = to as number | Date | undefined;
+  return (lower === undefined || cellValue >= lower) && (upper === undefined || cellValue < upper);
+}
+
 export class FilterTask {
   columnKey: string;
   columnName: string;
@@ -73,11 +79,7 @@ export class FilterTask {
       if (this.type === 'gte') return cellValue >= (this.value as number);
       if (this.type === 'lt') return cellValue < (this.value as number);
       if (this.type === 'lte') return cellValue <= (this.value as number);
-      if (this.type === 'range')
-        return (
-          cellValue >= ((this.rangeValues[0] as number) || Number.NEGATIVE_INFINITY) &&
-          cellValue < ((this.rangeValues[1] as number) || Number.POSITIVE_INFINITY)
-        );
+      if (this.type === 'range') return isInRange(cellValue, this.rangeValues);
     } else if (this.columnType === 'date') {
       const cellValue = (row[this.columnKey] || new Date(NaN)) as Date;
       if (cellValue.toString() === 'Invalid Date') return false;
@@ -86,11 +88,7 @@ export class FilterTask {
       if (this.type === 'gte') return cellValue >= (this.value as Date);
       if (this.type === 'lt') return cellValue < (this.value as Date);
       if (this.type === 'lte') return cellValue <= (this.value as Date);
-      if (this.type === 'range')
-        return (
-          cellValue >= ((this.rangeValues[0] as Date) || Number.NEGATIVE_INFINITY) &&
-          cellValue < ((this.rangeValues[1] as Date) || Number.POSITIVE_INFINITY)
-        );
+      if (this.type === 'range') return isInRange(cellValue, this.rangeValues);
     } else if (this.columnType === 'factor') {
       const cellValue = (row[this.columnKey] || '') as string;
       if (this.type === 'sw') return cellValue.startsWith(this.value as string);

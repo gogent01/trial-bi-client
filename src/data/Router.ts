@@ -16,7 +16,6 @@ export abstract class Router {
 
 export class DemoRouter extends Router {
   trials: TrialPublic[];
-  // Demo data generators (with Faker) are large, so each trial's database is loaded and built on first use
   private databaseLoaders: Record<string, () => Promise<Database>>;
   private databases = new Map<string, Promise<Database | undefined>>();
 
@@ -45,11 +44,8 @@ export class DemoRouter extends Router {
     this.prefetchGenerators();
   }
 
-  // Downloads the generator code once the page is idle, so the first query doesn't wait for the download.
-  // The databases themselves are still built only when a trial is first used.
   private prefetchGenerators(): void {
     const prefetch = () => {
-      // Errors are ignored here: the download is retried when the data is actually needed
       import('./breast/BreastDatabase').catch(() => undefined);
       import('./melanoma/MelanomaDatabase').catch(() => undefined);
     };
@@ -65,7 +61,6 @@ export class DemoRouter extends Router {
     if (!load) return Promise.resolve(undefined);
 
     const database = load().catch((error) => {
-      // Allow a retry on the next call, e.g. after a network error
       console.error(error);
       this.databases.delete(trialKey);
       return undefined;
