@@ -1,8 +1,6 @@
 import i18n from '../services/i18n';
-import type { Trial, APITrial, DataQuery, TableSchemaInfo } from './types';
+import type { Trial, APITrial, Database, DataQuery, TableSchemaInfo } from './types';
 import { Model } from './Model';
-import { BreastDatabase } from './breast/BreastDatabase';
-import { MelanomaDatabase } from './melanoma/MelanomaDatabase';
 import { QueryPlanner } from './QueryPlanner';
 import { axiosInstance } from '../services/axios';
 
@@ -17,7 +15,10 @@ export abstract class Router {
 }
 
 export class DemoRouter extends Router {
-  trials: Trial[];
+  trials: TrialPublic[];
+  // Demo data generators (with Faker) are large, so each trial's database is loaded and built on first use
+  private databaseLoaders: Record<string, () => Promise<Database>>;
+  private databases = new Map<string, Promise<Database | undefined>>();
 
   constructor() {
     super();
@@ -26,7 +27,6 @@ export class DemoRouter extends Router {
         id: 0,
         key: 'breast',
         name: t('demo_trials.breast'),
-        database: new BreastDatabase(1870),
         created_at: new Date('2022-01-10'),
         updated_at: new Date('2023-11-21'),
       },
@@ -34,34 +34,67 @@ export class DemoRouter extends Router {
         id: 1,
         key: 'melanoma',
         name: t('demo_trials.melanoma'),
-        database: new MelanomaDatabase(2236),
         created_at: new Date('2022-02-01'),
         updated_at: new Date('2023-12-05'),
       },
     ];
+    this.databaseLoaders = {
+      breast: () => import('./breast/BreastDatabase').then(({ BreastDatabase }) => new BreastDatabase(1870)),
+      melanoma: () => import('./melanoma/MelanomaDatabase').then(({ MelanomaDatabase }) => new MelanomaDatabase(2236)),
+    };
+    this.prefetchGenerators();
+  }
+
+  // Downloads the generator code once the page is idle, so the first query doesn't wait for the download.
+  // The databases themselves are still built only when a trial is first used.
+  private prefetchGenerators(): void {
+    const prefetch = () => {
+      // Errors are ignored here: the download is retried when the data is actually needed
+      import('./breast/BreastDatabase').catch(() => undefined);
+      import('./melanoma/MelanomaDatabase').catch(() => undefined);
+    };
+    if ('requestIdleCallback' in window) window.requestIdleCallback(prefetch);
+    else setTimeout(prefetch, 1000);
+  }
+
+  private getDatabase(trialKey: string): Promise<Database | undefined> {
+    const cached = this.databases.get(trialKey);
+    if (cached) return cached;
+
+    const load = this.databaseLoaders[trialKey];
+    if (!load) return Promise.resolve(undefined);
+
+    const database = load().catch((error) => {
+      // Allow a retry on the next call, e.g. after a network error
+      console.error(error);
+      this.databases.delete(trialKey);
+      return undefined;
+    });
+    this.databases.set(trialKey, database);
+    return database;
   }
 
   async getTrials(): Promise<TrialPublic[]> {
-    return this.trials.map((trial) => ({ ...trial, database: undefined }));
+    return this.trials.map((trial) => ({ ...trial }));
   }
 
   async getCompleteSchema(trialKey: string): Promise<TableSchemaInfo> {
-    const trial = this.trials.find((trial) => trial.key === trialKey);
-    return trial?.database?.getCompleteSchema() ?? [];
+    const database = await this.getDatabase(trialKey);
+    return database?.getCompleteSchema() ?? [];
   }
 
   async getDataFromQuery(query: DataQuery): Promise<Model> {
     if (query.length === 0) return Model.empty();
 
     const trialKey = query[0].trialKey;
-    const trial = this.trials.find((trial) => trial.key === trialKey);
-    if (!trial?.database) return Model.empty();
+    const database = await this.getDatabase(trialKey);
+    if (!database) return Model.empty();
 
-    const homogenousQuery = query.filter((dataQuery) => dataQuery.trialKey === trial.key);
-    const planner = new QueryPlanner(trial.database, homogenousQuery);
+    const homogenousQuery = query.filter((dataQuery) => dataQuery.trialKey === trialKey);
+    const planner = new QueryPlanner(database, homogenousQuery);
     const orderedQuery = planner.orderQuery();
 
-    return trial.database.getDataFromQuery(orderedQuery);
+    return database.getDataFromQuery(orderedQuery);
   }
 }
 
