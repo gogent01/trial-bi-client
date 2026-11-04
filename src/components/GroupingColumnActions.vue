@@ -14,6 +14,9 @@
       />
       <div v-if="['nth', 'all', 'unique'].includes(column.grouping.action)" class="flex items-center gap-2">
         <input
+          :id="`grouping-${column.origin.key}-${column.key}-param`"
+          :name="`grouping-${column.origin.key}-${column.key}-param`"
+          :aria-label="column.name"
           type="text"
           :value="''"
           class="block w-40 rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"

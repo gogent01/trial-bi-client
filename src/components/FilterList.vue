@@ -16,6 +16,9 @@
             </button>
           </div>
           <select
+            :id="`filter-${task.columnKey}-type`"
+            :name="`filter-${task.columnKey}-type`"
+            :aria-label="task.columnName"
             :value="getOption(task.columnType, task.type)"
             class="block w-full rounded-md border-0 py-1 pl-3 pr-8 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-teal-600 text-sm sm:leading-6"
             @change="updateFilterType($event, taskIdx)"
@@ -32,22 +35,28 @@
           </div>
           <div v-else-if="task.type === 'range'">
             <div v-if="task.columnType === 'number'" class="flex items-center gap-2">
-              <label for="from" class="text-sm text-gray-900">{{ t('filters.range_from') }}</label>
+              <label :for="`filter-${task.columnKey}-from`" class="text-sm text-gray-900">{{
+                t('filters.range_from')
+              }}</label>
               <input
+                :id="`filter-${task.columnKey}-from`"
+                :name="`filter-${task.columnKey}-from`"
                 type="text"
                 :value="task.rangeValues[0] ?? ''"
-                name="from"
                 class="flex px-2 py-1 w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
                 :placeholder="t('filters.range_from')"
                 @input="sanitizeNumberInput"
                 @keyup.enter="($event.target as HTMLInputElement).blur()"
                 @blur="updateFilterRangeValues($event, taskIdx)"
               />
-              <label for="to" class="text-sm text-gray-900">{{ t('filters.range_to') }}</label>
+              <label :for="`filter-${task.columnKey}-to`" class="text-sm text-gray-900">{{
+                t('filters.range_to')
+              }}</label>
               <input
+                :id="`filter-${task.columnKey}-to`"
+                :name="`filter-${task.columnKey}-to`"
                 type="text"
                 :value="task.rangeValues[1] ?? ''"
-                name="to"
                 class="flex px-2 py-1 w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
                 :placeholder="t('filters.range_to')"
                 @input="sanitizeNumberInput"
@@ -56,8 +65,12 @@
               />
             </div>
             <div v-else-if="task.columnType === 'date'" class="flex items-center gap-2">
-              <label for="from" class="text-sm text-gray-900">{{ t('filters.range_from') }}</label>
+              <label :for="`filter-${task.columnKey}-from`" class="text-sm text-gray-900">{{
+                t('filters.range_from')
+              }}</label>
               <input
+                :id="`filter-${task.columnKey}-from`"
+                :name="`filter-${task.columnKey}-from`"
                 :value="task.rangeValues[0] ? (task.rangeValues[0] as Date).toISOString().split('T')[0] : ''"
                 :class="[
                   task.rangeValues[0] ? 'text-gray-900' : 'placeholder:text-gray-400',
@@ -67,8 +80,12 @@
                 @keyup.enter="($event.target as HTMLInputElement).blur()"
                 @blur="updateFilterRangeValues($event, taskIdx)"
               />
-              <label for="to" class="text-sm text-gray-900">{{ t('filters.range_to') }}</label>
+              <label :for="`filter-${task.columnKey}-to`" class="text-sm text-gray-900">{{
+                t('filters.range_to')
+              }}</label>
               <input
+                :id="`filter-${task.columnKey}-to`"
+                :name="`filter-${task.columnKey}-to`"
                 :value="task.rangeValues[1] ? (task.rangeValues[1] as Date).toISOString().split('T')[0] : ''"
                 :class="[
                   task.rangeValues[1] ? 'text-gray-900' : 'placeholder:text-gray-400',
@@ -83,6 +100,9 @@
           <template v-else-if="task.type">
             <template v-if="task.columnType === 'date'">
               <input
+                :id="`filter-${task.columnKey}-value`"
+                :name="`filter-${task.columnKey}-value`"
+                :aria-label="task.columnName"
                 :value="task.value ? (task.value as Date).toISOString().split('T')[0] : ''"
                 :class="[
                   task.value ? 'text-gray-900' : 'placeholder:text-gray-400',
@@ -94,6 +114,9 @@
             </template>
             <template v-else-if="task.columnType === 'number'">
               <input
+                :id="`filter-${task.columnKey}-value`"
+                :name="`filter-${task.columnKey}-value`"
+                :aria-label="task.columnName"
                 type="text"
                 :value="task.value"
                 class="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
@@ -104,6 +127,9 @@
             </template>
             <template v-else>
               <input
+                :id="`filter-${task.columnKey}-value`"
+                :name="`filter-${task.columnKey}-value`"
+                :aria-label="task.columnName"
                 type="text"
                 :value="task.value"
                 class="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
