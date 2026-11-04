@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker/locale/en';
+import { fakerEN as faker } from '@faker-js/faker';
 import { Model } from '../../Model';
 import type { TableRow, TableData } from '../../types';
 import { lifeStatusSchema } from '../../melanoma/status/schema';
@@ -24,7 +24,7 @@ function createLifeStatus(id: number, patientId: number): TableRow {
           'Observation consent withdrawn',
           'Death registered',
         ]);
-  const deathDate = status === 'Death registered' ? faker.date.recent(40) : undefined;
+  const deathDate = status === 'Death registered' ? faker.date.recent({ days: 40 }) : undefined;
   const deathCause =
     status === 'Death registered'
       ? faker.helpers.arrayElement([
@@ -39,7 +39,7 @@ function createLifeStatus(id: number, patientId: number): TableRow {
   return {
     id,
     patient_id: patientId,
-    contact_date: faker.date.recent(90, '2023-02-15'),
+    contact_date: faker.date.recent({ days: 90, refDate: '2023-02-15' }),
     status,
     death_date: deathDate,
     death_cause: deathCause,

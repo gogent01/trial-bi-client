@@ -1,4 +1,4 @@
-import { describe, it, expect } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 import { testPatientModel as model } from './objects.utils';
 import { getColumnMetadata } from './functions.utils';
 import { FilterTask } from '../src/classes/FilterTask';

@@ -1,6 +1,7 @@
 import { fileURLToPath, URL } from 'node:url';
 
-import { defineConfig } from 'vite';
+// Vitest's defineConfig is Vite's, extended with the `test` section
+import { defineConfig } from 'vitest/config';
 import vue from '@vitejs/plugin-vue';
 
 // https://vitejs.dev/config/
@@ -17,5 +18,9 @@ export default defineConfig({
     proxy: {
       '/api': 'http://localhost:3000',
     },
+  },
+  test: {
+    include: ['__tests__/**/*.spec.ts'],
+    environment: 'node',
   },
 });

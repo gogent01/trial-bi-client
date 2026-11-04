@@ -30,7 +30,7 @@ In the full system, a daily ETL job transforms the contents of the operational t
 - Tailwind CSS, Headless UI, Heroicons
 - vue-i18n (English and Russian, picked from the browser language)
 - simple-statistics, fast-sort, ExcelJS
-- Jest
+- Vitest
 
 ### Installation and Launch
 
