@@ -303,7 +303,7 @@
     GroupingReactiveTableColumn,
     GroupingReactiveTableSchema,
   } from './data/types';
-  import { APIRouter, DemoRouter } from './data/Router';
+  import { APIRouter, DemoRouter, type Router } from './data/Router';
   import { StateStorage } from './classes/StateStorage';
   import { FilterTask } from './classes/FilterTask';
   import type { FilterType } from './classes/FilterTask';
@@ -359,12 +359,13 @@
     isGroupingOverlayVisible.value = !isGroupingOverlayVisible.value;
   }
 
-  const apiRouter = new DemoRouter();
+  // Demo data generated in the browser by default; set VITE_DATA_SOURCE=api to use the backend REST API
+  const router: Router = import.meta.env.VITE_DATA_SOURCE === 'api' ? new APIRouter() : new DemoRouter();
   const trials = ref<Trial[]>([]);
 
   onMounted(async () => {
     areTrialsLoaded.value = false;
-    trials.value = await apiRouter.getTrials();
+    trials.value = await router.getTrials();
     areTrialsLoaded.value = true;
   });
 
@@ -400,7 +401,7 @@
   async function createQuery() {
     if (selectedTrialIdx.value < 0) return;
     backupReactiveCompleteSchema();
-    completeSchema = addReactivity(await apiRouter.getCompleteSchema(trials.value[selectedTrialIdx.value].key));
+    completeSchema = addReactivity(await router.getCompleteSchema(trials.value[selectedTrialIdx.value].key));
     reactiveCompleteSchema.value = completeSchema.map((columnInfo) => ({ ...columnInfo }));
     isNewQuery.value = true;
     toggleQueryEditOverlayVisibility();
@@ -448,7 +449,7 @@
         modelKey: column.origin.key,
         columnKey: column.key,
       }));
-    const dbData = await apiRouter.getDataFromQuery(query);
+    const dbData = await router.getDataFromQuery(query);
     currentPage.value = 1;
 
     if (isNewQuery.value) {
@@ -899,7 +900,6 @@
 
   function saveQueryResultTable() {
     const schema = reactiveSchema.value.filter((column) => !column.invisible);
-    const colnames = schema.map((column) => column.name);
     const visibleKeys = schema.map((column) => column.key);
     const data = filteredAndSortedTable.value.map((row) => {
       const keys = Object.keys(row);

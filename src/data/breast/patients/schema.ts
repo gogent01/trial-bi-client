@@ -54,4 +54,4 @@ export const patientSchema: TableSchema = [
     name: 'BMI',
     type: 'number' as ColumnType,
   },
-].map((column, idx) => ({ origin: { key: 'patients', name: 'Пациенты', priority: 0 }, position: idx, ...column }));
+].map((column, idx) => ({ origin: { key: 'patients', name: 'Patients', priority: 0 }, position: idx, ...column }));

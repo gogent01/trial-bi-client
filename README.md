@@ -15,32 +15,42 @@ Trial BI is a system designed for analyzing data from clinical trials. It is int
 
 ## Trial BI Client
 
-This repository contains only the front-end of the system. In its current state, it connects to an internal demonstration source of randomly generated data. The code for retrieving data from the backend is also implemented, and there is an option to modify code for retrieving data from locally uploaded files.
+Live demo: https://trial-bi-client.vercel.app
+
+This repository contains only the front-end of the system. By default it uses an internal demonstration source of randomly generated data (`DemoRouter` in `src/data/Router.ts`). The client for the backend is also implemented (`APIRouter`, a REST API under `/api/1.0`), and there is an option to modify code for retrieving data from locally uploaded files.
+
+To use the backend instead of the demo data, set `VITE_DATA_SOURCE=api` (for example, in `.env.local`). In development, Vite proxies `/api` requests to `http://localhost:3000`.
+
+In the full system, a daily ETL job transforms the contents of the operational trial database into DuckDB, and the backend serves that data to this client.
 
 ### Technologies
-- TypeScript
-- Vue 3 + Pinia
-- Tailwind CSS
-- ExcelJS
+- TypeScript, Vue 3 (Composition API, `<script setup>`), Vite
+- Tailwind CSS, Headless UI, Heroicons
+- vue-i18n (English and Russian, picked from the browser language)
+- simple-statistics, fast-sort, ExcelJS
+- Jest
 
 ### Installation and Launch
 
+The project uses [pnpm](https://pnpm.io) (run `corepack enable` to get the version pinned in `package.json`).
+
 ```bash
-npm install
-npm start
+pnpm install
+pnpm start
 ```
 
 Standard scripts for a Vue project:
 
 ```bash
-npm run type-check # type correctness checks
-npm run build # build the application to './dist' folder
+pnpm type-check # type correctness checks
+pnpm build # build the application to './dist' folder
+pnpm lint # lint and auto-fix
 ```
 
-Tests have been written for the complex classes (data filtering and descriptive statistics calculation). They are located in the `__tests__` folder. To run tests use the following command:
+Tests have been written for the complex classes (data filtering and descriptive statistics calculation) and for pluralization rules. They are located in the `__tests__` folder. To run tests in watch mode use the following command:
 
 ```bash
-npm run test
+pnpm test
 ```
 
 ### Structure

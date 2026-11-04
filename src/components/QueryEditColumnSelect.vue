@@ -45,11 +45,10 @@
             </div>
           </div>
         </li>
+        <!-- Invisible fillers pad tables with fewer than 3 columns, so in the 2-column layout they stack like larger tables -->
         <li
-          v-for="placeholder in Array.from({
-            length: group.columns.length % 3 === 0 ? 0 : 3 - group.columns.length,
-          }).fill(0)"
-          :key="placeholder as number"
+          v-for="filler in Math.max(0, 3 - group.columns.length)"
+          :key="'filler-' + filler"
           class="invisible flex p-2 bg-white hover:bg-gray-50 cursor-pointer"
         >
           <div class="flex flex-1 gap-2 items-center justify-between">
@@ -59,7 +58,7 @@
                   type="checkbox"
                   class="h-4 w-4 rounded border-gray-300 text-teal-600 cursor-pointer focus:ring-teal-600"
                 />
-                <label class="text-sm text-gray-900 cursor-pointer select-none">{{ placeholder }}</label>
+                <label class="text-sm text-gray-900 cursor-pointer select-none">&nbsp;</label>
               </div>
             </div>
           </div>

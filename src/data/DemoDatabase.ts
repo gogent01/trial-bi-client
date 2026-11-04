@@ -70,7 +70,7 @@ export abstract class DemoDatabase implements Database {
     const joinedSchema = [...safeLeftModel.schema, ...safeRightModel.schema];
     const joinedData = [] as TableData;
 
-    safeLeftModel.data.forEach((leftRow, idx) => {
+    safeLeftModel.data.forEach((leftRow) => {
       const primaryKey = safeLeftModel.schema[primaryKeyIdx].key;
       const foreignKey = safeRightModel.schema[foreignKeyIdx].key;
       const indexesOfAllForeignRows = safeRightModel.data.reduce((indexes: number[], rightRow, idx) => {

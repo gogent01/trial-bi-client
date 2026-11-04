@@ -13,15 +13,15 @@ module.exports = {
         sans: ['Inter var', ...defaultTheme.fontFamily.sans],
       },
       spacing: {
-        '18': '4.5rem',
-        '84': '21rem',
-        '88': '22rem',
-        '92': '23rem',
+        18: '4.5rem',
+        84: '21rem',
+        88: '22rem',
+        92: '23rem',
         '5/4': '125%',
       },
       borderWidth: {
-        '6': '6px',
-      }
+        6: '6px',
+      },
     },
   },
   plugins: [require('@tailwindcss/typography'), require('@tailwindcss/forms')],
