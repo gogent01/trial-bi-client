@@ -5,6 +5,7 @@ const messages = {
       'A BI system for clinical trial data, providing extensive capabilities for data processing. Enables researchers to discover initial insights and prepare data for further analysis in statistical software.',
   },
   buttons: {
+    close: 'Close',
     group: 'Group data',
     edit_groups: 'Edit groups',
     ungroup: 'Ungroup',
