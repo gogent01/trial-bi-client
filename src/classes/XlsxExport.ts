@@ -34,14 +34,6 @@ export class XlsxExport {
         } else {
           cell.alignment = { vertical: 'top', horizontal: 'left', wrapText: true };
         }
-
-        const stringValue = (cell.value || '').toString();
-        if (stringValue.split('.').length <= 2) {
-          const numericValue = parseFloat(stringValue);
-          if (!isNaN(numericValue)) {
-            cell.value = numericValue;
-          }
-        }
       });
     });
 

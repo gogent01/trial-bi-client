@@ -67,8 +67,8 @@ describe('Checks if all values and NA are correctly counted', () => {
     const columnMetadata = getColumnMetadata(model, columnKey) as TableColumn;
     const columnValues = getColumnValues(model, columnKey);
     const expectedValue = [
-      { param: 'Count', value: '10' },
-      { param: 'Non-empty values', value: '8' },
+      { param: 'Count', value: '10', exportValue: 10 },
+      { param: 'Non-empty values', value: '8', exportValue: 8 },
     ];
     const actualValue = stats.calculate(columnMetadata, columnValues);
 
@@ -81,8 +81,8 @@ describe('Checks if all values and NA are correctly counted', () => {
     const columnMetadata = getColumnMetadata(model, columnKey) as TableColumn;
     const columnValues = getColumnValues(model, columnKey);
     const expectedValue = [
-      { param: 'Count', value: '10' },
-      { param: 'Non-empty values', value: '8' },
+      { param: 'Count', value: '10', exportValue: 10 },
+      { param: 'Non-empty values', value: '8', exportValue: 8 },
     ];
     const actualValue = stats.calculate(columnMetadata, columnValues);
 
@@ -95,8 +95,8 @@ describe('Checks if all values and NA are correctly counted', () => {
     const columnMetadata = getColumnMetadata(model, columnKey) as TableColumn;
     const columnValues = getColumnValues(model, columnKey);
     const expectedValue = [
-      { param: 'Count', value: '10' },
-      { param: 'Non-empty values', value: '7' },
+      { param: 'Count', value: '10', exportValue: 10 },
+      { param: 'Non-empty values', value: '7', exportValue: 7 },
     ];
     const actualValue = stats.calculate(columnMetadata, columnValues);
 
@@ -109,8 +109,8 @@ describe('Checks if all values and NA are correctly counted', () => {
     const columnMetadata = getColumnMetadata(model, columnKey) as TableColumn;
     const columnValues = getColumnValues(model, columnKey);
     const expectedValue = [
-      { param: 'Count', value: '10' },
-      { param: 'Non-empty values', value: '8' },
+      { param: 'Count', value: '10', exportValue: 10 },
+      { param: 'Non-empty values', value: '8', exportValue: 8 },
     ];
     const actualValue = stats.calculate(columnMetadata, columnValues);
 
@@ -125,14 +125,14 @@ describe('Checks for correct calculations of basic statistics', () => {
     const columnMetadata = getColumnMetadata(model, columnKey) as TableColumn;
     const columnValues = getColumnValues(model, columnKey);
     const expectedValue = [
-      { param: 'Minimum', value: '28.0' },
-      { param: 'First quartile', value: '34.0' },
-      { param: 'Median', value: '46.0' },
-      { param: 'Third quartile', value: '50.0' },
-      { param: 'Maximum', value: '69.0' },
-      { param: 'Interquartile range', value: '16.0' },
-      { param: 'Mean', value: '44.375' },
-      { param: 'Standard deviation', value: '12.459' },
+      { param: 'Minimum', value: '28.0', exportValue: 28 },
+      { param: 'First quartile', value: '34.0', exportValue: 34 },
+      { param: 'Median', value: '46.0', exportValue: 46 },
+      { param: 'Third quartile', value: '50.0', exportValue: 50 },
+      { param: 'Maximum', value: '69.0', exportValue: 69 },
+      { param: 'Interquartile range', value: '16.0', exportValue: 16 },
+      { param: 'Mean', value: '44.375', exportValue: 44.375 },
+      { param: 'Standard deviation', value: '12.459', exportValue: 12.459 },
     ];
     const actualValue = stats.calculate(columnMetadata, columnValues);
 
@@ -145,12 +145,12 @@ describe('Checks for correct calculations of basic statistics', () => {
     const columnMetadata = getColumnMetadata(model, columnKey) as TableColumn;
     const columnValues = getColumnValues(model, columnKey);
     const expectedValue = [
-      { param: 'Count', value: '10' },
-      { param: 'Non-empty values', value: '7' },
-      { param: 'State Multi-Specialty Surgical Center', value: '1' },
-      { param: 'City Hospital 1', value: '3' },
-      { param: 'City Hospital 62', value: '3' },
-      { param: 'No data', value: '3' },
+      { param: 'Count', value: '10', exportValue: 10 },
+      { param: 'Non-empty values', value: '7', exportValue: 7 },
+      { param: 'State Multi-Specialty Surgical Center', value: '1', exportValue: 1 },
+      { param: 'City Hospital 1', value: '3', exportValue: 3 },
+      { param: 'City Hospital 62', value: '3', exportValue: 3 },
+      { param: 'No data', value: '3', exportValue: 3 },
     ];
     const actualValue = stats.calculate(columnMetadata, columnValues);
 
