@@ -234,3 +234,17 @@ describe('FilterTask filtering logic: "factor" columns', () => {
     expect(filteredRows.length).toBe(4);
   });
 });
+
+describe('FilterTask cloning', () => {
+  it('keeps the filter type, values and column of the original', () => {
+    const task = new FilterTask('patients.height', 'Height, cm', 'number');
+    task.setType('range');
+    task.setRangeValues([150, 190]);
+
+    const clone = task.clone();
+
+    expect(clone).toEqual(task);
+    expect(clone).not.toBe(task);
+    expect(clone.type).toBe('range');
+  });
+});

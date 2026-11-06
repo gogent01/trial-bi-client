@@ -30,6 +30,7 @@ export class FilterTask {
   clone(): FilterTask {
     const clonedFilterTask = new FilterTask(this.columnKey, this.columnName, this.columnType, this.columnLevels);
 
+    clonedFilterTask.type = this.type;
     clonedFilterTask.setValue(this.value);
     clonedFilterTask.setMultipleValues(this.multipleValues);
     clonedFilterTask.setRangeValues(this.rangeValues);

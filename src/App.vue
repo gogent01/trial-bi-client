@@ -491,6 +491,11 @@
     filterTasks.value = storage.filters;
   }
 
+  // The reverse of updateTableState: needed after the shown table was replaced, so later states start from it
+  function saveTableState(): void {
+    storage.replaceState({ reactiveSchema: reactiveSchema.value, data: data.value, filters: filterTasks.value });
+  }
+
   async function getDataFromQuery() {
     const query: DataQuery = reactiveCompleteSchema.value
       .filter((column) => column.selected)
@@ -566,6 +571,7 @@
         });
 
       data.value = dbData.data;
+      saveTableState();
 
       statsForColumnAtIndex.value = reactiveSchema.value.findIndex((column) => column.hasStats);
     }
@@ -698,6 +704,7 @@
 
       return groupedData;
     }, [] as TableData);
+    saveTableState();
 
     isGrouped.value = true;
     toggleGroupingOverlayVisibility();
@@ -720,7 +727,7 @@
     statsForColumnAtIndex.value = reactiveSchema.value.findIndex((column) => column.hasStats);
     currentPage.value = 1;
 
-    groupingOverlay.value!.clearGrouping();
+    groupingOverlay.value!.clearGrouping(reactiveSchema.value);
     isGrouped.value = false;
   }
 

@@ -168,8 +168,9 @@
     if (isValid.value) emit('group', groupingSchema.value);
   }
 
-  function clearGrouping(): void {
-    groupingSchema.value = props.schema.map((column) => ({ ...column, grouping: { action: 'hide' } }));
+  // Pass the schema when it has just changed: the schema prop only updates on the next render
+  function clearGrouping(schema: ReactiveTableSchema = props.schema): void {
+    groupingSchema.value = schema.map((column) => ({ ...column, grouping: { action: 'hide' } }));
   }
 
   function backupGrouping(): void {
@@ -189,7 +190,7 @@
   }
 
   interface Exposes {
-    clearGrouping(): void;
+    clearGrouping(schema?: ReactiveTableSchema): void;
     backupGrouping(): void;
     restoreGroupingBackup(): void;
   }
