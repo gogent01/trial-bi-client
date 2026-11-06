@@ -27,8 +27,8 @@
                 name="page"
                 id="page"
                 type="text"
-                class="block p-2 w-7 h-7 border border-transparent rounded-md bg-slate-200 text-center text-sm focus:border-teal-500 focus:ring-teal-500 lg:text-base"
-                placeholder="1"
+                class="block p-1 w-9 h-7 border border-transparent rounded-md bg-slate-200 text-center text-sm focus:border-teal-500 focus:ring-teal-500 lg:text-base"
+                placeholder="…"
                 @input="sanitizeNumberInput"
                 @keyup.enter="emitUpdate"
                 @blur="restore"
@@ -85,7 +85,7 @@
   function emitUpdate() {
     const displayedPageNumber = parseInt(displayedPage.value, 10);
     if (displayedPageNumber === props.currentPage) return;
-    if (displayedPageNumber < 1 || displayedPageNumber > props.maxPage) {
+    if (isNaN(displayedPageNumber) || displayedPageNumber < 1 || displayedPageNumber > props.maxPage) {
       displayedPage.value = props.currentPage.toString();
       return;
     }

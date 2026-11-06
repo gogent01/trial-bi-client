@@ -3,14 +3,26 @@
     <!-- Navbar -->
     <nav class="bg-teal-600">
       <div class="mx-auto px-4">
-        <div class="relative flex h-16 items-center justify-between">
-          <!-- Logo section -->
+        <div class="relative h-16 flex gap-4 items-center">
+          <!-- Logo -->
           <div class="flex items-center">
-            <div class="flex-shrink-0 flex gap-3 items-center">
+            <div class="flex-shrink-0 flex gap-4 items-center">
               <img class="h-8 w-auto text-white" :src="logo" alt="Trial BI" />
             </div>
           </div>
-          <div class="h-10 flex gap-2 items-center">
+
+          <!-- Menu -->
+          <div class="hidden items-center md:flex">
+            <button
+              class="text-white text-sm font-medium hover:underline hover:underline-offset-2 hover:decoration-from-font"
+              @click="toggleAboutOverlayVisibility()"
+            >
+              About
+            </button>
+          </div>
+
+          <!-- Launcher -->
+          <div class="h-10 ml-auto flex gap-2 items-center">
             <div
               v-if="!areTrialsLoaded"
               class="h-7 w-7 rounded-full border-4 border-l-white border-t-white border-r-white border-b-teal-600 animate-spin"
@@ -26,7 +38,7 @@
             />
             <button
               :class="[selectedTrialIdx > -1 ? 'hover:bg-teal-800' : 'opacity-50 cursor-default']"
-              class="hidden md:inline-flex items-center min-w-max rounded-lg border border-transparent bg-teal-900 px-4 py-2 font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+              class="hidden md:inline-flex items-center min-w-max rounded-lg bg-teal-900 px-4 py-2 font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
               @click="createQuery"
             >
               <plus-icon class="-ml-2 mr-1 h-6 w-6"></plus-icon>
@@ -36,6 +48,12 @@
         </div>
       </div>
     </nav>
+
+    <about-overlay
+      :is-visible="isAboutOverlayVisible"
+      @close="toggleAboutOverlayVisibility()"
+      class="hidden md:block"
+    />
 
     <query-edit-overlay
       :is-visible="isQueryEditOverlayVisible"
@@ -88,6 +106,7 @@
       </div>
     </div>
 
+    <!-- Main Area -->
     <div
       class="hidden mx-auto w-full flex-grow bg-slate-300 md:flex md:flex-row"
       style="max-height: calc(100vh - 4rem)"
@@ -107,7 +126,7 @@
       <div class="flex flex-row bg-slate-300" :style="{ width: 'calc(100% - 2 * var(--control-width))' }">
         <div
           v-if="!queryHidden"
-          class="pl-4 py-4 basis-1/4 flex-shrink-0 flex-grow-0 flex flex-col lg:basis-1/5 2xl:pr-4"
+          class="pl-4 py-4 basis-1/4 flex-shrink-0 flex-grow-0 flex flex-col lg:basis-1/5 2xl:pr-1"
         >
           <div class="h-1/2 flex flex-col overflow-hidden">
             <div class="ml-2 mb-2 text-slate-700 text-xl font-semibold">
@@ -205,7 +224,7 @@
               <div v-else class="w-full h-full flex items-center justify-center p-3 bg-gray-50">
                 <div class="text-center">
                   <cube-transparent-icon class="mx-auto h-20 w-20 text-gray-600" aria-hidden="true" />
-                  <h3 class="my-3 text-lg font-semibold text-gray-900">{{ t('no_data_main.notice') }}</h3>
+                  <h3 class="my-1 text-lg font-semibold text-gray-900">{{ t('no_data_main.notice') }}</h3>
 
                   <div class="block lg:hidden">
                     <p class="text-gray-600">{{ t('no_data_main.todo.select_trial') }}</p>
@@ -249,7 +268,7 @@
 
         <div
           v-if="!statisticsHidden"
-          class="pr-4 py-4 basis-1/4 flex-shrink-0 flex-grow-0 flex flex-col lg:basis-1/5 2xl:pl-4"
+          class="pr-4 py-4 basis-1/4 flex-shrink-0 flex-grow-0 flex flex-col lg:basis-1/5 2xl:pl-1"
         >
           <div class="flex mb-2 ml-2 items-center justify-between text-slate-700">
             <p class="text-xl font-semibold">{{ t('titles.statistics') }}</p>
@@ -336,6 +355,7 @@
   import { ColumnStats } from './classes/ColumnStats';
 
   import TrialSelect from './components/TrialSelect.vue';
+  import AboutOverlay from './components/AboutOverlay.vue';
   import QueryEditOverlay from './components/QueryEditOverlay.vue';
   import QueryNavbarTop from './components/QuerySummaryNavbarTop.vue';
   import QueryList from './components/QueryList.vue';
@@ -367,6 +387,11 @@
   }
   function toggleStatisticsVisibility() {
     statisticsHidden.value = !statisticsHidden.value;
+  }
+
+  const isAboutOverlayVisible = ref<boolean>(false);
+  function toggleAboutOverlayVisibility() {
+    isAboutOverlayVisible.value = !isAboutOverlayVisible.value;
   }
 
   const isQueryEditOverlayVisible = ref<boolean>(false);
