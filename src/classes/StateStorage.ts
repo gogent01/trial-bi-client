@@ -46,6 +46,11 @@ export class StateStorage {
     this.add({ data, reactiveSchema, filters });
   }
 
+  /** Replaces the active state, for changes that build a new table instead of changing the current one */
+  replaceState(state: TableState): void {
+    if (this.activeIdx > -1) this.storage[this.activeIdx] = state;
+  }
+
   clear(): void {
     this.activeIdx = -1;
     this.storage = [];
