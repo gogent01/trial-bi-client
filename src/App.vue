@@ -339,7 +339,6 @@
     Trial,
     ReactiveTableSchemaInfo,
     ReactiveTableSchema,
-    TableSchema,
     TableRow,
     TableData,
     DataQuery,
@@ -367,7 +366,7 @@
   import QueryResultTable from './components/QueryResultTable.vue';
   import StatisticsNavbarTop from './components/StatisticsNavbarTop.vue';
   import StatisticsTable from './components/StatisticsTable.vue';
-  import { XlsxExport } from './classes/XlsxExport';
+  import { XlsxExport, codebookRows, exportKey, statsFileName, type ExportSheet } from './classes/XlsxExport';
   import { compressRowGroup } from './classes/Grouping';
   import { withUniqueNames } from './classes/ColumnNames';
 
@@ -672,6 +671,7 @@
       }
 
       stateColumn.name = `${stateColumn.name} ${makePostfix(groupingColumn)}`.trim();
+      stateColumn.aggregation = { ...groupingColumn.grouping };
 
       if (['count', 'sum', 'mean', 'median'].includes(groupingColumn.grouping.action)) {
         stateColumn.type = 'number';
@@ -885,51 +885,42 @@
     }
   }
 
-  async function saveTable(schema: TableSchema, data: TableData, sheetName: string, fileName: string) {
+  async function saveTable(sheets: ExportSheet[], fileName: string) {
     const xlsxExport = new XlsxExport();
-    await xlsxExport.generateXLSX(schema, data, sheetName, fileName);
+    await xlsxExport.generateXLSX(sheets, fileName);
   }
 
   function saveQueryResultTable() {
-    const schema = reactiveSchema.value.filter((column) => !column.invisible);
-    const visibleKeys = schema.map((column) => column.key);
-    const data = filteredAndSortedTable.value.map((row) => {
-      const keys = Object.keys(row);
-      return keys.reduce((visibleRow: TableRow, key) => {
-        if (visibleKeys.includes(key)) visibleRow[key] = row[key];
-        return visibleRow;
-      }, {});
-    });
-    saveTable(schema, data, t('export.data.sheet_name'), t('export.data.file_name'));
+    const columns = reactiveSchema.value.filter((column) => !column.invisible);
+    const dataSheet: ExportSheet = {
+      name: t('export.data.sheet_name'),
+      columns: columns.map((column) => ({ key: column.key, header: exportKey(column) })),
+      rows: filteredAndSortedTable.value,
+    };
+    const codebookSheet: ExportSheet = {
+      name: t('export.data.codebook.sheet_name'),
+      columns: [
+        { key: 'key', header: t('export.data.codebook.key') },
+        { key: 'table', header: t('export.data.codebook.table') },
+        { key: 'column', header: t('export.data.codebook.column') },
+        { key: 'type', header: t('export.data.codebook.type') },
+      ],
+      rows: codebookRows(columns),
+    };
+    saveTable([dataSheet, codebookSheet], t('export.data.file_name'));
   }
 
   function saveStatsTable() {
-    const schema: TableSchema = [
-      {
-        origin: {
-          key: 'stats',
-          name: t('export.stats.schema.origin_name'),
-          priority: 0,
-        },
-        key: 'param',
-        name: t('export.stats.schema.param_name'),
-        type: 'text',
-        position: 0,
-      },
-      {
-        origin: {
-          key: 'stats',
-          name: t('export.stats.schema.origin_name'),
-          priority: 0,
-        },
-        key: 'value',
-        name: t('export.stats.schema.value_name'),
-        type: 'text',
-        position: 1,
-      },
-    ];
-    const data: TableData = stats.value.data.map((row) => ({ param: row.param, value: row.exportValue }));
-    const filename = stats.value.variable.toLowerCase().replace(/[^а-яa-z0-9_-]/g, '_');
-    saveTable(schema, data, t('export.stats.sheet_name'), filename);
+    if (statsForColumnAtIndex.value < 0) return;
+
+    const statsSheet: ExportSheet = {
+      name: t('export.stats.sheet_name'),
+      columns: [
+        { key: 'param', header: t('export.stats.schema.param_name') },
+        { key: 'value', header: t('export.stats.schema.value_name') },
+      ],
+      rows: stats.value.data.map((row) => ({ param: row.param, value: row.exportValue })),
+    };
+    saveTable([statsSheet], statsFileName(reactiveSchema.value[statsForColumnAtIndex.value]));
   }
 </script>
