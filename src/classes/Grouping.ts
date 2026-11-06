@@ -1,6 +1,7 @@
 import { sort } from 'fast-sort';
 import { median } from 'simple-statistics';
 import { CURRENT_LOCALE } from '../config/variables';
+import { formatNumber, roundNumber } from '../services/numbers';
 import type { GroupingReactiveTableSchema, TableRow } from '../data/types';
 
 type CellValue = TableRow[string];
@@ -12,11 +13,8 @@ function isMissing(value: CellValue): boolean {
 function formatValue(value: CellValue): string {
   if (isMissing(value)) return 'NA';
   if (value instanceof Date) return value.toLocaleDateString(CURRENT_LOCALE);
+  if (typeof value === 'number') return formatNumber(value);
   return String(value);
-}
-
-function prettyNumber(n: number): number {
-  return parseFloat(n.toFixed(3));
 }
 
 /** Collapses a group of rows into one row, applying each column's grouping action */
@@ -49,11 +47,11 @@ export function compressRowGroup(rowGroup: TableRow[], groupingSchema: GroupingR
       if (column.type !== 'number' || values.length === 0) {
         compressedRow[column.key] = undefined;
       } else if (action === 'sum') {
-        compressedRow[column.key] = prettyNumber(values.reduce((sum, value) => sum + value, 0));
+        compressedRow[column.key] = roundNumber(values.reduce((sum, value) => sum + value, 0));
       } else if (action === 'mean') {
-        compressedRow[column.key] = prettyNumber(values.reduce((sum, value) => sum + value, 0) / values.length);
+        compressedRow[column.key] = roundNumber(values.reduce((sum, value) => sum + value, 0) / values.length);
       } else {
-        compressedRow[column.key] = prettyNumber(median(values));
+        compressedRow[column.key] = roundNumber(median(values));
       }
     }
   });

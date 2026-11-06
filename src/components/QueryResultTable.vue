@@ -66,11 +66,7 @@
             ]"
             style="min-width: 2rem; max-width: 12rem"
           >
-            {{
-              row[column.key] instanceof Date
-                ? (row[column.key]! as Date).toLocaleDateString(CURRENT_LOCALE)
-                : row[column.key]
-            }}
+            {{ formatCell(row[column.key]) }}
           </td>
         </tr>
       </tbody>
@@ -94,8 +90,9 @@
   import { useI18n } from 'vue-i18n';
   import { FunnelIcon, ChartBarIcon, ChevronUpIcon, ChevronDownIcon } from '@heroicons/vue/24/outline';
   import { FunnelIcon as FunnelIconActive, ChartBarIcon as ChartBarIconActive } from '@heroicons/vue/24/solid';
-  import type { ReactiveTableSchema, TableData } from '../data/types';
+  import type { ReactiveTableSchema, TableData, TableRow } from '../data/types';
   import { CURRENT_LOCALE } from '../config/variables';
+  import { formatNumber } from '../services/numbers';
 
   const { t } = useI18n();
 
@@ -120,6 +117,12 @@
   const visibleSchema = computed(() => {
     return props.reactiveSchema.filter((column) => !column.invisible);
   });
+
+  function formatCell(value: TableRow[string]) {
+    if (value instanceof Date) return value.toLocaleDateString(CURRENT_LOCALE);
+    if (typeof value === 'number') return formatNumber(value);
+    return value;
+  }
 
   function emitFilter(columnKey: string) {
     emit('filter', columnKey);

@@ -42,10 +42,10 @@
                 :id="`filter-${task.columnKey}-from`"
                 :name="`filter-${task.columnKey}-from`"
                 type="text"
-                :value="task.rangeValues[0] ?? ''"
+                :value="toNumberInputValue(task.rangeValues[0])"
                 class="flex px-2 py-1 w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
                 :placeholder="t('filters.range_from')"
-                @input="sanitizeNumberInput"
+                @input="sanitizeInput"
                 @keyup.enter="($event.target as HTMLInputElement).blur()"
                 @blur="updateFilterRangeValues($event, taskIdx)"
               />
@@ -56,10 +56,10 @@
                 :id="`filter-${task.columnKey}-to`"
                 :name="`filter-${task.columnKey}-to`"
                 type="text"
-                :value="task.rangeValues[1] ?? ''"
+                :value="toNumberInputValue(task.rangeValues[1])"
                 class="flex px-2 py-1 w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
                 :placeholder="t('filters.range_to')"
-                @input="sanitizeNumberInput"
+                @input="sanitizeInput"
                 @keyup.enter="($event.target as HTMLInputElement).blur()"
                 @blur="updateFilterRangeValues($event, taskIdx)"
               />
@@ -118,10 +118,10 @@
                 :name="`filter-${task.columnKey}-value`"
                 :aria-label="task.columnName"
                 type="text"
-                :value="task.value"
+                :value="toNumberInputValue(task.value)"
                 class="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-teal-600 sm:text-sm sm:leading-6"
                 :placeholder="t('filters.enter_value')"
-                @input="sanitizeNumberInput"
+                @input="sanitizeInput"
                 @keyup.enter="updateFilterValue($event, taskIdx)"
               />
             </template>
@@ -151,6 +151,7 @@
   import type { FilterType, FilterTask } from '../classes/FilterTask';
   import { TrashIcon } from '@heroicons/vue/24/outline';
   import MultipleSelect from './MultipleSelect.vue';
+  import { formatNumber, parseNumber, sanitizeNumberInput } from '../services/numbers';
 
   const { t } = useI18n();
 
@@ -232,8 +233,9 @@
 
     let typedValue: string | number | Date;
     if (columnType === 'number') {
-      typedValue = parseFloat(value);
-      if (isNaN(typedValue)) return;
+      const parsedValue = parseNumber(value);
+      if (parsedValue === undefined) return;
+      typedValue = parsedValue;
     } else if (columnType === 'date') {
       typedValue = new Date(value);
     } else {
@@ -253,9 +255,8 @@
     let typedFromValue: number | Date | undefined;
     let typedToValue: number | Date | undefined;
     if (columnType === 'number') {
-      const parse = (value: string) => (value === '' || isNaN(parseFloat(value)) ? undefined : parseFloat(value));
-      typedFromValue = parse(inputFrom.value);
-      typedToValue = parse(inputTo.value);
+      typedFromValue = parseNumber(inputFrom.value);
+      typedToValue = parseNumber(inputTo.value);
     } else if (columnType === 'date') {
       typedFromValue = inputFrom.value !== '' ? new Date(inputFrom.value) : undefined;
       typedToValue = inputTo.value !== '' ? new Date(inputTo.value) : undefined;
@@ -272,17 +273,12 @@
     emit('remove', filterTaskIndex);
   }
 
-  function sanitizeNumberInput(event: Event) {
-    const input = event.target! as HTMLInputElement;
+  function toNumberInputValue(value: unknown) {
+    return typeof value === 'number' ? formatNumber(value) : '';
+  }
 
-    let i = 0;
-    input.value = input.value
-      .replace(',', '.')
-      .replace(/[^0-9.-]/g, '')
-      .replace(/(.)-/g, '$1')
-      .replace(/\./g, function (match) {
-        return match === '.' ? (i++ === 0 ? '.' : '') : '';
-      })
-      .replace(/^\./g, '');
+  function sanitizeInput(event: Event) {
+    const input = event.target! as HTMLInputElement;
+    input.value = sanitizeNumberInput(input.value);
   }
 </script>

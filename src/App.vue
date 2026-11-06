@@ -914,7 +914,7 @@
         position: 1,
       },
     ];
-    const data = stats.value.data as TableData;
+    const data: TableData = stats.value.data.map((row) => ({ param: row.param, value: row.exportValue }));
     const filename = stats.value.variable.toLowerCase().replace(/[^а-яa-z0-9_-]/g, '_');
     saveTable(schema, data, t('export.stats.sheet_name'), filename);
   }
