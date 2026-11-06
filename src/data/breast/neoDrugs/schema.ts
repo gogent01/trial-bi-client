@@ -5,7 +5,7 @@ export const neoDrugSchema: TableSchema = [
     key: 'id',
     name: 'ID',
     type: 'id' as ColumnType,
-    primaryKey: 'neo_therapies',
+    primaryKey: 'neo_drugs',
   },
   {
     key: 'neo_therapy_id',

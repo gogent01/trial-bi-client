@@ -369,6 +369,7 @@
   import StatisticsTable from './components/StatisticsTable.vue';
   import { XlsxExport } from './classes/XlsxExport';
   import { compressRowGroup } from './classes/Grouping';
+  import { withUniqueNames } from './classes/ColumnNames';
 
   const { t } = useI18n();
   const areTrialsLoaded = ref<boolean>(false);
@@ -505,6 +506,7 @@
         columnKey: column.key,
       }));
     const dbData = await router.getDataFromQuery(query);
+    const resultSchema = withUniqueNames(dbData.schema);
     currentPage.value = 1;
 
     if (isNewQuery.value) {
@@ -512,7 +514,7 @@
       clearSort();
       clearFilters();
 
-      const rSchema: ReactiveTableSchema = dbData.schema
+      const rSchema: ReactiveTableSchema = resultSchema
         .filter((column) => column.type !== 'id')
         .sort((columnA, columnB) => {
           return (
@@ -536,9 +538,9 @@
       updateTableState();
 
       const oldColumnKeys = new Set<string>(reactiveSchema.value.map((column) => column.key));
-      const newColumnKeys = new Set<string>(dbData.schema.map((column) => column.key));
+      const newColumnKeys = new Set<string>(resultSchema.map((column) => column.key));
       const columnsToRemove = reactiveSchema.value.filter((column) => !newColumnKeys.has(column.key));
-      const columnsToAdd = dbData.schema
+      const columnsToAdd = resultSchema
         .filter((column) => column.type !== 'id')
         .filter((column) => !oldColumnKeys.has(column.key));
 
@@ -551,8 +553,13 @@
         }
       });
 
-      reactiveSchema.value = reactiveSchema.value
-        .filter((column) => newColumnKeys.has(column.key))
+      // A kept column gets a new name when an added column has the same name
+      const newNames = new Map<string, string>(resultSchema.map((column) => [column.key, column.name]));
+      const keptColumns = reactiveSchema.value.filter((column) => newColumnKeys.has(column.key));
+      keptColumns.forEach((column) => (column.name = newNames.get(column.key)!));
+      filterTasks.value.forEach((task) => (task.columnName = newNames.get(task.columnKey) ?? task.columnName));
+
+      reactiveSchema.value = keptColumns
         .concat(
           columnsToAdd.map((column) => ({
             ...column,
@@ -680,7 +687,7 @@
     let lastGroupingKey: string = '';
     let groupDataAccumulator: TableData = [];
 
-    data.value = sort(data.value).asc(groupingColumnsKeys);
+    data.value = sort(data.value).asc(groupingColumnsKeys.map((key) => (row: TableRow) => row[key]));
 
     data.value = data.value.reduce((groupedData, row, idx, data) => {
       const groupingKey = groupingColumnsKeys.map((key) => row[key] || 'empty').join('_');

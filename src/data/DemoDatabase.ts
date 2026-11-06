@@ -58,31 +58,24 @@ export abstract class DemoDatabase implements Database {
     const primaryKeyIdx = left.schema.findIndex(
       (column) => column.primaryKey === right.schema[foreignKeyIdx].belongsTo
     );
-    const namingConflictColumnKeys = Model.getConflictingKeys(left, right);
 
-    const safeLeftModel = left.copy();
-    const safeRightModel = right.copy();
-    for (const key of namingConflictColumnKeys) {
-      safeLeftModel.resolveNamingConflict(key, 'left');
-      safeRightModel.resolveNamingConflict(key, 'right');
-    }
-
-    const joinedSchema = [...safeLeftModel.schema, ...safeRightModel.schema];
+    // Result keys are prefixed with the table, so columns of joined tables never clash
+    const joinedSchema = [...left.schema, ...right.schema];
     const joinedData = [] as TableData;
 
-    const primaryKey = safeLeftModel.schema[primaryKeyIdx].key;
-    const foreignKey = safeRightModel.schema[foreignKeyIdx].key;
+    const primaryKey = left.schema[primaryKeyIdx].key;
+    const foreignKey = right.schema[foreignKeyIdx].key;
 
     const rightRowsByKey = new Map<TableRow[string], TableData>();
-    for (const rightRow of safeRightModel.data) {
+    for (const rightRow of right.data) {
       const rows = rightRowsByKey.get(rightRow[foreignKey]);
       if (rows) rows.push(rightRow);
       else rightRowsByKey.set(rightRow[foreignKey], [rightRow]);
     }
 
-    const emptyRightRow: TableRow = Object.fromEntries(safeRightModel.schema.map((column) => [column.key, undefined]));
+    const emptyRightRow: TableRow = Object.fromEntries(right.schema.map((column) => [column.key, undefined]));
 
-    for (const leftRow of safeLeftModel.data) {
+    for (const leftRow of left.data) {
       const matchingRows = rightRowsByKey.get(leftRow[primaryKey]);
       if (!matchingRows || leftRow[primaryKey] === undefined) {
         joinedData.push({ ...leftRow, ...emptyRightRow });
