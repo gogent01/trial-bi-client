@@ -2,6 +2,7 @@
   "name": "trial-bi-client",
   "version": "1.4.0",
   "private": true,
+  "license": "UNLICENSED",
   "scripts": {
     "start": "vite --host",
     "test": "vitest",
