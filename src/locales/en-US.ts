@@ -160,11 +160,17 @@ const messages = {
     data: {
       file_name: 'Query results',
       sheet_name: 'Data',
+      codebook: {
+        sheet_name: 'Columns',
+        key: 'Key',
+        table: 'Table',
+        column: 'Column',
+        type: 'Type',
+      },
     },
     stats: {
       sheet_name: 'Statistics',
       schema: {
-        origin_name: 'Statistics',
         param_name: 'Parameter',
         value_name: 'Value',
       },

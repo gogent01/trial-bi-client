@@ -38,6 +38,8 @@ type ReactiveColumn = {
   sortPriority?: number;
   hasStats: boolean;
   invisible?: boolean;
+  /** Set by grouping: how the column's values were combined */
+  aggregation?: GroupingMixin['grouping'];
 };
 
 export type ReactiveTableColumnInfo = TableColumnInfo & ReactiveColumnInfo;

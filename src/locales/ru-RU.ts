@@ -161,11 +161,17 @@ const messages = {
     data: {
       file_name: 'Результат запроса',
       sheet_name: 'Данные',
+      codebook: {
+        sheet_name: 'Столбцы',
+        key: 'Ключ',
+        table: 'Таблица',
+        column: 'Столбец',
+        type: 'Тип',
+      },
     },
     stats: {
       sheet_name: 'Статистика',
       schema: {
-        origin_name: 'Статистика',
         param_name: 'Параметр',
         value_name: 'Значение',
       },
